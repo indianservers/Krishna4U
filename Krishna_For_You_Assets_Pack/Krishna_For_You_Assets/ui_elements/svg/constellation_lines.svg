@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="640" viewBox="0 0 1024 640" fill="none"><defs>
+<linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFF1A8"/><stop offset=".48" stop-color="#E9B74A"/><stop offset="1" stop-color="#955B18"/></linearGradient>
+<linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#1E9FD2"/><stop offset="1" stop-color="#0A1D55"/></linearGradient>
+<filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5" result="x"/><feMerge><feMergeNode in="x"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs><g id="lines" stroke="url(#g)" fill="none" stroke-width="3"><path d="M70 510L240 190 460 360 620 110 820 260 955 70"/><path d="M240 190L820 260M460 360L955 70"/></g><g id="nodes" fill="#5DDBFF"><circle cx="70" cy="510" r="9"/><circle cx="240" cy="190" r="9"/><circle cx="460" cy="360" r="9"/><circle cx="620" cy="110" r="9"/><circle cx="820" cy="260" r="9"/><circle cx="955" cy="70" r="9"/></g></svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 256 256" fill="none">
+<defs>
+ <linearGradient id="gold" x1="30" y1="20" x2="225" y2="235" gradientUnits="userSpaceOnUse"><stop stop-color="#FFF2AF"/><stop offset=".48" stop-color="#E9B84A"/><stop offset="1" stop-color="#9E641D"/></linearGradient>
+ <linearGradient id="cyan" x1="60" y1="50" x2="210" y2="210"><stop stop-color="#78E7FF"/><stop offset="1" stop-color="#168DCC"/></linearGradient>
+ <filter id="softGlow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<g id="glow" opacity=".3" stroke="#2BBCEB" stroke-width="10" filter="url(#softGlow)"><path d="M52 216C43 148 98 143 88 92S134 26 204 42"/><circle cx="53" cy="216" r="14"/><circle cx="88" cy="92" r="14"/><circle cx="204" cy="42" r="14"/></g>
+<g id="core" stroke="url(#gold)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><path d="M52 216C43 148 98 143 88 92S134 26 204 42"/><circle cx="53" cy="216" r="14"/><circle cx="88" cy="92" r="14"/><circle cx="204" cy="42" r="14"/></g>
+<g id="accent"><circle cx="128" cy="128" r="116" stroke="#39BCEB" stroke-opacity=".15" stroke-width="2" stroke-dasharray="3 10"/></g>
+</svg>

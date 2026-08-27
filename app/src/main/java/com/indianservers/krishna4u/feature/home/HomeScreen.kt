@@ -1,0 +1,115 @@
+package com.indianservers.krishna4u.feature.home
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import com.indianservers.krishna4u.BuildConfig
+import com.indianservers.krishna4u.R
+import com.indianservers.krishna4u.core.design.GlassCard
+import com.indianservers.krishna4u.core.design.KrishnaCosmicBackground
+import com.indianservers.krishna4u.ui.theme.AntiqueGold
+import com.indianservers.krishna4u.ui.theme.LightGold
+import com.indianservers.krishna4u.ui.theme.MutedText
+import com.indianservers.krishna4u.ui.theme.SoftWhite
+
+private data class HomeCard(val title: String, val body: String, val icon: Int, val route: String)
+
+@Composable
+fun HomeScreen(onOpen: (String) -> Unit, onGallery: () -> Unit) {
+    val cards = listOf(
+        HomeCard("Krishna’s Life", "Explore the divine stories of Krishna.", R.drawable.icon_flute, "06"),
+        HomeCard("Teachings", "Timeless wisdom for modern life.", R.drawable.icon_teachings, "08"),
+        HomeCard("Bhagavad Gita", "Read, listen, and reflect deeply.", R.drawable.icon_gita, "12"),
+        HomeCard("Ask Krishna", "Scripture-grounded reflective guidance.", R.drawable.icon_lotus, "22")
+    )
+    KrishnaCosmicBackground(R.drawable.bg_01_cosmic_mandala) {
+        Column(Modifier.fillMaxSize().statusBarsPadding()) {
+            Row(Modifier.fillMaxWidth().padding(18.dp), verticalAlignment = Alignment.CenterVertically) {
+                Image(painterResource(R.drawable.icon_peacock_feather), null, Modifier.size(52.dp).clip(CircleShape))
+                Column(Modifier.weight(1f).padding(start = 12.dp)) {
+                    Text("Namaste, Sai", color = LightGold, style = MaterialTheme.typography.headlineMedium)
+                    Text("May Krishna guide your path today.", color = MutedText)
+                }
+                Image(painterResource(R.drawable.icon_notification), "Notifications", Modifier.size(38.dp))
+            }
+            LazyColumn(Modifier.weight(1f), contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 18.dp, vertical = 4.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                item {
+                    GlassCard(Modifier.fillMaxWidth().height(285.dp), onClick = { onOpen("09") }) {
+                        Image(painterResource(R.drawable.illustration_02_krishna_portrait), null, Modifier.align(Alignment.CenterEnd).fillMaxSize(), contentScale = ContentScale.Fit)
+                        Column(Modifier.align(Alignment.CenterStart).fillMaxWidth(.55f)) {
+                            Text("“", color = LightGold, style = MaterialTheme.typography.displayLarge)
+                            Text("You have the right to action, not to its fruits.", color = SoftWhite, style = MaterialTheme.typography.headlineMedium)
+                            Spacer(Modifier.height(12.dp))
+                            Text("Bhagavad Gita 2.47", color = AntiqueGold, style = MaterialTheme.typography.titleLarge)
+                            Image(painterResource(R.drawable.icon_play), "Play teaching", Modifier.padding(top = 10.dp).size(46.dp))
+                        }
+                    }
+                }
+                item {
+                    GlassCard(Modifier.fillMaxWidth()) {
+                        Column { Text("Your Gita Journey · Chapter 2 · 38%", color = SoftWhite, style = MaterialTheme.typography.titleLarge); Spacer(Modifier.height(10.dp)); Box(Modifier.fillMaxWidth().height(5.dp).background(Brush.horizontalGradient(listOf(AntiqueGold, LightGold, Color.Transparent)))) }
+                    }
+                }
+                items(2) { rowIndex ->
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        cards.slice(rowIndex * 2..rowIndex * 2 + 1).forEach { card ->
+                            GlassCard(Modifier.weight(1f).height(132.dp), onClick = { onOpen(card.route) }) {
+                                Column { Row(verticalAlignment = Alignment.CenterVertically) { Text(card.title, Modifier.weight(1f), color = LightGold, style = MaterialTheme.typography.titleLarge); Image(painterResource(card.icon), null, Modifier.size(42.dp)) }; Text(card.body, color = MutedText, style = MaterialTheme.typography.bodyMedium) }
+                            }
+                        }
+                    }
+                }
+                item {
+                    GlassCard(Modifier.fillMaxWidth().height(118.dp), onClick = { onOpen("24") }) {
+                        Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
+                            Image(painterResource(R.drawable.illustration_06_meditating_seeker), null, Modifier.size(100.dp), contentScale = ContentScale.Fit)
+                            Column(Modifier.weight(1f)) { Text("Today with Krishna", color = LightGold, style = MaterialTheme.typography.titleLarge); Text("Begin a 5-minute reflection", color = MutedText) }
+                            Text("→", color = LightGold, style = MaterialTheme.typography.headlineLarge)
+                        }
+                    }
+                }
+                if (BuildConfig.DEBUG) item { Text("Open Mockup Gallery", Modifier.fillMaxWidth().clickable(onClick = onGallery).padding(18.dp), color = LightGold, style = MaterialTheme.typography.labelLarge) }
+            }
+            SacredBottomNavigation(onOpen)
+        }
+    }
+}
+
+@Composable
+private fun SacredBottomNavigation(onOpen: (String) -> Unit) {
+    val items = listOf("Home" to R.drawable.icon_home, "Explore" to R.drawable.icon_explore, "Gita" to R.drawable.icon_gita, "Journal" to R.drawable.icon_journal, "Profile" to R.drawable.icon_profile)
+    Row(Modifier.fillMaxWidth().navigationBarsPadding().padding(horizontal = 8.dp, vertical = 10.dp), horizontalArrangement = Arrangement.SpaceEvenly) {
+        items.forEachIndexed { index, item ->
+            Column(Modifier.weight(1f).clickable { onOpen(listOf("05", "08", "12", "26", "28")[index]) }, horizontalAlignment = Alignment.CenterHorizontally) {
+                Image(painterResource(item.second), item.first, Modifier.size(30.dp))
+                Text(item.first, color = if (index == 0) LightGold else MutedText, style = MaterialTheme.typography.bodyMedium, fontWeight = if (index == 0) FontWeight.Bold else FontWeight.Normal)
+            }
+        }
+    }
+}

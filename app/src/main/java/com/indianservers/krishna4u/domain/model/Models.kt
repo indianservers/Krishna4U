@@ -1,0 +1,18 @@
+package com.indianservers.krishna4u.domain.model
+
+data class GitaChapter(val number: Int, val title: String, val summary: String)
+data class Sloka(val chapter: Int, val verse: Int, val sanskrit: String, val translation: String)
+data class Translation(val language: String, val text: String)
+data class WordMeaning(val word: String, val meaning: String)
+data class Teaching(val id: String, val title: String, val reference: String)
+data class KrishnaLifeEvent(val id: String, val title: String, val lesson: String)
+data class FaqItem(val question: String, val answer: String, val source: String)
+data class LifeSituation(val id: String, val title: String)
+data class GuidanceResponse(val reflection: String, val source: String)
+data class DailyPractice(val date: String, val completedSteps: Int)
+data class MeditationSession(val durationSeconds: Long, val completed: Boolean)
+data class Bookmark(val id: String, val targetId: String)
+data class Note(val id: String, val text: String)
+data class Reflection(val id: String, val text: String)
+data class LearningProgress(val completed: Int, val total: Int)
+data class UserPreference(val language: String, val reducedMotion: Boolean)
