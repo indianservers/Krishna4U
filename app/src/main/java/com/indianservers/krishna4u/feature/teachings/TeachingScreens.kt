@@ -1,12 +1,23 @@
 package com.indianservers.krishna4u.feature.teachings
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.indianservers.krishna4u.R
 import com.indianservers.krishna4u.core.design.*
@@ -14,11 +25,17 @@ import com.indianservers.krishna4u.core.sharing.shareSacredText
 import com.indianservers.krishna4u.ui.theme.*
 
 @Composable
-fun TeachingsLibraryScreen(onBack: () -> Unit, onNavigate: (String) -> Unit) {
-    var category by remember { mutableStateOf("All") }
+fun TeachingsLibraryScreen(
+    bookmarks: Set<String>,
+    onToggleBookmark: (String) -> Unit,
+    onBack: () -> Unit,
+    onNavigate: (String) -> Unit
+) {
+    var selectedFilter by remember { mutableStateOf("All") }
     var query by remember { mutableStateOf("") }
+    val activeFilter = teachingFilters.first { it.label == selectedFilter }
     val visibleTeachings = teachingLibrary.filter { teaching ->
-        (category == "All" || teaching.category == category) &&
+        activeFilter.matches(teaching) &&
             (query.isBlank() || listOf(teaching.title, teaching.summary, teaching.question, teaching.teaching, teaching.takeaways.joinToString()).any { it.contains(query, ignoreCase = true) })
     }
     FeatureScaffold("Krishna’s Teachings", "Timeless wisdom for modern life", R.drawable.bg_01_cosmic_mandala, onBack, onNavigate) {
@@ -35,21 +52,165 @@ fun TeachingsLibraryScreen(onBack: () -> Unit, onNavigate: (String) -> Unit) {
             }
         }
         item {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                listOf("All", "Krishna’s Guidance", "Gita Wisdom", "Compassion", "Daily Dharma").chunked(2).forEach { row ->
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        row.forEach { label ->
-                            val shortLabel = when (label) { "Krishna’s Guidance" -> "Guidance"; else -> label }
-                            SpiritualChip(shortLabel, if (label == "Compassion") R.drawable.icon_compassion else R.drawable.icon_dharma, category == label, { category = label }, Modifier.weight(1f))
-                        }
-                    }
+            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp), contentPadding = PaddingValues(horizontal = 2.dp)) {
+                items(teachingFilters, key = { it.label }) { filter ->
+                    SpiritualChip(
+                        filter.label,
+                        filter.icon,
+                        selectedFilter == filter.label,
+                        { selectedFilter = filter.label }
+                    )
                 }
             }
         }
-        item { SacredHero(R.drawable.illustration_01_krishna_full_body, "${teachingLibrary.size} paths for daily life", "Krishna’s guidance, compassionate stories, Gita wisdom and practical dharma for everyday choices.") }
-        items(visibleTeachings) { teaching -> SacredListCard(teaching.title, teaching.summary, teaching.icon, { onNavigate("teaching/${teaching.id}") }) }
+        item {
+            TeachingWisdomWheel(
+                selectedFilter = selectedFilter,
+                onSelect = { selectedFilter = it }
+            )
+        }
+        item {
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    if (selectedFilter == "All") "Explore ${visibleTeachings.size} teachings" else "$selectedFilter · ${visibleTeachings.size} teachings",
+                    Modifier.weight(1f),
+                    color = LightGold,
+                    style = MaterialTheme.typography.headlineSmall
+                )
+                if (selectedFilter != "All" || query.isNotBlank()) {
+                    Text(
+                        "Clear",
+                        color = AntiqueGold,
+                        modifier = Modifier.clickable { selectedFilter = "All"; query = "" }.padding(8.dp)
+                    )
+                }
+            }
+        }
+        items(visibleTeachings, key = { it.id }) { teaching ->
+            TeachingLibraryCard(
+                teaching = teaching,
+                bookmarked = "teaching:${teaching.id}" in bookmarks,
+                onBookmark = { onToggleBookmark(teaching.id) },
+                onOpen = { onNavigate("teaching/${teaching.id}") }
+            )
+        }
         if (visibleTeachings.isEmpty()) item { SacredListCard("No teachings found", "Try a shorter phrase or choose All.", R.drawable.icon_search) }
     }
+}
+
+private data class TeachingFilter(
+    val label: String,
+    val icon: Int,
+    val matches: (TeachingUi) -> Boolean
+)
+
+private val teachingFilters = listOf(
+    TeachingFilter("All", R.drawable.icon_lotus) { true },
+    TeachingFilter("Dharma", R.drawable.icon_dharma) { it.category == "Daily Dharma" },
+    TeachingFilter("Karma", R.drawable.icon_karma) { it.category == "Gita Wisdom" && (it.icon == R.drawable.icon_karma || it.title.contains("action", true) || it.teaching.contains("action", true)) },
+    TeachingFilter("Mind", R.drawable.icon_mind) { it.icon == R.drawable.icon_mind || listOf(it.title, it.summary, it.teaching).any { text -> text.contains("mind", true) || text.contains("attention", true) } },
+    TeachingFilter("Love", R.drawable.icon_love) { it.category == "Compassion" || it.icon == R.drawable.icon_compassion || it.icon == R.drawable.icon_love },
+    TeachingFilter("Leadership", R.drawable.icon_leadership) { it.icon == R.drawable.icon_leadership || it.title.contains("lead", true) || it.teaching.contains("leader", true) },
+    TeachingFilter("Guidance", R.drawable.icon_teachings) { it.category == "Krishna’s Guidance" }
+)
+
+@Composable
+private fun TeachingWisdomWheel(selectedFilter: String, onSelect: (String) -> Unit) {
+    val nodes = teachingFilters.drop(1)
+    GlassCard(Modifier.fillMaxWidth()) {
+        Box(Modifier.fillMaxWidth().height(320.dp), contentAlignment = Alignment.Center) {
+            AnimatedMandalaHalo(Modifier.size(270.dp))
+            Image(
+                painterResource(R.drawable.illustration_02_krishna_portrait),
+                "Krishna at the centre of the wisdom paths",
+                Modifier.size(145.dp),
+                contentScale = ContentScale.Fit
+            )
+            WisdomNode(nodes[0], selectedFilter, onSelect, Modifier.align(Alignment.TopStart).padding(start = 24.dp))
+            WisdomNode(nodes[1], selectedFilter, onSelect, Modifier.align(Alignment.TopEnd).padding(end = 24.dp))
+            WisdomNode(nodes[2], selectedFilter, onSelect, Modifier.align(Alignment.CenterEnd))
+            WisdomNode(nodes[3], selectedFilter, onSelect, Modifier.align(Alignment.BottomEnd).padding(end = 24.dp))
+            WisdomNode(nodes[4], selectedFilter, onSelect, Modifier.align(Alignment.BottomStart).padding(start = 24.dp))
+            WisdomNode(nodes[5], selectedFilter, onSelect, Modifier.align(Alignment.CenterStart))
+        }
+    }
+}
+
+@Composable
+private fun WisdomNode(filter: TeachingFilter, selectedFilter: String, onSelect: (String) -> Unit, modifier: Modifier = Modifier) {
+    val selected = filter.label == selectedFilter
+    Column(
+        modifier
+            .width(76.dp)
+            .clip(RoundedCornerShape(18.dp))
+            .background(if (selected) AntiqueGold.copy(alpha = .22f) else CosmicMidnight.copy(alpha = .72f))
+            .border(1.dp, if (selected) LightGold else AntiqueGold.copy(alpha = .55f), RoundedCornerShape(18.dp))
+            .clickable { onSelect(if (selected) "All" else filter.label) }
+            .padding(vertical = 7.dp, horizontal = 3.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        SacredIcon(filter.icon, filter.label, Modifier.size(34.dp))
+        Text(filter.label, color = if (selected) LightGold else SoftWhite, style = MaterialTheme.typography.labelSmall, maxLines = 1)
+    }
+}
+
+@Composable
+private fun TeachingLibraryCard(
+    teaching: TeachingUi,
+    bookmarked: Boolean,
+    onBookmark: () -> Unit,
+    onOpen: () -> Unit
+) {
+    GlassCard(Modifier.fillMaxWidth().height(148.dp), onClick = onOpen) {
+        Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
+            Image(
+                painterResource(teachingArtwork(teaching)),
+                null,
+                Modifier.fillMaxHeight().width(112.dp).clip(RoundedCornerShape(18.dp)),
+                contentScale = ContentScale.Crop
+            )
+            Column(Modifier.weight(1f).padding(horizontal = 12.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                Text(teaching.title, color = LightGold, style = MaterialTheme.typography.titleLarge, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                Text(teachingFilterLabel(teaching), color = AntiqueGold, style = MaterialTheme.typography.labelLarge)
+                Text("◷ ${teachingReadMinutes(teaching)} min read", color = MutedText, style = MaterialTheme.typography.bodyMedium)
+            }
+            Box(
+                Modifier
+                    .size(42.dp)
+                    .clip(CircleShape)
+                    .background(if (bookmarked) AntiqueGold.copy(alpha = .24f) else CosmicMidnight.copy(alpha = .65f))
+                    .clickable(onClick = onBookmark),
+                contentAlignment = Alignment.Center
+            ) {
+                SacredIcon(R.drawable.icon_bookmark, if (bookmarked) "Remove bookmark" else "Bookmark teaching", Modifier.size(27.dp))
+            }
+        }
+    }
+}
+
+private fun teachingArtwork(teaching: TeachingUi): Int = when {
+    teaching.icon == R.drawable.icon_mind -> R.drawable.illustration_06_meditating_seeker
+    teaching.icon == R.drawable.icon_leadership || teaching.icon == R.drawable.icon_courage -> R.drawable.illustration_03_krishna_arjuna_chariot
+    teaching.category == "Gita Wisdom" -> R.drawable.illustration_07_open_gita
+    teaching.category == "Compassion" -> R.drawable.illustration_02_krishna_portrait
+    teaching.icon == R.drawable.icon_peacock_feather -> R.drawable.illustration_09_peacock_feather
+    else -> R.drawable.illustration_01_krishna_full_body
+}
+
+private fun teachingFilterLabel(teaching: TeachingUi): String = when {
+    teaching.icon == R.drawable.icon_leadership -> "Leadership"
+    teaching.icon == R.drawable.icon_mind -> "Inner Peace"
+    teaching.icon == R.drawable.icon_karma -> "Karma Yoga"
+    teaching.category == "Compassion" -> "Love & Compassion"
+    teaching.category == "Daily Dharma" -> "Dharma"
+    else -> teaching.category
+}
+
+internal fun teachingReadMinutes(teaching: TeachingUi): Int {
+    val words = sequenceOf(teaching.summary, teaching.question, teaching.teaching, teaching.practice)
+        .plus(teaching.takeaways.asSequence())
+        .sumOf { text -> text.split(Regex("\\s+")).count { it.isNotBlank() } }
+    return (words / 150.0).toInt().coerceAtLeast(3)
 }
 
 @Composable

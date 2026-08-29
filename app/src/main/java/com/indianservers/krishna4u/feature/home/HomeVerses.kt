@@ -1,0 +1,51 @@
+package com.indianservers.krishna4u.feature.home
+
+internal data class HomeVerse(
+    val quote: String,
+    val reference: String,
+    val chapter: Int,
+    val verse: Int
+)
+
+internal val homeVerses = listOf(
+    HomeVerse("You have the right to action, but never to its fruits.", "Bhagavad Gita 2.47", 2, 47),
+    HomeVerse("Perform your duty with an even mind, letting go of attachment to success and failure.", "Bhagavad Gita 2.48", 2, 48),
+    HomeVerse("The soul is never born, and it never dies.", "Bhagavad Gita 2.20", 2, 20),
+    HomeVerse("As a person changes worn-out clothes, the soul accepts a new body.", "Bhagavad Gita 2.22", 2, 22),
+    HomeVerse("Weapons cannot cut the soul, fire cannot burn it, and water cannot wet it.", "Bhagavad Gita 2.23", 2, 23),
+    HomeVerse("Pleasure and pain come and go like the seasons; learn to endure them calmly.", "Bhagavad Gita 2.14", 2, 14),
+    HomeVerse("Treat happiness and sorrow, gain and loss, victory and defeat alike.", "Bhagavad Gita 2.38", 2, 38),
+    HomeVerse("Yoga is skill and wisdom in action.", "Bhagavad Gita 2.50", 2, 50),
+    HomeVerse("One whose mind remains steady in sorrow and free from craving in pleasure is truly wise.", "Bhagavad Gita 2.56", 2, 56),
+    HomeVerse("The peaceful remain unmoved, like an ocean undisturbed by the rivers entering it.", "Bhagavad Gita 2.70", 2, 70),
+    HomeVerse("Perform every action without attachment, for through selfless action one reaches the highest.", "Bhagavad Gita 3.19", 3, 19),
+    HomeVerse("Whatever a great person does, others naturally follow.", "Bhagavad Gita 3.21", 3, 21),
+    HomeVerse("Dedicate all your actions to Me, free yourself from expectation, and fight without anxiety.", "Bhagavad Gita 3.30", 3, 30),
+    HomeVerse("It is better to follow your own path imperfectly than another’s path perfectly.", "Bhagavad Gita 3.35", 3, 35),
+    HomeVerse("Whenever righteousness declines, I manifest Myself.", "Bhagavad Gita 4.7", 4, 7),
+    HomeVerse("I appear to protect the good, overcome evil, and restore righteousness.", "Bhagavad Gita 4.8", 4, 8),
+    HomeVerse("In whatever way people approach Me, I receive them accordingly.", "Bhagavad Gita 4.11", 4, 11),
+    HomeVerse("The wise see action in inaction and inaction in action.", "Bhagavad Gita 4.18", 4, 18),
+    HomeVerse("Approach the wise with humility, sincere questions, and a willingness to learn.", "Bhagavad Gita 4.34", 4, 34),
+    HomeVerse("Nothing in this world purifies like true knowledge.", "Bhagavad Gita 4.38", 4, 38),
+    HomeVerse("One who has faith, discipline, and control over the senses gains knowledge and lasting peace.", "Bhagavad Gita 4.39", 4, 39),
+    HomeVerse("One who offers every action to the Divine remains untouched, like a lotus leaf resting on water.", "Bhagavad Gita 5.10", 5, 10),
+    HomeVerse("The wise see the same Divine presence in every living being.", "Bhagavad Gita 5.18", 5, 18),
+    HomeVerse("Know Me as the friend and well-wisher of all beings, and you will find peace.", "Bhagavad Gita 5.29", 5, 29),
+    HomeVerse("Lift yourself through the power of your own mind; do not allow yourself to fall.", "Bhagavad Gita 6.5", 6, 5),
+    HomeVerse("The mind is the best friend of one who has mastered it, but the enemy of one who has not.", "Bhagavad Gita 6.6", 6, 6),
+    HomeVerse("Balance in eating, sleeping, work, and recreation brings freedom from suffering.", "Bhagavad Gita 6.17", 6, 17),
+    HomeVerse("Whenever the restless mind wanders, gently bring it back under your guidance.", "Bhagavad Gita 6.26", 6, 26),
+    HomeVerse("The mind is difficult to control, but it can be mastered through practice and detachment.", "Bhagavad Gita 6.35", 6, 35),
+    HomeVerse("There is nothing higher than Me; everything rests upon Me like pearls on a thread.", "Bhagavad Gita 7.7", 7, 7),
+    HomeVerse("Remember Me and continue to perform your duty.", "Bhagavad Gita 8.7", 8, 7),
+    HomeVerse("To those who remember Me with devotion, I provide what they need and protect what they have.", "Bhagavad Gita 9.22", 9, 22),
+    HomeVerse("Offer Me a leaf, a flower, a fruit, or water with love, and I will accept it.", "Bhagavad Gita 9.26", 9, 26),
+    HomeVerse("I am equal toward all beings; no one is hateful or especially dear to Me.", "Bhagavad Gita 9.29", 9, 29),
+    HomeVerse("I am the Self seated within the hearts of all beings.", "Bhagavad Gita 10.20", 10, 20),
+    HomeVerse("Whatever is beautiful, powerful, or glorious springs from a spark of My splendour.", "Bhagavad Gita 10.41", 10, 41),
+    HomeVerse("Be merely an instrument in the Divine plan.", "Bhagavad Gita 11.33", 11, 33),
+    HomeVerse("One who hates no being and is friendly, compassionate, and free from ego is dear to Me.", "Bhagavad Gita 12.13–14", 12, 13),
+    HomeVerse("Lust, anger, and greed are the three gates leading toward self-destruction; abandon them.", "Bhagavad Gita 16.21", 16, 21),
+    HomeVerse("Take refuge in Me alone; I shall free you from sorrow—do not fear.", "Bhagavad Gita 18.66", 18, 66)
+)

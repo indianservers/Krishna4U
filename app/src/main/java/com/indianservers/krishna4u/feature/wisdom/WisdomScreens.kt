@@ -1,6 +1,7 @@
 package com.indianservers.krishna4u.feature.wisdom
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.LinearProgressIndicator
@@ -10,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -102,7 +104,12 @@ private fun rememberWisdomGitaRepository(): OfflineGitaRepository {
 }
 
 @Composable
-fun WisdomForLifeScreen(onBack: () -> Unit, onNavigate: (String) -> Unit) {
+fun WisdomForLifeScreen(
+    homeShortcuts: Set<String>,
+    onToggleHomeShortcut: (String) -> Unit,
+    onBack: () -> Unit,
+    onNavigate: (String) -> Unit
+) {
     val repository = rememberWisdomGitaRepository()
     var query by remember { mutableStateOf("") }
     val filtered = remember(query) {
@@ -120,94 +127,76 @@ fun WisdomForLifeScreen(onBack: () -> Unit, onNavigate: (String) -> Unit) {
                 }
             }
         }
-        item {
-            SacredListCard(
-                "Krishna & Emotional Intelligence",
-                "Understand feelings, calm reactions, express needs, practise empathy and resolve conflict.",
-                R.drawable.icon_relationships,
-                { onNavigate("emotional_intelligence") }
-            )
-        }
-        item {
-            SacredListCard(
-                "Emotion Wheel",
-                "Choose afraid, angry, lonely, guilty or confused for a matching letter, Gita verse and calming action.",
-                R.drawable.icon_inner_peace,
-                { onNavigate("emotion_wheel") }
-            )
-        }
-        item {
-            SacredListCard(
-                "Sacred Collectibles",
-                "Awaken the Peacock Feather, Flute, Chakra, Lotus and Conch through real learning—not purchases.",
-                R.drawable.icon_chakra,
-                { onNavigate("collectibles") }
-            )
-        }
-        item {
-            SacredListCard(
-                "Krishna’s Letters to You",
-                "Longer personal messages for failure, loneliness, grief, rejection, guilt and uncertainty.",
-                R.drawable.icon_compassion,
-                { onNavigate("krishna_letters") }
-            )
-        }
-        item {
-            SacredListCard(
-                "One-Minute Krishna Stories",
-                "108 concise stories, each with one memorable moral and one action for today.",
-                R.drawable.icon_flute,
-                { onNavigate("one_minute_stories") }
-            )
-        }
-        item {
-            SacredListCard(
-                "Dharma Decision Stories",
-                "Face realistic dilemmas, choose what you would do and reveal Krishna-inspired guidance.",
-                R.drawable.icon_dharma,
-                { onNavigate("dharma_decisions") }
-            )
-        }
-        item {
-            SacredListCard(
-                "Difficult Questions About Krishna",
-                "Examine war, strategy, punishment, divine play and morally complex Mahabharata events without easy answers.",
-                R.drawable.icon_teachings,
-                { onNavigate("difficult_questions") }
-            )
-        }
-        item {
-            SacredListCard(
-                "Parenting with Krishna’s Values",
-                "Stories, conversation prompts and family activities for honesty, responsibility, compassion and courage.",
-                R.drawable.icon_relationships,
-                { onNavigate("parenting_values") }
-            )
+        item { Text("Add your favourites to Home", color = LightGold, style = MaterialTheme.typography.headlineMedium) }
+        items(exploreModuleShortcuts.take(8), key = { it.route }) { shortcut ->
+            PinnableExploreCard(shortcut, shortcut.route in homeShortcuts, { onToggleHomeShortcut(shortcut.route) }, onNavigate)
         }
         item { Text("More ways to grow", color = LightGold, style = MaterialTheme.typography.headlineMedium) }
-        item { SacredListCard("The Krishna Within", "Awaken wisdom, playfulness, courage, friendship and compassion.", R.drawable.icon_lotus, { onNavigate("10") }) }
-        item { SacredListCard("What Is Dharma?", "Understand truth, duty, compassion and courageous right action.", R.drawable.icon_dharma, { onNavigate("21") }) }
-        item { SacredListCard("Questions of the Heart", "Simple answers about dharma, duty, suffering, detachment and the mind.", R.drawable.icon_ask_krishna, { onNavigate("20") }) }
-        item { SacredListCard("When Life Feels…", "Choose what you feel and receive a calm next step.", R.drawable.icon_mind, { onNavigate("23") }) }
-        item { SacredListCard("Today with Krishna", "A four-step daily practice: listen, understand, reflect and act.", R.drawable.icon_calendar, { onNavigate("24") }) }
-        item { SacredListCard("Gita Study Mode", "Slow down and study one teaching with attention.", R.drawable.icon_gita, { onNavigate("19") }) }
+        items(exploreModuleShortcuts.drop(8), key = { it.route }) { shortcut ->
+            PinnableExploreCard(shortcut, shortcut.route in homeShortcuts, { onToggleHomeShortcut(shortcut.route) }, onNavigate)
+        }
         item { OutlinedTextField(query, { query = it }, label = { Text("Search wisdom, emotion or situation") }, leadingIcon = { SacredIcon(R.drawable.icon_search, null, Modifier.size(26.dp)) }, singleLine = true, modifier = Modifier.fillMaxWidth()) }
         item { Text(if (query.isBlank()) "Explore 18 themes" else "${filtered.size} matching themes", color = LightGold, style = MaterialTheme.typography.headlineMedium) }
         items(filtered.chunked(2)) { row ->
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 row.forEach { theme ->
-                    GlassCard(Modifier.weight(1f).height(165.dp), onClick = { onNavigate("wisdom_theme/${theme.id}") }) {
-                        Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+                    val route = "wisdom_theme/${theme.id}"
+                    GlassCard(Modifier.weight(1f).height(165.dp)) {
+                        Column(Modifier.fillMaxSize().clickable { onNavigate(route) }, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
                             SacredIcon(theme.icon, null, Modifier.size(58.dp))
                             Text(theme.title, color = LightGold, style = MaterialTheme.typography.titleLarge, textAlign = TextAlign.Center, maxLines = 2)
                             Text("5 teachings", color = MutedText)
                         }
+                        HomeShortcutButton(
+                            pinned = route in homeShortcuts,
+                            onClick = { onToggleHomeShortcut(route) },
+                            modifier = Modifier.align(Alignment.TopEnd)
+                        )
                     }
                 }
                 if (row.size == 1) Spacer(Modifier.weight(1f))
             }
         }
         if (filtered.isEmpty()) item { GlassCard(Modifier.fillMaxWidth()) { Text("No wisdom themes match “$query”. Try a feeling, situation, or verse idea.", color = MutedText) } }
+    }
+}
+
+@Composable
+private fun PinnableExploreCard(
+    shortcut: ExploreShortcut,
+    pinned: Boolean,
+    onTogglePin: () -> Unit,
+    onNavigate: (String) -> Unit
+) {
+    GlassCard(Modifier.fillMaxWidth()) {
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                Modifier.weight(1f).clickable { onNavigate(shortcut.route) },
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                SacredIcon(shortcut.icon, null, Modifier.size(42.dp))
+                Column(Modifier.padding(horizontal = 12.dp)) {
+                    Text(shortcut.title, color = LightGold, style = MaterialTheme.typography.titleLarge)
+                    Text(shortcut.description, color = MutedText, style = MaterialTheme.typography.bodyMedium)
+                }
+            }
+            HomeShortcutButton(pinned, onTogglePin)
+        }
+    }
+}
+
+@Composable
+private fun HomeShortcutButton(pinned: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    Box(
+        modifier.size(34.dp).clickable(onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+        SacredIcon(
+            R.drawable.icon_bookmark,
+            if (pinned) "Remove from Home" else "Add to Home",
+            Modifier.size(23.dp).alpha(if (pinned) 1f else .48f)
+        )
+        Text(if (pinned) "✓" else "+", color = LightGold, style = MaterialTheme.typography.labelSmall)
     }
 }
 
@@ -265,7 +254,7 @@ fun WisdomSlokaScreen(
     val verse = repository.verse(chapterNumber, verseNumber) ?: return
     val teachingIndex = theme.teachings.indexOfFirst { it.chapter == chapterNumber && it.verse == verseNumber }.coerceAtLeast(0)
     FeatureScaffold("Śloka $chapterNumber.$verseNumber", repository.chapter(chapterNumber).title, R.drawable.bg_07_gita_wisdom, onBack, onNavigate, false) {
-        item { SacredHero(R.drawable.illustration_07_open_gita, verse.sanskrit, verse.transliteration) }
+        item { SacredHero(R.drawable.illustration_07_open_gita, verse.sanskrit, verse.transliteration, imageHeight = 145.dp) }
         item { GlassCard(Modifier.fillMaxWidth()) { Column(verticalArrangement = Arrangement.spacedBy(8.dp)) { Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) { Text("English meaning", Modifier.weight(1f), color = LightGold, style = MaterialTheme.typography.headlineMedium); EnglishAudioIcon(verse.englishSummary, Modifier.size(44.dp)) }; Text(verse.englishSummary, color = SoftWhite, style = MaterialTheme.typography.bodyLarge); Text("Translation: ${verse.translator}", color = MutedText) } } }
         item { GlassCard(Modifier.fillMaxWidth()) { Column(verticalArrangement = Arrangement.spacedBy(8.dp)) { Text("Life insight", color = LightGold, style = MaterialTheme.typography.headlineMedium); Text(theme.practice, color = SoftWhite, style = MaterialTheme.typography.bodyLarge) } } }
         item { Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {

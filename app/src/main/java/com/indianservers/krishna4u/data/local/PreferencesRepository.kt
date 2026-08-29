@@ -21,6 +21,7 @@ data class UserPreferences(
     val displayName: String = "Devotee",
     val krishnaMessageIndex: Int = 0,
     val bookmarks: Set<String> = emptySet(),
+    val homeShortcuts: Set<String> = emptySet(),
     val reflections: Set<String> = emptySet(),
     val readSlokas: Set<String> = emptySet(),
     val textSize: String = "Comfortable",
@@ -43,6 +44,7 @@ class PreferencesRepository(private val context: Context) {
         val displayName = stringPreferencesKey("display_name")
         val krishnaMessageIndex = intPreferencesKey("krishna_message_index")
         val bookmarks = stringSetPreferencesKey("bookmarks")
+        val homeShortcuts = stringSetPreferencesKey("home_shortcuts")
         val reflections = stringSetPreferencesKey("journal_reflections")
         val readSlokas = stringSetPreferencesKey("read_slokas")
         val textSize = stringPreferencesKey("text_size")
@@ -65,6 +67,7 @@ class PreferencesRepository(private val context: Context) {
             displayName = values[Keys.displayName]?.takeIf(String::isNotBlank) ?: "Devotee",
             krishnaMessageIndex = values[Keys.krishnaMessageIndex] ?: 0,
             bookmarks = values[Keys.bookmarks]?.toSet() ?: emptySet(),
+            homeShortcuts = values[Keys.homeShortcuts]?.toSet() ?: emptySet(),
             reflections = values[Keys.reflections]?.toSet() ?: emptySet(),
             readSlokas = values[Keys.readSlokas]?.toSet() ?: emptySet(),
             textSize = values[Keys.textSize] ?: "Comfortable",
@@ -112,6 +115,12 @@ class PreferencesRepository(private val context: Context) {
         val updated = preferences[Keys.bookmarks]?.toMutableSet() ?: mutableSetOf()
         if (!updated.add(id)) updated.remove(id)
         preferences[Keys.bookmarks] = updated
+    }
+
+    suspend fun toggleHomeShortcut(route: String) = context.krishnaDataStore.edit { preferences ->
+        val updated = preferences[Keys.homeShortcuts]?.toMutableSet() ?: mutableSetOf()
+        if (!updated.add(route)) updated.remove(route)
+        preferences[Keys.homeShortcuts] = updated
     }
 
     suspend fun saveReflection(text: String) = context.krishnaDataStore.edit { preferences ->

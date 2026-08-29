@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="32dp"
+    android:height="32dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+
+    <!-- Restrained cyan halo beneath the gold temple linework. -->
+    <group>
+        <path
+            android:pathData="M98,440 L414,440 M126,440 C130,329 148,245 184,191 C204,161 228,146 256,146 C284,146 308,161 328,191 C364,245 382,329 386,440 M181,190 Q256,154 331,190 M195,154 Q256,126 317,154 M216,122 Q256,101 296,122 M236,91 Q256,70 276,91 M256,70 L256,52 M222,440 L222,350 Q222,317 256,292 Q290,317 290,350 L290,440 M176,440 C179,331 198,239 226,174 M336,440 C333,331 314,239 286,174 M256,292 L256,171 M98,440 L98,458 L414,458 L414,440 M256,52 C256,31 239,16 219,16 C199,16 184,30 184,49 C184,67 199,82 217,82 C234,82 246,70 246,54 C246,41 236,31 223,31 M256,52 C307,40 343,56 384,69 C350,84 314,85 279,72 M256,52 L256,70"
+            android:fillColor="@android:color/transparent"
+            android:strokeColor="#8025BFEA"
+            android:strokeWidth="30"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
+        <path
+            android:pathData="M205,50 A18,18 0,1 0,241 50 A18,18 0,1 0,205 50 M223,25 L223,75 M198,50 L248,50 M205,32 L241,68 M241,32 L205,68"
+            android:fillColor="@android:color/transparent"
+            android:strokeColor="#8025BFEA"
+            android:strokeWidth="25"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
+    </group>
+
+    <!-- Antique-gold Puri-inspired shikhara, chakra, flag and doorway. -->
+    <group>
+        <path
+            android:pathData="M98,440 L414,440 M126,440 C130,329 148,245 184,191 C204,161 228,146 256,146 C284,146 308,161 328,191 C364,245 382,329 386,440 M181,190 Q256,154 331,190 M195,154 Q256,126 317,154 M216,122 Q256,101 296,122 M236,91 Q256,70 276,91 M256,70 L256,52 M222,440 L222,350 Q222,317 256,292 Q290,317 290,350 L290,440 M176,440 C179,331 198,239 226,174 M336,440 C333,331 314,239 286,174 M256,292 L256,171 M98,440 L98,458 L414,458 L414,440 M256,52 C256,31 239,16 219,16 C199,16 184,30 184,49 C184,67 199,82 217,82 C234,82 246,70 246,54 C246,41 236,31 223,31 M256,52 C307,40 343,56 384,69 C350,84 314,85 279,72 M256,52 L256,70"
+            android:fillColor="@android:color/transparent"
+            android:strokeColor="#FFF1A8"
+            android:strokeWidth="17"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
+        <path
+            android:pathData="M205,50 A18,18 0,1 0,241 50 A18,18 0,1 0,205 50 M223,25 L223,75 M198,50 L248,50 M205,32 L241,68 M241,32 L205,68"
+            android:fillColor="@android:color/transparent"
+            android:strokeColor="#FFF1A8"
+            android:strokeWidth="14"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
+        <path
+            android:pathData="M98,440 L414,440 M126,440 C130,329 148,245 184,191 C204,161 228,146 256,146 C284,146 308,161 328,191 C364,245 382,329 386,440 M181,190 Q256,154 331,190 M195,154 Q256,126 317,154 M216,122 Q256,101 296,122 M236,91 Q256,70 276,91 M222,440 L222,350 Q222,317 256,292 Q290,317 290,350 L290,440 M176,440 C179,331 198,239 226,174 M336,440 C333,331 314,239 286,174 M256,292 L256,171 M98,440 L98,458 L414,458 L414,440 M256,52 C307,40 343,56 384,69 C350,84 314,85 279,72"
+            android:fillColor="@android:color/transparent"
+            android:strokeColor="#E6A92F"
+            android:strokeWidth="6"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
+    </group>
+</vector>

@@ -60,7 +60,16 @@ fun KrishnaApp(pendingDestination: String? = null, onDestinationConsumed: () -> 
         composable("02") { DivineOnboardingScreen({ go("03") }, { go("03") }) }
         composable("03") { ChooseLanguageScreen(prefs.language, { scope.launch { repository.setLanguage(it) } }, { go("04") }) }
         composable("04") { PersonaliseJourneyScreen { scope.launch { repository.finishOnboarding(it); go("krishna_speaks") } } }
-        composable("05") { HomeScreen(prefs.displayName, prefs.interests, prefs.readSlokas.size, ::go) }
+        composable("05") {
+            HomeScreen(
+                displayName = prefs.displayName,
+                selectedNeeds = prefs.interests,
+                readSlokaCount = prefs.readSlokas.size,
+                homeShortcuts = prefs.homeShortcuts,
+                onToggleHomeShortcut = { route -> scope.launch { repository.toggleHomeShortcut(route) } },
+                onOpen = ::go
+            )
+        }
         composable("gallery") { MockupGalleryScreen(::go) }
         composable("06") { KrishnaLifeJourneyScreen(prefs.readingMode, { nav.popBackStack() }, ::go) }
         composable("07") { LifeEventDetailsScreen("govardhan", prefs.readingMode, "life:govardhan" in prefs.bookmarks, { scope.launch { repository.toggleBookmark("life:govardhan") } }, { nav.popBackStack() }, ::go) }
@@ -70,7 +79,14 @@ fun KrishnaApp(pendingDestination: String? = null, onDestinationConsumed: () -> 
         }
         composable("family_stories") { FamilyStoryLibraryScreen(prefs.readingMode, { nav.popBackStack() }, ::go) }
         composable("family_story/{eventId}") { entry -> FamilyStoryDetailsScreen(entry.arguments?.getString("eventId"), prefs.readingMode, { nav.popBackStack() }, ::go) }
-        composable("08") { TeachingsLibraryScreen({ nav.popBackStack() }, ::go) }
+        composable("08") {
+            TeachingsLibraryScreen(
+                bookmarks = prefs.bookmarks,
+                onToggleBookmark = { id -> scope.launch { repository.toggleBookmark("teaching:$id") } },
+                onBack = { nav.popBackStack() },
+                onNavigate = ::go
+            )
+        }
         composable("09") { TeachingDetailsScreen("karma-action", "teaching:karma-action" in prefs.bookmarks, { scope.launch { repository.toggleBookmark("teaching:karma-action") } }, { nav.popBackStack() }, ::go) }
         composable("teaching/{teachingId}") { entry ->
             val teachingId = entry.arguments?.getString("teachingId") ?: "karma-action"
@@ -156,7 +172,14 @@ fun KrishnaApp(pendingDestination: String? = null, onDestinationConsumed: () -> 
                 onNavigate = ::go
             )
         }
-        composable("wisdom") { WisdomForLifeScreen({ nav.popBackStack() }, ::go) }
+        composable("wisdom") {
+            WisdomForLifeScreen(
+                homeShortcuts = prefs.homeShortcuts,
+                onToggleHomeShortcut = { route -> scope.launch { repository.toggleHomeShortcut(route) } },
+                onBack = { nav.popBackStack() },
+                onNavigate = ::go
+            )
+        }
         composable("emotional_intelligence") { EmotionalIntelligenceLibraryScreen(prefs.readingMode, { nav.popBackStack() }, ::go) }
         composable("emotional_intelligence/{lessonId}") { entry -> EmotionalIntelligenceLessonScreen(entry.arguments?.getString("lessonId"), prefs.readingMode, { nav.popBackStack() }, ::go) }
         composable("emotion_wheel") { EmotionWheelScreen({ nav.popBackStack() }, ::go) }

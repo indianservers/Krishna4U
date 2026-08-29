@@ -14,10 +14,12 @@ class OneMinuteStoriesContentTest {
         assertEquals(108, oneMinuteKrishnaStories.map { it.story }.distinct().size)
         assertEquals(12, oneMinuteKrishnaStories.map { it.theme }.distinct().size)
         oneMinuteKrishnaStories.forEach { story ->
-            assertTrue(story.story.split(Regex("\\s+")).size in 10..80)
+            assertTrue(story.story.split(Regex("\\s+")).size in 20..95)
             assertTrue(story.moral.isNotBlank())
+            assertTrue(story.dharmaTakeaway.split(Regex("\\s+")).size >= 8)
             assertTrue(story.action.isNotBlank())
             assertTrue(Regex("[.!?][”\\\"]?$").containsMatchIn(story.moral))
+            assertTrue(Regex("[.!?][”\\\"]?$").containsMatchIn(story.dharmaTakeaway))
             assertTrue(Regex("[.!?][”\\\"]?$").containsMatchIn(story.action))
         }
     }

@@ -1,11 +1,19 @@
 package com.indianservers.krishna4u.feature.guidance
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.indianservers.krishna4u.R
 import com.indianservers.krishna4u.core.design.*
@@ -63,14 +71,78 @@ fun AskKrishnaScreen(readingModeId: String, onBack: () -> Unit, onNavigate: (Str
 @Composable
 fun LifeSituationsScreen(onBack: () -> Unit, onNavigate: (String) -> Unit) {
     var selected by remember { mutableStateOf("Anxious") }
-    val moods = listOf("Anxious", "Angry", "Lost", "Grieving", "Rejected", "Confused")
+    val moods = lifeMoods
+    val current = moods.first { it.name == selected }
     FeatureScaffold("WHEN LIFE FEELS…", "Choose what your heart needs today", R.drawable.bg_05_moonlit_sacred_river, onBack, onNavigate, false) {
-        item { SacredHero(R.drawable.illustration_06_meditating_seeker, selected, "Krishna’s wisdom meets difficult feelings with patience and clarity.") }
-        items(moods.chunked(3)) { row -> Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(7.dp)) { row.forEach { mood -> SpiritualChip(mood, R.drawable.icon_mind, selected == mood, { selected = mood }, Modifier.weight(1f)) } } }
-        item { SacredListCard("Return to what is in your hands", "Breathe. Name the next right action. Release the imagined future. Gita 2.48.", R.drawable.icon_inner_peace) }
+        items(listOf(moods.take(3), moods.drop(3))) { row ->
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+                row.forEach { mood ->
+                    Column(
+                        Modifier
+                            .weight(1f)
+                            .background(
+                                if (selected == mood.name) AntiqueGold.copy(alpha = .14f) else Color.Transparent,
+                                RoundedCornerShape(20.dp)
+                            )
+                            .clickable { selected = mood.name }
+                            .padding(horizontal = 2.dp, vertical = 5.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Image(
+                            painterResource(mood.image),
+                            mood.name,
+                            Modifier.fillMaxWidth().aspectRatio(1f),
+                            contentScale = ContentScale.Fit
+                        )
+                        Text(
+                            mood.name,
+                            color = if (selected == mood.name) LightGold else SoftWhite,
+                            style = MaterialTheme.typography.bodyMedium,
+                            textAlign = TextAlign.Center,
+                            maxLines = 1
+                        )
+                    }
+                }
+            }
+        }
+        item {
+            GlassCard(Modifier.fillMaxWidth()) {
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Image(
+                        painterResource(R.drawable.illustration_02_krishna_portrait),
+                        null,
+                        Modifier.size(118.dp),
+                        contentScale = ContentScale.Fit
+                    )
+                    Column(Modifier.weight(1f).padding(start = 10.dp), verticalArrangement = Arrangement.spacedBy(7.dp)) {
+                        Text(current.title, color = LightGold, style = MaterialTheme.typography.titleLarge)
+                        Text(current.guidance, color = SoftWhite, style = MaterialTheme.typography.bodyLarge)
+                        Text(current.verse, color = AntiqueGold, style = MaterialTheme.typography.titleMedium)
+                    }
+                }
+            }
+        }
         item { PrimaryGoldButton("Begin 3-minute guidance", { onNavigate("25") }, Modifier.fillMaxWidth()) }
     }
 }
+
+private data class LifeMood(
+    val name: String,
+    val image: Int,
+    val title: String,
+    val guidance: String,
+    val verse: String
+)
+
+private val lifeMoods = listOf(
+    LifeMood("Anxious", R.drawable.life_feels_anxious, "Return to what is in your hands", "Breathe. Name the next right action. Release the imagined future.", "Gita 6.26"),
+    LifeMood("Angry", R.drawable.life_feels_angry, "Pause before the flame speaks", "Let the first wave pass. Choose words that protect truth without causing another wound.", "Gita 2.63"),
+    LifeMood("Lost", R.drawable.life_feels_lost, "Let one right step be enough", "You do not need the whole road today. Choose the next honest duty and walk with Me.", "Gita 18.66"),
+    LifeMood("Grieving", R.drawable.life_feels_grieving, "Love remains through change", "Do not hurry your tears. Let love stay while your heart slowly learns a new way to carry it.", "Gita 2.20"),
+    LifeMood("Rejected", R.drawable.life_feels_rejected, "Your worth has not left you", "Another person’s choice cannot reduce the sacred presence within you. Return gently to your own dignity.", "Gita 5.18"),
+    LifeMood("Conflicted", R.drawable.life_feels_conflicted, "Choose the path that keeps Dharma", "Be still. Ask which choice is truthful, responsible and kind—not merely easy or popular.", "Gita 18.63"),
+    LifeMood("Afraid", R.drawable.life_feels_afraid, "Courage begins with one step", "Fear may walk beside you, but it does not have to choose your direction. Move toward what is right.", "Gita 2.3")
+)
 
 @Composable
 fun TodayWithKrishnaScreen(onBack: () -> Unit, onNavigate: (String) -> Unit) {

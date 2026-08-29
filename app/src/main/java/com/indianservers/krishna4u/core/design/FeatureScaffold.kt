@@ -25,6 +25,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
 import com.indianservers.krishna4u.R
 import com.indianservers.krishna4u.ui.theme.LightGold
 import com.indianservers.krishna4u.ui.theme.MutedText
@@ -86,10 +87,16 @@ fun FeatureScaffold(
 }
 
 @Composable
-fun SacredHero(@DrawableRes illustration: Int, title: String, body: String, modifier: Modifier = Modifier) {
+fun SacredHero(
+    @DrawableRes illustration: Int,
+    title: String,
+    body: String,
+    modifier: Modifier = Modifier,
+    imageHeight: Dp = 230.dp
+) {
     GlassCard(modifier.fillMaxWidth()) {
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-            Image(painterResource(illustration), null, Modifier.fillMaxWidth().height(230.dp), contentScale = ContentScale.Fit)
+            Image(painterResource(illustration), null, Modifier.fillMaxWidth().height(imageHeight), contentScale = ContentScale.Fit)
             Text(title, color = LightGold, style = MaterialTheme.typography.headlineMedium, textAlign = TextAlign.Center)
             Text(body, color = SoftWhite.copy(.88f), style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
         }

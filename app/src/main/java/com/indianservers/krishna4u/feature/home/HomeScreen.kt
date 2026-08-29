@@ -20,12 +20,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,17 +41,40 @@ import androidx.compose.ui.unit.sp
 import com.indianservers.krishna4u.R
 import com.indianservers.krishna4u.core.design.GlassCard
 import com.indianservers.krishna4u.core.design.KrishnaCosmicBackground
+import com.indianservers.krishna4u.feature.wisdom.exploreShortcut
 import com.indianservers.krishna4u.ui.theme.AntiqueGold
 import com.indianservers.krishna4u.ui.theme.LightGold
 import com.indianservers.krishna4u.ui.theme.LocalReducedMotion
 import com.indianservers.krishna4u.ui.theme.MutedText
 import com.indianservers.krishna4u.ui.theme.SoftWhite
+import java.time.LocalTime
+import kotlinx.coroutines.delay
 
 private data class HomeCard(val title: String, val body: String, val icon: Int, val route: String)
 
+fun isNightMessageTime(deviceTime: LocalTime): Boolean = deviceTime.hour >= 20
+
 @Composable
-fun HomeScreen(displayName: String, selectedNeeds: Set<String>, readSlokaCount: Int, onOpen: (String) -> Unit) {
+fun HomeScreen(
+    displayName: String,
+    selectedNeeds: Set<String>,
+    readSlokaCount: Int,
+    homeShortcuts: Set<String>,
+    onToggleHomeShortcut: (String) -> Unit,
+    onOpen: (String) -> Unit
+) {
     val reducedMotion = LocalReducedMotion.current
+    val featuredVerse = remember { homeVerses.random() }
+    val deviceTime by produceState(initialValue = LocalTime.now()) {
+        while (true) {
+            value = LocalTime.now()
+            delay(30_000)
+        }
+    }
+    val showNightMessage = isNightMessageTime(deviceTime)
+    val pinnedShortcuts = remember(homeShortcuts) {
+        homeShortcuts.mapNotNull(::exploreShortcut).sortedBy { it.title }
+    }
     val chakraTransition = rememberInfiniteTransition(label = "settingsChakra")
     val chakraRotation by chakraTransition.animateFloat(
         initialValue = 0f,
@@ -78,7 +104,10 @@ fun HomeScreen(displayName: String, selectedNeeds: Set<String>, readSlokaCount: 
             }
             LazyColumn(Modifier.weight(1f), contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 18.dp, vertical = 4.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 item {
-                    GlassCard(Modifier.fillMaxWidth().height(285.dp), onClick = { onOpen("09") }) {
+                    GlassCard(
+                        Modifier.fillMaxWidth().height(310.dp),
+                        onClick = { onOpen("gita_verse/${featuredVerse.chapter}/${featuredVerse.verse}") }
+                    ) {
                         Image(
                             painterResource(R.drawable.illustration_02_krishna_portrait),
                             null,
@@ -86,11 +115,11 @@ fun HomeScreen(displayName: String, selectedNeeds: Set<String>, readSlokaCount: 
                             contentScale = ContentScale.Fit
                         )
                         Column(Modifier.align(Alignment.CenterStart).fillMaxWidth(.44f)) {
-                            Text("“", color = LightGold, style = MaterialTheme.typography.displayLarge)
-                            Text("You have the right to action, not to its fruits.", color = SoftWhite, style = MaterialTheme.typography.titleLarge)
-                            Spacer(Modifier.height(12.dp))
-                            Text("Bhagavad Gita 2.47", color = AntiqueGold, style = MaterialTheme.typography.titleLarge)
-                            Image(painterResource(R.drawable.icon_play), "Play teaching", Modifier.padding(top = 10.dp).size(46.dp))
+                            Text("“", color = LightGold, style = MaterialTheme.typography.headlineLarge)
+                            Text(featuredVerse.quote, color = SoftWhite, style = MaterialTheme.typography.bodyLarge)
+                            Spacer(Modifier.height(8.dp))
+                            Text(featuredVerse.reference, color = AntiqueGold, style = MaterialTheme.typography.titleMedium)
+                            Image(painterResource(R.drawable.icon_play), "Open verse", Modifier.padding(top = 8.dp).size(38.dp))
                         }
                     }
                 }
@@ -123,6 +152,32 @@ fun HomeScreen(displayName: String, selectedNeeds: Set<String>, readSlokaCount: 
                         cards.slice(rowIndex * 2..rowIndex * 2 + 1).forEach { card ->
                             GlassCard(Modifier.weight(1f).height(132.dp), onClick = { onOpen(card.route) }) {
                                 Column { Row(verticalAlignment = Alignment.CenterVertically) { Text(card.title, Modifier.weight(1f), color = LightGold, style = MaterialTheme.typography.titleLarge); Image(painterResource(card.icon), null, Modifier.size(42.dp)) }; Text(card.body, color = MutedText, style = MaterialTheme.typography.bodyMedium) }
+                            }
+                        }
+                    }
+                }
+                if (pinnedShortcuts.isNotEmpty()) {
+                    item {
+                        Text("Your Explore shortcuts", color = LightGold, style = MaterialTheme.typography.titleLarge)
+                    }
+                    items(pinnedShortcuts, key = { it.route }) { shortcut ->
+                        GlassCard(Modifier.fillMaxWidth()) {
+                            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                                Row(
+                                    Modifier.weight(1f).clickable { onOpen(shortcut.route) },
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Image(painterResource(shortcut.icon), null, Modifier.size(34.dp))
+                                    Column(Modifier.padding(horizontal = 10.dp)) {
+                                        Text(shortcut.title, color = LightGold, style = MaterialTheme.typography.titleMedium)
+                                        Text(shortcut.description, color = MutedText, style = MaterialTheme.typography.bodySmall, maxLines = 1)
+                                    }
+                                }
+                                Image(
+                                    painterResource(R.drawable.icon_bookmark),
+                                    "Remove ${shortcut.title} from Home",
+                                    Modifier.size(25.dp).clickable { onToggleHomeShortcut(shortcut.route) }
+                                )
                             }
                         }
                     }
@@ -161,20 +216,22 @@ fun HomeScreen(displayName: String, selectedNeeds: Set<String>, readSlokaCount: 
                         }
                     }
                 }
-                item {
-                    GlassCard(Modifier.fillMaxWidth().height(118.dp), onClick = { onOpen("night_message") }) {
-                        Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
-                            Image(
-                                painterResource(R.drawable.letters_icon_star),
-                                "Krishna’s Night Message",
-                                Modifier.size(64.dp),
-                                contentScale = ContentScale.Fit
-                            )
-                            Column(Modifier.weight(1f).padding(horizontal = 14.dp)) {
-                                Text("Krishna’s Night Message", color = LightGold, style = MaterialTheme.typography.titleLarge)
-                                Text("Place today in Krishna’s hands and rest", color = MutedText, style = MaterialTheme.typography.bodyMedium)
+                if (showNightMessage) {
+                    item {
+                        GlassCard(Modifier.fillMaxWidth().height(118.dp), onClick = { onOpen("night_message") }) {
+                            Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
+                                Image(
+                                    painterResource(R.drawable.letters_icon_star),
+                                    "Krishna’s Night Message",
+                                    Modifier.size(64.dp),
+                                    contentScale = ContentScale.Fit
+                                )
+                                Column(Modifier.weight(1f).padding(horizontal = 14.dp)) {
+                                    Text("Krishna’s Night Message", color = LightGold, style = MaterialTheme.typography.titleLarge)
+                                    Text("Place today in Krishna’s hands and rest", color = MutedText, style = MaterialTheme.typography.bodyMedium)
+                                }
+                                Text("→", color = LightGold, style = MaterialTheme.typography.headlineMedium)
                             }
-                            Text("→", color = LightGold, style = MaterialTheme.typography.headlineMedium)
                         }
                     }
                 }

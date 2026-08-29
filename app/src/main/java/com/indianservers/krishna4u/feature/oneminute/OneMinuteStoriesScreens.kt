@@ -95,7 +95,7 @@ fun OneMinuteStoryScreen(storyId: String?, onBack: () -> Unit, onNavigate: (Stri
     val index = oneMinuteKrishnaStories.indexOf(item)
     val previous = oneMinuteKrishnaStories.getOrNull(index - 1)
     val next = oneMinuteKrishnaStories.getOrNull(index + 1)
-    val spoken = "${item.title}. ${item.story} Moral: ${item.moral} Today's action: ${item.action}"
+    val spoken = "${item.title}. ${item.story} Takeaways: ${item.moral} ${item.dharmaTakeaway} Today's action: ${item.action}"
     FeatureScaffold(item.title, "STORY ${item.number} OF 108 · ${item.theme.uppercase()}", R.drawable.bg_05_moonlit_sacred_river, onBack, onNavigate, false) {
         item {
             SacredHero(
@@ -119,8 +119,9 @@ fun OneMinuteStoryScreen(storyId: String?, onBack: () -> Unit, onNavigate: (Stri
         item {
             GlassCard(Modifier.fillMaxWidth()) {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("Remember", color = AntiqueGold, style = MaterialTheme.typography.headlineSmall)
-                    Text(item.moral, color = SoftWhite, style = MaterialTheme.typography.titleLarge)
+                    Text("Takeaways", color = AntiqueGold, style = MaterialTheme.typography.headlineSmall)
+                    Text("• ${item.moral}", color = SoftWhite, style = MaterialTheme.typography.titleLarge)
+                    Text("• ${item.dharmaTakeaway}", color = SoftWhite, style = MaterialTheme.typography.bodyLarge)
                 }
             }
         }
@@ -132,7 +133,7 @@ fun OneMinuteStoryScreen(storyId: String?, onBack: () -> Unit, onNavigate: (Stri
                     shareSacredText(
                         context,
                         "One-Minute Krishna Story · ${item.title}",
-                        "${item.title}\n\n${item.story}\n\nRemember:\n${item.moral}\n\nDo this today:\n${item.action}\n\nStory ${item.number} of 108 · Shared from Krishna For You"
+                        "${item.title}\n\n${item.story}\n\nTakeaways:\n• ${item.moral}\n• ${item.dharmaTakeaway}\n\nDo this today:\n${item.action}\n\nStory ${item.number} of 108 · Shared from Krishna For You"
                     )
                 },
                 Modifier.fillMaxWidth()

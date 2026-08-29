@@ -20,7 +20,6 @@ import com.indianservers.krishna4u.ui.theme.SoftWhite
 
 @Composable
 fun EmotionalIntelligenceLibraryScreen(readingModeId: String, onBack: () -> Unit, onNavigate: (String) -> Unit) {
-    val mode = readingMode(readingModeId)
     FeatureScaffold("Krishna & Emotions", "Emotional intelligence for daily life", R.drawable.bg_05_moonlit_sacred_river, onBack, onNavigate) {
         item {
             SacredHero(
@@ -29,7 +28,6 @@ fun EmotionalIntelligenceLibraryScreen(readingModeId: String, onBack: () -> Unit
                 "Emotions are messengers. Krishna’s wisdom can help us understand them without letting them control our words and actions."
             )
         }
-        item { SacredListCard("Reading Mode · ${mode.title}", "${mode.ageRange} · Examples adapt to your selection", R.drawable.icon_relationships, { onNavigate("28") }) }
         items(emotionalIntelligenceLessons) { lesson ->
             SacredListCard(lesson.title, lesson.subtitle, lesson.icon, { onNavigate("emotional_intelligence/${lesson.id}") })
         }

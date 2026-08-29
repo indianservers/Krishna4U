@@ -27,7 +27,7 @@ fun ChapterWiseSummaryScreen(onBack: () -> Unit, onNavigate: (String) -> Unit) {
     val repository = rememberGitaRepository()
     FeatureScaffold("Chapter-wise Summaries", "18 paths through one timeless teaching", R.drawable.bg_07_gita_wisdom, onBack, onNavigate) {
         item { SacredHero(R.drawable.illustration_07_open_gita, "The complete Bhagavad Gita", "Select a chapter for its theme, English summary and complete verse collection.") }
-        items(gitaChapters) { chapter -> SacredListCard("${chapter.number}. ${chapter.title}", "${repository.versesInChapter(chapter.number).size} slokas · ${chapter.theme}", R.drawable.icon_gita, { onNavigate("gita_chapter/${chapter.number}") }) }
+        items(gitaChapters) { chapter -> SacredListCard("${chapter.number}. ${chapter.title}", "${repository.versesInChapter(chapter.number).size} slokas · ${chapter.theme}", chapterIcon(chapter.number), { onNavigate("gita_chapter/${chapter.number}") }) }
     }
 }
 
@@ -36,8 +36,8 @@ fun CompleteChapterScreen(chapterNumber: Int, onBack: () -> Unit, onNavigate: (S
     val context = LocalContext.current
     val repository = rememberGitaRepository(); val chapter = repository.chapter(chapterNumber); val verses = remember(chapterNumber) { repository.versesInChapter(chapterNumber) }
     val takeaways = gitaChapterTakeaways.getValue(chapterNumber)
-    FeatureScaffold("Chapter ${chapter.number}", chapter.title, R.drawable.bg_03_kurukshetra_cosmos, onBack, onNavigate, false) {
-        item { SacredHero(if (chapterNumber == 11) R.drawable.illustration_05_vishvarupa else R.drawable.illustration_03_krishna_arjuna_chariot, chapter.theme, chapter.summary) }
+    FeatureScaffold("Chapter ${chapter.number}", chapter.title, chapterBackground(chapterNumber), onBack, onNavigate, false) {
+        item { SacredHero(chapterIllustration(chapterNumber), chapter.theme, chapter.summary) }
         item {
             GlassCard(Modifier.fillMaxWidth()) {
                 Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -45,7 +45,20 @@ fun CompleteChapterScreen(chapterNumber: Int, onBack: () -> Unit, onNavigate: (S
                     Text("Carry these lessons from Chapter ${chapter.number} into daily life.", color = MutedText, style = MaterialTheme.typography.bodyMedium)
                     takeaways.forEachIndexed { index, takeaway ->
                         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
-                            Text("${index + 1}.", color = AntiqueGold, style = MaterialTheme.typography.titleLarge)
+                            SacredIcon(
+                                listOf(
+                                    chapterIcon(chapterNumber),
+                                    R.drawable.icon_karma,
+                                    R.drawable.icon_dharma,
+                                    R.drawable.icon_mind,
+                                    R.drawable.icon_lotus,
+                                    R.drawable.icon_courage,
+                                    R.drawable.icon_teachings,
+                                    R.drawable.icon_inner_peace
+                                )[index % 8],
+                                null,
+                                Modifier.size(34.dp)
+                            )
                             Text(takeaway, Modifier.weight(1f).padding(start = 10.dp), color = SoftWhite, style = MaterialTheme.typography.bodyLarge)
                         }
                     }
@@ -89,7 +102,14 @@ fun CompleteVerseReaderScreen(chapterNumber: Int, verseNumber: Int, bookmarked: 
     val repository = rememberGitaRepository(); val verse = repository.verse(chapterNumber, verseNumber); val chapterVerses = remember(chapterNumber) { repository.versesInChapter(chapterNumber) }
     if (verse == null) return
     FeatureScaffold("Sloka ${verse.chapter}.${verse.verse}", repository.chapter(chapterNumber).title, R.drawable.bg_07_gita_wisdom, onBack, onNavigate, false) {
-        item { SacredHero(R.drawable.illustration_07_open_gita, verse.sanskrit, verse.transliteration) }
+        item {
+            SacredHero(
+                R.drawable.illustration_07_open_gita,
+                verse.sanskrit,
+                verse.transliteration,
+                imageHeight = 145.dp
+            )
+        }
         item { GlassCard(Modifier.fillMaxWidth()) { Column(verticalArrangement = Arrangement.spacedBy(10.dp)) { Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) { Text("English meaning", Modifier.weight(1f), color = LightGold, style = MaterialTheme.typography.titleLarge); EnglishAudioIcon(verse.englishSummary, Modifier.size(44.dp)) }; Text(verse.englishSummary, color = SoftWhite, style = MaterialTheme.typography.bodyLarge); Text("Translation: ${verse.translator}", color = MutedText, style = MaterialTheme.typography.bodyMedium) } } }
         item { Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) { SecondarySacredButton(if (bookmarked) "✓ Saved" else "☆ Bookmark", onToggleBookmark, Modifier.weight(1f)); SecondarySacredButton("Share", { shareSacredText(context, "Bhagavad Gita ${verse.chapter}.${verse.verse}", "Bhagavad Gita ${verse.chapter}.${verse.verse}\n\n${verse.sanskrit}\n\n${verse.transliteration}\n\nEnglish meaning:\n${verse.englishSummary}\n\nTranslation: ${verse.translator}\nShared from Krishna For You") }, Modifier.weight(1f)) } }
         item { Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) { SecondarySacredButton("Previous", { if (verseNumber > 1) onNavigate("gita_verse/$chapterNumber/${verseNumber - 1}") }, Modifier.weight(1f)); SecondarySacredButton("All slokas", { onNavigate("gita_slokas/$chapterNumber") }, Modifier.weight(1f)); PrimaryGoldButton("Next", { if (verseNumber < chapterVerses.size) onNavigate("gita_verse/$chapterNumber/${verseNumber + 1}") }, Modifier.weight(1f)) } }
