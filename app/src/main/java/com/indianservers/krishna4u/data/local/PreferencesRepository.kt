@@ -24,6 +24,8 @@ data class UserPreferences(
     val homeShortcuts: Set<String> = emptySet(),
     val reflections: Set<String> = emptySet(),
     val readSlokas: Set<String> = emptySet(),
+    val commitmentPractices: Set<String> = emptySet(),
+    val commitmentsRenewedOn: String = "",
     val textSize: String = "Comfortable",
     val notificationsEnabled: Boolean = true,
     val notificationHour: Int = 8,
@@ -47,6 +49,8 @@ class PreferencesRepository(private val context: Context) {
         val homeShortcuts = stringSetPreferencesKey("home_shortcuts")
         val reflections = stringSetPreferencesKey("journal_reflections")
         val readSlokas = stringSetPreferencesKey("read_slokas")
+        val commitmentPractices = stringSetPreferencesKey("commitment_practices")
+        val commitmentsRenewedOn = stringPreferencesKey("commitments_renewed_on")
         val textSize = stringPreferencesKey("text_size")
         val notificationsEnabled = booleanPreferencesKey("notifications_enabled")
         val notificationHour = intPreferencesKey("notification_hour")
@@ -70,6 +74,8 @@ class PreferencesRepository(private val context: Context) {
             homeShortcuts = values[Keys.homeShortcuts]?.toSet() ?: emptySet(),
             reflections = values[Keys.reflections]?.toSet() ?: emptySet(),
             readSlokas = values[Keys.readSlokas]?.toSet() ?: emptySet(),
+            commitmentPractices = values[Keys.commitmentPractices]?.toSet() ?: emptySet(),
+            commitmentsRenewedOn = values[Keys.commitmentsRenewedOn] ?: "",
             textSize = values[Keys.textSize] ?: "Comfortable",
             notificationsEnabled = values[Keys.notificationsEnabled] ?: true,
             notificationHour = (values[Keys.notificationHour] ?: 8).coerceIn(0, 23),
@@ -142,6 +148,20 @@ class PreferencesRepository(private val context: Context) {
         val read = preferences[Keys.readSlokas]?.toMutableSet() ?: mutableSetOf()
         read.add("$chapter.$verse")
         preferences[Keys.readSlokas] = read
+    }
+
+    suspend fun toggleCommitmentPractised(id: String, date: String) = context.krishnaDataStore.edit { preferences ->
+        val datePrefix = "$date:"
+        val practices = preferences[Keys.commitmentPractices]
+            ?.filterTo(mutableSetOf()) { it.startsWith(datePrefix) }
+            ?: mutableSetOf()
+        val entry = "$date:$id"
+        if (!practices.add(entry)) practices.remove(entry)
+        preferences[Keys.commitmentPractices] = practices
+    }
+
+    suspend fun renewCommitments(date: String) = context.krishnaDataStore.edit { preferences ->
+        preferences[Keys.commitmentsRenewedOn] = date
     }
 
     suspend fun resetJourney() = context.krishnaDataStore.edit { preferences ->

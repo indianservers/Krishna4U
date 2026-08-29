@@ -24,8 +24,10 @@ import com.indianservers.krishna4u.feature.difficultquestions.*
 import com.indianservers.krishna4u.feature.parenting.*
 import com.indianservers.krishna4u.feature.night.*
 import com.indianservers.krishna4u.feature.collectibles.*
+import com.indianservers.krishna4u.feature.commitments.*
 import com.indianservers.krishna4u.ui.theme.KrishnaPreferenceTheme
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 @Composable
 fun KrishnaApp(pendingDestination: String? = null, onDestinationConsumed: () -> Unit = {}) {
@@ -189,6 +191,20 @@ fun KrishnaApp(pendingDestination: String? = null, onDestinationConsumed: () -> 
         }
         composable("collectible/{collectibleId}") { entry ->
             SacredCollectibleDetailsScreen(entry.arguments?.getString("collectibleId"), LearningActivity(prefs.bookmarks, prefs.reflections, prefs.readSlokas), { nav.popBackStack() }, ::go)
+        }
+        composable("commitments") {
+            val today = LocalDate.now().toString()
+            val practisedToday = prefs.commitmentPractices
+                .filter { it.startsWith("$today:") }
+                .mapTo(mutableSetOf()) { it.substringAfter(':') }
+            KrishnaCommitmentsScreen(
+                practisedToday = practisedToday,
+                renewedToday = prefs.commitmentsRenewedOn == today,
+                onTogglePractised = { id -> scope.launch { repository.toggleCommitmentPractised(id, today) } },
+                onRenew = { scope.launch { repository.renewCommitments(today) } },
+                onBack = { nav.popBackStack() },
+                onNavigate = ::go
+            )
         }
         composable("krishna_letters") { KrishnaLettersLibraryScreen(prefs.displayName, { nav.popBackStack() }, ::go) }
         composable("krishna_letters/{letterId}") { entry -> KrishnaLetterScreen(entry.arguments?.getString("letterId"), prefs.displayName, { nav.popBackStack() }, ::go) }

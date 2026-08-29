@@ -14,6 +14,7 @@ val exploreModuleShortcuts = listOf(
     ExploreShortcut("emotional_intelligence", "Krishna & Emotional Intelligence", "Understand feelings, calm reactions and resolve conflict.", R.drawable.icon_relationships),
     ExploreShortcut("emotion_wheel", "Emotion Wheel", "Find a letter, verse and calming action for what you feel.", R.drawable.icon_inner_peace),
     ExploreShortcut("collectibles", "Sacred Collectibles", "Awaken sacred symbols through real learning.", R.drawable.icon_chakra),
+    ExploreShortcut("commitments", "My 18 Commitments to Krishna", "Renew 18 vows and practise them through daily action.", R.drawable.icon_check),
     ExploreShortcut("krishna_letters", "Krishna’s Letters to You", "A personal letter for what your heart is carrying.", R.drawable.icon_compassion),
     ExploreShortcut("one_minute_stories", "One-Minute Krishna Stories", "108 concise stories with one moral and action.", R.drawable.icon_flute),
     ExploreShortcut("dharma_decisions", "Dharma Decision Stories", "Choose through realistic dilemmas and reveal guidance.", R.drawable.icon_dharma),

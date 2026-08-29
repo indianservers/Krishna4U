@@ -163,12 +163,17 @@ private fun TeachingLibraryCard(
 ) {
     GlassCard(Modifier.fillMaxWidth().height(148.dp), onClick = onOpen) {
         Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
-            Image(
-                painterResource(teachingArtwork(teaching)),
-                null,
-                Modifier.fillMaxHeight().width(112.dp).clip(RoundedCornerShape(18.dp)),
-                contentScale = ContentScale.Crop
-            )
+            Box(
+                Modifier.fillMaxHeight().width(112.dp).padding(vertical = 7.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painterResource(teachingArtwork(teaching)),
+                    "Illustration for ${teaching.title}",
+                    Modifier.fillMaxSize().clip(RoundedCornerShape(14.dp)),
+                    contentScale = ContentScale.Fit
+                )
+            }
             Column(Modifier.weight(1f).padding(horizontal = 12.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
                 Text(teaching.title, color = LightGold, style = MaterialTheme.typography.titleLarge, maxLines = 2, overflow = TextOverflow.Ellipsis)
                 Text(teachingFilterLabel(teaching), color = AntiqueGold, style = MaterialTheme.typography.labelLarge)

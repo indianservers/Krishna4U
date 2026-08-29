@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -83,10 +84,10 @@ fun HomeScreen(
         label = "settingsChakraRotation"
     )
     val cards = listOf(
-        HomeCard("Krishna’s Life", "Explore the divine stories of Krishna.", R.drawable.icon_flute, "06"),
-        HomeCard("Teachings", "Timeless wisdom for modern life.", R.drawable.icon_teachings, "08"),
-        HomeCard("Bhagavad Gita", "Read, listen, and reflect deeply.", R.drawable.icon_gita, "12"),
-        HomeCard("Ask Krishna", "Scripture-grounded reflective guidance.", R.drawable.icon_lotus, "22")
+        HomeCard("Krishna’s Life", "Explore the divine stories of Krishna.", R.drawable.home_icon_krishna_life, "06"),
+        HomeCard("Teachings", "Timeless wisdom for modern life.", R.drawable.home_icon_teachings, "08"),
+        HomeCard("Bhagavad Gita", "Read, listen, and reflect deeply.", R.drawable.home_icon_bhagavad_gita, "12"),
+        HomeCard("Ask Krishna", "Scripture-grounded reflective guidance.", R.drawable.home_icon_ask_krishna, "22")
     )
     KrishnaCosmicBackground(R.drawable.bg_01_cosmic_mandala) {
         Column(Modifier.fillMaxSize().statusBarsPadding()) {
@@ -150,8 +151,21 @@ fun HomeScreen(
                 items(2) { rowIndex ->
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                         cards.slice(rowIndex * 2..rowIndex * 2 + 1).forEach { card ->
-                            GlassCard(Modifier.weight(1f).height(132.dp), onClick = { onOpen(card.route) }) {
-                                Column { Row(verticalAlignment = Alignment.CenterVertically) { Text(card.title, Modifier.weight(1f), color = LightGold, style = MaterialTheme.typography.titleLarge); Image(painterResource(card.icon), null, Modifier.size(42.dp)) }; Text(card.body, color = MutedText, style = MaterialTheme.typography.bodyMedium) }
+                            GlassCard(Modifier.weight(1f).height(140.dp), onClick = { onOpen(card.route) }) {
+                                Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
+                                    Column(Modifier.weight(1f)) {
+                                        Text(card.title, color = LightGold, style = MaterialTheme.typography.titleLarge)
+                                        Spacer(Modifier.height(5.dp))
+                                        Text(card.body, color = MutedText, style = MaterialTheme.typography.bodyMedium)
+                                    }
+                                    Spacer(Modifier.width(6.dp))
+                                    Image(
+                                        painterResource(card.icon),
+                                        card.title,
+                                        Modifier.size(64.dp).clip(CircleShape),
+                                        contentScale = ContentScale.Crop
+                                    )
+                                }
                             }
                         }
                     }
