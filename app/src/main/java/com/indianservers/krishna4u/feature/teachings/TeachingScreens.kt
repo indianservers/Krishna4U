@@ -98,10 +98,68 @@ fun LessonsFromKrishnaScreen(onBack: () -> Unit, onNavigate: (String) -> Unit) {
 @Composable
 fun ApplyToYourLifeScreen(onBack: () -> Unit, onNavigate: (String) -> Unit) {
     var answer by remember { mutableStateOf("") }
+    var showGuidance by remember { mutableStateOf(false) }
+    var showInputHint by remember { mutableStateOf(false) }
+    val reflectionSteps = listOf(
+        "Pause — separate fear from duty",
+        "Discern — ask whom the choice serves",
+        "Act — choose with courage",
+        "Release — let go of the outcome"
+    )
     FeatureScaffold("Bring Wisdom to Life", "Apply it to your life", R.drawable.bg_06_dharma_crossroads, onBack, onNavigate, false) {
         item { SacredHero(R.drawable.illustration_06_meditating_seeker, "What are you facing today?", "A right choice can feel difficult. Krishna’s wisdom helps separate fear from dharma.") }
-        item { GlassCard(Modifier.fillMaxWidth()) { OutlinedTextField(answer, { answer = it }, label = { Text("Describe your situation") }, modifier = Modifier.fillMaxWidth(), minLines = 3) } }
-        items(listOf("Pause — separate fear from duty", "Discern — ask whom the choice serves", "Act — choose with courage", "Release — let go of the outcome")) { step -> SacredListCard(step, "Tap to reflect", R.drawable.icon_check, {}) }
-        item { PrimaryGoldButton("Begin Guided Reflection", { onNavigate("22") }, Modifier.fillMaxWidth()) }
+        item {
+            GlassCard(Modifier.fillMaxWidth()) {
+                OutlinedTextField(
+                    value = answer,
+                    onValueChange = {
+                        answer = it.take(500)
+                        showInputHint = false
+                        showGuidance = false
+                    },
+                    label = { Text("Describe your situation") },
+                    supportingText = {
+                        Text(
+                            if (showInputHint) "Please share a few words so the reflection can guide you." else "${answer.length}/500",
+                            color = if (showInputHint) MaterialTheme.colorScheme.error else MutedText
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    minLines = 3,
+                    maxLines = 6
+                )
+            }
+        }
+        items(reflectionSteps) { step -> SacredListCard(step, "A step in your reflection", R.drawable.icon_check, {}) }
+        item {
+            PrimaryGoldButton(
+                "Begin Guided Reflection",
+                {
+                    if (answer.isBlank()) {
+                        showInputHint = true
+                        showGuidance = false
+                    } else {
+                        showInputHint = false
+                        showGuidance = true
+                    }
+                },
+                Modifier.fillMaxWidth()
+            )
+        }
+        if (showGuidance) {
+            item {
+                GlassCard(Modifier.fillMaxWidth()) {
+                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        Text("Krishna-inspired reflection", color = LightGold, style = MaterialTheme.typography.titleLarge)
+                        Text(
+                            "First, breathe and name what is within your control. Ask which choice protects truth, responsibility and compassion—not merely comfort. Take the smallest courageous action you can today, then release the result. You are responsible for sincere effort, not for controlling every outcome.",
+                            color = SoftWhite,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Text("Your situation: ${answer.trim()}", color = MutedText, style = MaterialTheme.typography.bodyMedium)
+                    }
+                }
+            }
+        }
     }
 }
