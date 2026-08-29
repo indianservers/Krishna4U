@@ -84,7 +84,7 @@ fun OneMinuteStoriesLibraryScreen(onBack: () -> Unit, onNavigate: (String) -> Un
         items(filtered, key = { it.id }) { item ->
             SacredListCard("${item.number}. ${item.title}", item.moral, storyIcon(item.theme), { onNavigate("one_minute_story/${item.id}") })
         }
-        if (filtered.isEmpty()) item { SacredListCard("No stories found", "Try another word or choose All.", R.drawable.icon_search, {}) }
+        if (filtered.isEmpty()) item { SacredListCard("No stories found", "Try another word or choose All.", R.drawable.icon_search) }
     }
 }
 
@@ -107,6 +107,7 @@ fun OneMinuteStoryScreen(storyId: String?, onBack: () -> Unit, onNavigate: (Stri
         item {
             GlassCard(Modifier.fillMaxWidth()) {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    PeacockStorySweep("minute-${item.id}")
                     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                         Text("One-minute story", Modifier.weight(1f), color = LightGold, style = MaterialTheme.typography.headlineSmall)
                         EnglishAudioIcon(spoken, Modifier.size(44.dp))
@@ -123,7 +124,7 @@ fun OneMinuteStoryScreen(storyId: String?, onBack: () -> Unit, onNavigate: (Stri
                 }
             }
         }
-        item { SacredListCard("Do this today", item.action, R.drawable.icon_check, {}) }
+        item { SacredListCard("Do this today", item.action, R.drawable.icon_check) }
         item {
             SecondarySacredButton(
                 "Share Story",

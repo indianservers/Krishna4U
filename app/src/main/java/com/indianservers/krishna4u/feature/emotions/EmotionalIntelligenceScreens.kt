@@ -53,8 +53,8 @@ fun EmotionalIntelligenceLessonScreen(lessonId: String?, readingModeId: String, 
     val next = emotionalIntelligenceLessons.getOrNull(index + 1)
     FeatureScaffold(lesson.title, "EMOTIONAL INTELLIGENCE · ${index + 1} OF ${emotionalIntelligenceLessons.size}", R.drawable.bg_08_minimal_starfield, onBack, onNavigate, false) {
         item { SacredHero(R.drawable.illustration_06_meditating_seeker, lesson.openingQuestion, lesson.subtitle) }
-        item { SacredListCard("Krishna’s connection", lesson.krishnaConnection, R.drawable.icon_teachings, {}) }
-        item { SacredListCard("The emotional skill", lesson.emotionalSkill, lesson.icon, {}) }
+        item { SacredListCard("Krishna’s connection", lesson.krishnaConnection, R.drawable.icon_teachings) }
+        item { SacredListCard("The emotional skill", lesson.emotionalSkill, lesson.icon) }
         item {
             GlassCard(Modifier.fillMaxWidth()) {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -68,9 +68,9 @@ fun EmotionalIntelligenceLessonScreen(lessonId: String?, readingModeId: String, 
                 }
             }
         }
-        item { SacredListCard("A ${readingMode(readingModeId).title.lowercase()} example", lesson.exampleFor(readingModeId), R.drawable.icon_life_journey, {}) }
-        item { SacredListCard("Reflect", lesson.reflection, R.drawable.icon_journal, {}) }
-        item { SacredListCard("Try this today", lesson.practice, R.drawable.icon_check, {}) }
+        item { SacredListCard("A ${readingMode(readingModeId).title.lowercase()} example", lesson.exampleFor(readingModeId), R.drawable.icon_life_journey) }
+        item { SacredListCard("Reflect", lesson.reflection, R.drawable.icon_journal) }
+        item { SacredListCard("Try this today", lesson.practice, R.drawable.icon_check) }
         item {
             SecondarySacredButton(
                 "Share Lesson",

@@ -18,6 +18,7 @@
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
+            android:launchMode="singleTop"
             android:theme="@style/Theme.Krishna4U"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
@@ -28,6 +29,9 @@
         </activity>
         <receiver
             android:name=".core.notifications.DailyVerseReceiver"
+            android:exported="false" />
+        <receiver
+            android:name=".core.notifications.NightMessageReceiver"
             android:exported="false" />
         <receiver
             android:name=".core.notifications.VerseBootReceiver"

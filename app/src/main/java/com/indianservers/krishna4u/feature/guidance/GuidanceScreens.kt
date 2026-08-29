@@ -27,7 +27,7 @@ fun FaqLibraryScreen(onBack: () -> Unit, onNavigate: (String) -> Unit) {
 @Composable
 fun WhatIsDharmaScreen(onBack: () -> Unit, onNavigate: (String) -> Unit) = FeatureScaffold("What is Dharma?", "Living in alignment", R.drawable.bg_06_dharma_crossroads, onBack, onNavigate, false) {
     item { SacredHero(R.drawable.illustration_08_wisdom_tree, "Dharma", "Dharma is right action aligned with truth, responsibility and the wellbeing of all.") }
-    items(listOf(Triple("Truth", "See reality clearly", R.drawable.icon_teachings), Triple("Duty", "Honour your responsibilities", R.drawable.icon_dharma), Triple("Compassion", "Protect the wellbeing of others", R.drawable.icon_compassion), Triple("Courage", "Act even when the path is difficult", R.drawable.icon_courage))) { x -> SacredListCard(x.first, x.second, x.third, {}) }
+    items(listOf(Triple("Truth", "See reality clearly", R.drawable.icon_teachings), Triple("Duty", "Honour your responsibilities", R.drawable.icon_dharma), Triple("Compassion", "Protect the wellbeing of others", R.drawable.icon_compassion), Triple("Courage", "Act even when the path is difficult", R.drawable.icon_courage))) { x -> SacredListCard(x.first, x.second, x.third) }
     item { SacredListCard("Bhagavad Gita 3.35", "Better one’s own dharma, even imperfectly lived.", R.drawable.icon_gita, { onNavigate("16") }) }
     item { PrimaryGoldButton("Explore related questions", { onNavigate("20") }, Modifier.fillMaxWidth()) }
 }
@@ -67,7 +67,7 @@ fun LifeSituationsScreen(onBack: () -> Unit, onNavigate: (String) -> Unit) {
     FeatureScaffold("WHEN LIFE FEELS…", "Choose what your heart needs today", R.drawable.bg_05_moonlit_sacred_river, onBack, onNavigate, false) {
         item { SacredHero(R.drawable.illustration_06_meditating_seeker, selected, "Krishna’s wisdom meets difficult feelings with patience and clarity.") }
         items(moods.chunked(3)) { row -> Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(7.dp)) { row.forEach { mood -> SpiritualChip(mood, R.drawable.icon_mind, selected == mood, { selected = mood }, Modifier.weight(1f)) } } }
-        item { SacredListCard("Return to what is in your hands", "Breathe. Name the next right action. Release the imagined future. Gita 2.48.", R.drawable.icon_inner_peace, {}) }
+        item { SacredListCard("Return to what is in your hands", "Breathe. Name the next right action. Release the imagined future. Gita 2.48.", R.drawable.icon_inner_peace) }
         item { PrimaryGoldButton("Begin 3-minute guidance", { onNavigate("25") }, Modifier.fillMaxWidth()) }
     }
 }

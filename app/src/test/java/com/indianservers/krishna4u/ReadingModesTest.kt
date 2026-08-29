@@ -12,7 +12,7 @@ class ReadingModesTest {
     @Test
     fun allAgeModesHaveDistinctProfiles() {
         assertEquals(listOf("kids", "teens", "adults"), readingModes.map { it.id })
-        assertEquals("Teens", readingMode("unknown").title)
+        assertEquals("Youth", readingMode("unknown").title)
     }
 
     @Test
@@ -21,6 +21,10 @@ class ReadingModesTest {
             assertEquals(3, event.takeawaysFor("kids").size)
             assertEquals(5, event.takeawaysFor("teens").size)
             assertTrue(event.storyFor("kids").length <= event.storyFor("adults").length)
+            assertTrue(event.storyFor("kids") != event.storyFor("teens"))
+            assertTrue(event.storyFor("teens") != event.storyFor("adults"))
+            assertTrue(event.storyFor("teens").contains(event.choicePrompt))
+            assertTrue(event.storyFor("adults").contains(event.context))
             assertEquals(3, event.familyQuestionsFor("kids").size)
             assertEquals(3, event.familyQuestionsFor("adults").size)
         }

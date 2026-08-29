@@ -48,7 +48,7 @@ fun TeachingsLibraryScreen(onBack: () -> Unit, onNavigate: (String) -> Unit) {
         }
         item { SacredHero(R.drawable.illustration_01_krishna_full_body, "${teachingLibrary.size} paths for daily life", "Krishna’s guidance, compassionate stories, Gita wisdom and practical dharma for everyday choices.") }
         items(visibleTeachings) { teaching -> SacredListCard(teaching.title, teaching.summary, teaching.icon, { onNavigate("teaching/${teaching.id}") }) }
-        if (visibleTeachings.isEmpty()) item { SacredListCard("No teachings found", "Try a shorter phrase or choose All.", R.drawable.icon_search, {}) }
+        if (visibleTeachings.isEmpty()) item { SacredListCard("No teachings found", "Try a shorter phrase or choose All.", R.drawable.icon_search) }
     }
 }
 
@@ -58,7 +58,7 @@ fun TeachingDetailsScreen(teachingId: String, bookmarked: Boolean, onToggleBookm
     val teaching = teachingById(teachingId)
     FeatureScaffold("TEACHING · ${teaching.category.uppercase()}", teaching.source, R.drawable.bg_03_kurukshetra_cosmos, onBack, onNavigate, false) {
         item { SacredHero(R.drawable.illustration_02_krishna_portrait, teaching.title, teaching.question) }
-        item { SacredListCard("Teaching", teaching.teaching, R.drawable.icon_teachings, {}) }
+        item { SacredListCard("Teaching", teaching.teaching, R.drawable.icon_teachings) }
         item {
             GlassCard(Modifier.fillMaxWidth()) {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -72,7 +72,7 @@ fun TeachingDetailsScreen(teachingId: String, bookmarked: Boolean, onToggleBookm
                 }
             }
         }
-        item { SacredListCard("Try this today", teaching.practice, R.drawable.icon_strategy, {}) }
+        item { SacredListCard("Try this today", teaching.practice, R.drawable.icon_strategy) }
         item { Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) { SecondarySacredButton(if (bookmarked) "✓ Saved" else "☆ Bookmark", onToggleBookmark, Modifier.weight(1f)); PrimaryGoldButton("Practice this today", { onNavigate("11") }, Modifier.weight(1.5f)) } }
         item { SecondarySacredButton("Share Teaching", { shareSacredText(context, "Krishna's Teaching · ${teaching.title}", "${teaching.question}\n\n${teaching.teaching}\n\nTakeaways:\n${teaching.takeaways.joinToString("\n") { "• $it" }}\n\n${teaching.source} · Shared from Krishna For You") }, Modifier.fillMaxWidth()) }
     }
@@ -130,7 +130,7 @@ fun ApplyToYourLifeScreen(onBack: () -> Unit, onNavigate: (String) -> Unit) {
                 )
             }
         }
-        items(reflectionSteps) { step -> SacredListCard(step, "A step in your reflection", R.drawable.icon_check, {}) }
+        items(reflectionSteps) { step -> SacredListCard(step, "A step in your reflection", R.drawable.icon_check) }
         item {
             PrimaryGoldButton(
                 "Begin Guided Reflection",

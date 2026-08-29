@@ -130,6 +130,22 @@ fun WisdomForLifeScreen(onBack: () -> Unit, onNavigate: (String) -> Unit) {
         }
         item {
             SacredListCard(
+                "Emotion Wheel",
+                "Choose afraid, angry, lonely, guilty or confused for a matching letter, Gita verse and calming action.",
+                R.drawable.icon_inner_peace,
+                { onNavigate("emotion_wheel") }
+            )
+        }
+        item {
+            SacredListCard(
+                "Sacred Collectibles",
+                "Awaken the Peacock Feather, Flute, Chakra, Lotus and Conch through real learning—not purchases.",
+                R.drawable.icon_chakra,
+                { onNavigate("collectibles") }
+            )
+        }
+        item {
+            SacredListCard(
                 "Krishna’s Letters to You",
                 "Longer personal messages for failure, loneliness, grief, rejection, guilt and uncertainty.",
                 R.drawable.icon_compassion,
@@ -168,6 +184,13 @@ fun WisdomForLifeScreen(onBack: () -> Unit, onNavigate: (String) -> Unit) {
                 { onNavigate("parenting_values") }
             )
         }
+        item { Text("More ways to grow", color = LightGold, style = MaterialTheme.typography.headlineMedium) }
+        item { SacredListCard("The Krishna Within", "Awaken wisdom, playfulness, courage, friendship and compassion.", R.drawable.icon_lotus, { onNavigate("10") }) }
+        item { SacredListCard("What Is Dharma?", "Understand truth, duty, compassion and courageous right action.", R.drawable.icon_dharma, { onNavigate("21") }) }
+        item { SacredListCard("Questions of the Heart", "Simple answers about dharma, duty, suffering, detachment and the mind.", R.drawable.icon_ask_krishna, { onNavigate("20") }) }
+        item { SacredListCard("When Life Feels…", "Choose what you feel and receive a calm next step.", R.drawable.icon_mind, { onNavigate("23") }) }
+        item { SacredListCard("Today with Krishna", "A four-step daily practice: listen, understand, reflect and act.", R.drawable.icon_calendar, { onNavigate("24") }) }
+        item { SacredListCard("Gita Study Mode", "Slow down and study one teaching with attention.", R.drawable.icon_gita, { onNavigate("19") }) }
         item { OutlinedTextField(query, { query = it }, label = { Text("Search wisdom, emotion or situation") }, leadingIcon = { SacredIcon(R.drawable.icon_search, null, Modifier.size(26.dp)) }, singleLine = true, modifier = Modifier.fillMaxWidth()) }
         item { Text(if (query.isBlank()) "Explore 18 themes" else "${filtered.size} matching themes", color = LightGold, style = MaterialTheme.typography.headlineMedium) }
         items(filtered.chunked(2)) { row ->

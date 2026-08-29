@@ -3,115 +3,177 @@ package com.indianservers.krishna4u.feature.letters
 import androidx.annotation.DrawableRes
 import com.indianservers.krishna4u.R
 
-data class KrishnaLetter(
-    val id: String,
-    val situation: String,
-    val title: String,
-    val preview: String,
-    val paragraphs: List<String>,
-    val reflection: String,
-    val nextStep: String,
-    @DrawableRes val icon: Int
-) {
-    fun spokenText(name: String): String = buildString {
-        append("My dear $name. ")
-        append(paragraphs.joinToString(" "))
-        append(" Remember: $reflection ")
-        append("With you in every sincere step, Krishna.")
-    }
+data class KrishnaLetter(val id: String, val situation: String, val title: String, val preview: String, val paragraphs: List<String>, val reflection: String, val nextStep: String, @DrawableRes val icon: Int) {
+    fun spokenText(name: String): String = "My dear $name. ${paragraphs.joinToString(" ")} Remember: $reflection I am with you, Krishna."
 }
 
+private fun personalLetter(id: String, situation: String, title: String, preview: String, first: String, second: String, third: String, reflection: String, nextStep: String, icon: Int) = KrishnaLetter(
+    id, situation, title, preview,
+    listOf(
+        first,
+        second,
+        third,
+        "My dear one, you do not have to change your whole life today. Give Me this moment. Breathe slowly. Choose one honest and kind action that is in your hands. Then let the rest wait. You deserve patience while you learn, care while you heal, and hope while the road becomes clear. I am not asking you to be perfect. I am asking you to stay close to truth and take the next right step. I am with you in that step."
+    ), reflection, nextStep, icon
+)
+
 val krishnaLetters = listOf(
-    KrishnaLetter(
-        id = "failure",
-        situation = "When you feel you have failed",
-        title = "Your Result Is Not Your Identity",
-        preview = "A setback can teach you without becoming the name you give yourself.",
-        paragraphs = listOf(
-            "My child, I know how quickly one result can become a judgment in your mind. You say, “I failed,” and soon the mind whispers, “I am a failure.” Do not give a temporary event the authority to define your whole being. A result can describe what happened once; it cannot measure the courage, sincerity, kindness or possibility within you.",
-            "Look at the effort honestly. If you prepared carelessly, accept that truth without excuses and let it make you more disciplined. If you worked sincerely and the result still disappointed you, remember that action belongs to you while outcomes arise from many causes. Neither pride after success nor self-hatred after failure will help you see clearly.",
-            "Do not run from the lesson. Ask what this moment reveals about your preparation, method, expectations and support. Correct what can be corrected. Seek guidance where you lack understanding. Then begin again with a smaller, wiser step. Falling becomes defeat only when you refuse to learn or decide that growth is no longer possible.",
-            "I do not ask you to pretend the disappointment does not hurt. Feel it, rest if needed, and then return to your Dharma. Your worth was never waiting inside a mark, offer, trophy or applause. Let this experience deepen you rather than diminish you. I am with the honest effort that rises again."
-        ),
-        reflection = "What did this result teach you about your method—not your worth?",
-        nextStep = "Write one lesson, one change and the smallest action you can complete within twenty-four hours.",
-        icon = R.drawable.icon_courage
-    ),
-    KrishnaLetter(
-        id = "loneliness",
-        situation = "When loneliness feels heavy",
-        title = "The Quiet Is Not Empty",
-        preview = "Your need for connection is human, and reaching out is an act of courage.",
-        paragraphs = listOf(
-            "My dear one, loneliness can make a crowded room feel distant and a silent night feel endless. It may tell you that nobody notices, that you are difficult to love, or that you must carry everything alone. Those thoughts feel convincing because you are hurting, but pain is not always a reliable storyteller.",
-            "Do not shame yourself for needing companionship. The heart was made for relationship, friendship and shared care. Begin by becoming present to yourself: breathe, eat, rest and name what kind of connection you are missing. Do you need to be heard, included, comforted, understood or simply accompanied? A clear need is easier to communicate than a silent hope that someone will guess.",
-            "Use quiet as a place to hear Me, but do not use spirituality to hide from people. Send one honest message. Sit near family instead of disappearing. Join a place where service, learning or devotion is shared. Connection often begins as a small repeated act, not as the sudden arrival of a perfect friend.",
-            "If someone does not respond, do not turn one absence into a verdict on your value. Keep your heart open with wise boundaries. Offer the kind of presence you hope to receive, and allow relationships time to grow. When loneliness becomes persistent despair or you feel unsafe with your thoughts, tell a trusted person or professional immediately. Asking for help is not a failure of faith; it is one way grace reaches you."
-        ),
-        reflection = "What kind of connection do you need most right now?",
-        nextStep = "Contact one safe person with a specific invitation: talk for ten minutes, take a walk or share a meal.",
-        icon = R.drawable.icon_friendship
-    ),
-    KrishnaLetter(
-        id = "grief",
-        situation = "When you are grieving",
-        title = "You Do Not Have to Hurry Your Grief",
-        preview = "Love leaves an absence, and healing does not demand that you forget.",
-        paragraphs = listOf(
-            "My child, grief is the shape love takes when someone or something precious is no longer present in the way you knew. Do not force yourself to become cheerful for the comfort of others. Tears are not a weakness in devotion. A trembling heart can still be held by faith.",
-            "Some days you may remember with gratitude; other days the same memory may break you open. Healing rarely moves in a straight line. A festival, song, place or ordinary object may bring the sorrow back without warning. This does not mean you have returned to the beginning. It means love has many doors through which it enters memory.",
-            "Let others sit beside you. Speak the name you miss. Preserve a meaningful story. Accept food, rest and practical support when your energy is low. You do not honour love by neglecting the life that remains in your care. Carry what was beautiful forward through the values, kindness and courage you received.",
-            "I will not ask you to explain every loss or cover mystery with easy answers. Bring Me your anger, confusion and silence as honestly as your prayers. In time, grief may become less like a storm and more like a river you learn to cross. Until then, take today gently. If grief prevents basic daily life for a long time or brings thoughts of self-harm, seek qualified support without delay."
-        ),
-        reflection = "What quality or memory from what you lost would you like to carry forward?",
-        nextStep = "Write or speak one loving memory, then do one act of care for your body today.",
-        icon = R.drawable.icon_compassion
-    ),
-    KrishnaLetter(
-        id = "rejection",
-        situation = "When you feel rejected",
-        title = "One Closed Door Does Not Define You",
-        preview = "Rejection can redirect a path without reducing the dignity of the traveller.",
-        paragraphs = listOf(
-            "My dear one, rejection reaches deeper than the word “no.” It can awaken the fear that you are unwanted, unworthy or easy to replace. Pause before you turn another person’s decision into a final truth about yourself. They may be responding from their needs, limits, timing or understanding—none of which can contain your complete value.",
-            "Respect the answer you received. Love and dignity do not grow through pressure, repeated pleading or trying to make someone feel guilty. If feedback is offered, examine it calmly and keep what helps you mature. You may need to improve a skill, repair a behaviour or communicate more clearly. Growth is different from reshaping your entire self to earn reluctant acceptance.",
-            "Allow disappointment without chasing humiliation. Step back from repeated checking, comparison and imagined conversations. Return your attention to the people, duties and possibilities still present. A closed opportunity may redirect your preparation; a closed relationship may teach boundaries, compatibility or self-respect.",
-            "Keep your heart soft, but do not abandon it at every door. You can hope again without denying what happened. You can bless another person’s path without forcing yourself to remain close to what wounds you. Walk forward with dignity. The place meant for your honest contribution will not require you to disappear in order to belong."
-        ),
-        reflection = "What part of this rejection is useful information, and what part is fear speaking about your worth?",
-        nextStep = "Stop one comparison or repeated check, and redirect that time toward a supportive person or meaningful task.",
-        icon = R.drawable.icon_relationships
-    ),
-    KrishnaLetter(
-        id = "guilt",
-        situation = "When guilt will not release you",
-        title = "Repair the Wrong, Then Return to the Light",
-        preview = "True remorse leads to responsibility and change—not endless self-punishment.",
-        paragraphs = listOf(
-            "My child, guilt can be a lamp when it shows that your action did not match your values. But shame turns that lamp against your whole being and says you are beyond repair. Do not confuse these voices. “I did something wrong” can lead to Dharma. “I am nothing but wrong” usually leads to hiding, denial or despair.",
-            "Begin with truth. Name what you did without minimising it, decorating it or shifting blame. Consider who was affected and what repair is possible. Offer an apology that does not demand immediate forgiveness. Restore what can be restored, accept fair consequences and change the conditions that allowed the behaviour to repeat.",
-            "Then let your remorse become conduct. If anger caused harm, learn regulation. If dishonesty caused harm, practise transparent truth. If neglect caused harm, become dependable. The purpose of guilt is not to keep you kneeling forever; it is to turn you toward wiser action.",
-            "Some consequences may remain even after sincere change, and another person may need distance. Respect that. Forgiving yourself does not erase their experience; it ends the belief that further self-hatred is a form of repair. If the guilt concerns serious harm, addiction or repeated behaviour, seek qualified guidance and accountability. I meet you in honest responsibility, not in perfection."
-        ),
-        reflection = "What repair, accountability or changed behaviour would make your remorse meaningful?",
-        nextStep = "Write the truth, the impact, the repair and the prevention plan in four clear sentences.",
-        icon = R.drawable.icon_dharma
-    ),
-    KrishnaLetter(
-        id = "uncertainty",
-        situation = "When the path is uncertain",
-        title = "You Do Not Need the Whole Road",
-        preview = "Clarity often arrives after the next honest step, not before it.",
-        paragraphs = listOf(
-            "My dear one, uncertainty makes the mind demand guarantees that life cannot provide. You rehearse every future, hoping that enough thought will remove all risk. Instead, the mind becomes tired while the path remains where it was. You do not need to see the entire road in order to walk with wisdom.",
-            "Separate what is known from what is imagined. Gather the facts available now. Ask which duties are truly yours, which values must not be traded, and which outcomes are beyond your control. Seek counsel from people who are wise, honest and not attached to choosing for you.",
-            "When two paths both contain difficulty, do not wait for one to become perfectly comfortable. Choose the direction that best serves Dharma with the understanding you have, then remain willing to correct course. A sincere decision is not made careless simply because the future remained hidden.",
-            "Let patience be active. Prepare, learn, pray and take the next reversible step. Rest when the mind is exhausted; fear becomes louder when the body is neglected. I am not only at the destination you hope to reach. I am present in the courage, integrity and attention with which you take this step. Walk what is clear today, and allow tomorrow’s light to arrive tomorrow."
-        ),
-        reflection = "What is known, what is imagined, and what is the next responsible step?",
-        nextStep = "Divide a page into Known, Unknown and Next Step; write at least one item under each.",
-        icon = R.drawable.icon_strategy
-    )
+    KrishnaLetter("failure", "When You Feel You Have Failed", "You Are More Than One Result", "This result may hurt, but it cannot decide who you are.", listOf(
+        "My dear one, I know this hurts. You hoped, worked and waited. Now one result is making you question yourself. Please hear Me: you faced a hard moment. You are not a failure. A mark, a job or a win can tell you what happened today. It cannot tell you how much good, courage and promise live in you.",
+        "I will not shame you for falling. I will help you see the next right step. Look at your effort with honesty. Keep what worked. Learn what did not. Ask for help where you need it. This is not the end of your story. It is one page that can make you wiser.",
+        "You do not have to prove your worth to begin again. You already deserve care, hope and another chance. Rest for a while. Then take one small step with your full heart. I am not waiting only at your success. I am beside you while you rise.",
+        "One day, you may look back and see that this result did not break you. It taught you how to prepare, ask, wait and try again. For today, do not carry the whole future. Carry only the next small task. I believe you can do that."
+    ), "What did this result teach you about your method, not your worth?", "Write one lesson and do one small thing today that will help your next try.", R.drawable.icon_courage),
+    KrishnaLetter("loneliness", "When Loneliness Feels Heavy", "You Are Not Forgotten", "The quiet feels empty, but your life still holds love and a place for you.", listOf(
+        "My dear one, I know the pain of feeling unseen. You may be in a room full of people and still feel alone. Your mind may say, ‘No one needs me.’ That thought comes from pain. It is not the full truth. Your need for love is not weakness. Your heart was made to give and receive care.",
+        "When the world feels far away, sit with Me for one quiet minute. Then do not hide there forever. Tell one safe person, ‘I need someone to talk to.’ Join your family for tea. Call a friend. Help someone who also feels left out. A true bond often starts with one small, brave hello.",
+        "If one person does not answer, do not make it a judgment on your worth. Keep reaching for safe people. You deserve support. If the sadness feels too heavy or you feel unsafe, tell a trusted adult or trained helper now. Help is one of the ways My care reaches you.",
+        "There is still a place for your voice, your smile and your care. The right bonds may take time to grow. Do not close your heart because today is quiet. Take one gentle step toward life, and let someone take one step toward you."
+    ), "What kind of care do you need most today: a talk, company, comfort or help?", "Send one honest message to a safe person and ask for ten minutes together.", R.drawable.icon_friendship),
+    KrishnaLetter("grief", "When You Are Grieving", "Your Love Is Still Real", "You do not need to rush your tears or forget what mattered.", listOf(
+        "My dear one, you miss someone or something you loved. That empty space is real. You do not need to act strong every hour. Tears do not make you weak. They show that your love was true. I can sit with you even when you have no words or prayers.",
+        "Some days may feel calm. Then a song, place or small memory may bring the pain back. This does not mean you are failing to heal. Grief moves like waves. Let safe people stay near you. Say the name you miss. Share a good memory. Eat, rest and care for the life that is still in your hands.",
+        "You do not have to leave love behind to move forward. Carry one good value from that person or time into the way you live. Go slowly. If grief stops you from living for a long time, or brings thoughts of harm, ask a trained helper at once. You deserve gentle care.",
+        "Today may not be the day when everything feels better. Let it be the day when you breathe, drink water and allow one person to care for you. Small acts of living do not betray what you lost. They carry love forward."
+    ), "What loving memory or good quality would you like to carry with you?", "Share one memory with someone safe, then do one kind thing for your body.", R.drawable.icon_compassion),
+    KrishnaLetter("rejection", "When You Feel Rejected", "A Closed Door Cannot Reduce You", "Someone’s no may change your path, but it cannot take away your worth.", listOf(
+        "My dear one, rejection can feel like the world has said, ‘You are not enough.’ But one person, place or chance cannot hold the full truth about you. Their answer may come from their needs, timing or limits. Feel the hurt, but do not turn it into a name for yourself.",
+        "A closed door can turn you toward a new road. I know you cannot see that road yet. Take useful feedback if it is given. Improve what is yours to improve. But do not erase yourself just to win a place where you are not treated with care.",
+        "Step away from checking, begging and comparing. Return to the people and duties that still welcome your honest heart. You deserve respect, including from yourself. Keep your heart soft and your limits clear. There are still good people, good work and new doors ahead.",
+        "You may not feel ready to hope again. That is all right. Do not force a smile. Just stop asking this one closed door to tell you who you are. Turn gently toward the life that is still calling your name."
+    ), "What part of this is useful feedback, and what part is fear speaking?", "Stop one act of checking or comparing and give that time to a good task or safe person.", R.drawable.icon_relationships),
+    KrishnaLetter("guilt", "When Guilt Will Not Release You", "Make It Right, Then Rise", "A wrong act asks for truth and change, not endless self-hate.", listOf(
+        "My dear one, you wish you could undo something. Guilt can point to what needs care. But it should not tell you that you are only your worst act. You did something wrong; that does not mean you can never become right again. I ask for truth, not a perfect past.",
+        "Name what happened. Do not hide it or blame another person. Say sorry without asking them to make you feel better. Repair what you can. Accept fair results. Then change the habit that caused the harm. If anger hurt someone, learn to pause. If a lie hurt trust, begin to speak the truth in small things.",
+        "Real regret becomes better action. It does not keep you on the floor forever. Some people may need time or space. Respect that. Once you have owned the wrong and begun to change, let yourself walk toward the light. You deserve the chance to live the lesson you learned.",
+        "I do not ask you to forget the lesson. I ask you to stop using it as a weapon against yourself. Let your next honest choice show who you are becoming. Change may be slow, but every true step counts."
+    ), "What honest repair or changed action would give your regret a good purpose?", "Write four lines: what I did, who it hurt, how I can repair it, and how I will stop it happening again.", R.drawable.icon_dharma),
+    KrishnaLetter("uncertainty", "When the Path Is Uncertain", "You Only Need the Next Right Step", "You do not need the whole road before you begin.", listOf(
+        "My dear one, not knowing can make your mind run in every direction. You want a sign that nothing will go wrong. Life cannot give that promise. Bring Me every question. You are not weak because you need time to see clearly.",
+        "Place the facts on one side and your fears on the other. Ask: What do I know? What is only a guess? Which choice is honest, kind and true to my duty? Speak with someone wise who will guide you without trying to control you. Then choose the smallest safe step that can teach you more.",
+        "You do not need to solve your whole life tonight. Walk the part of the road that you can see. You may change your plan when you learn more. That is wisdom, not failure. I am not only at the end of your journey. I am with you in this calm and honest next step.",
+        "Let your mind rest after you have done what you can today. Tomorrow may bring a fact, a person or an idea that you cannot see now. You deserve peace even before every answer arrives. Trust the next right step."
+    ), "What is known, what is only feared, and what is your next right step?", "Make three short lists: What I Know, What I Fear, and What I Can Do Today.", R.drawable.icon_strategy),
+    personalLetter("anxiety", "When Anxiety Overwhelms You", "Come Back to This Moment", "You do not need to solve every possible future right now.",
+        "My dear one, I know how anxiety can make a small thought feel like a great danger. Your body may feel tight, your breath may become fast, and your mind may keep asking, ‘What if?’ You are not weak or broken. Your mind is trying too hard to keep you safe.",
+        "Place both feet on the floor. Take a slow breath and name five things you can see. Ask what is happening now, not what fear says may happen later. Write down the real task in front of you. A clear small action can make the future feel less powerful.",
+        "Do not carry this alone. Tell a safe person when anxiety keeps stopping sleep, school, work or daily life. A trained helper can teach your mind and body how to feel safe again. Asking for help is wise, and it does not make your faith smaller.",
+        "What is true in this moment, before fear adds its story?", "Take five slow breaths, name what is real now, and tell one safe person how you feel.", R.drawable.letters_icon_star),
+    personalLetter("lost-hope", "When You Have Lost Hope", "This Dark Hour Is Not the Whole Story", "Hope can begin as one small choice to stay and receive care.",
+        "My dear one, I know you are tired of hearing that things will get better when you cannot see how. Hope may feel far away today. You do not need to pretend. Tell Me the truth about the darkness, and let this letter sit beside you without asking you to smile.",
+        "Do not make a final judgment about your life from its hardest hour. Pain can narrow your view until one closed door looks like the whole world. Borrow hope from a safe person. Let them help with food, rest, a call, an appointment or the next simple task.",
+        "If you may hurt yourself or do not feel safe, contact emergency help or a trusted person now and stay with someone. Your life is precious, and urgent support is an act of courage. Today, hope may be only this: you will not face the next hour alone.",
+        "Who can hold hope for you when you cannot hold it alone?", "Contact one safe person now and say clearly, ‘I am not okay, and I need you with me.’", R.drawable.letters_icon_sun),
+    personalLetter("heart-broken", "When Your Heart Is Broken", "Love Ending Does Not End You", "You may miss them and still choose the life ahead of you.",
+        "My dear one, I know how a broken heart can change every song, place and quiet hour. You may keep asking what you could have done to make them stay. Love can end even when your feelings are real. Their leaving does not prove that you were unworthy of love.",
+        "Let yourself grieve without chasing one more answer. Respect their choice and protect your dignity. Step away from checking, old messages and a perfect memory of what was never perfect. Each time you stop reopening the wound, you give your heart a little room to heal.",
+        "Return slowly to food, sleep, work, friends and prayer. Healing does not mean the love was false. It means your heart is learning to carry the memory without losing tomorrow. You will not always feel exactly as you do today. Walk gently until that truth becomes real.",
+        "What are you ready to stop checking so your heart can rest?", "Move one painful reminder out of daily view and spend time with one safe person.", R.drawable.letters_icon_heart),
+    personalLetter("not-enough", "When You Feel You Are Not Enough", "You Do Not Have to Earn Your Worth", "Growth is needed, but self-hate is not the price of growth.",
+        "My dear one, perhaps a result, a comment or a comparison has made you feel too small. You may believe you must become smarter, richer, prettier or stronger before you deserve respect. That is pain speaking. Your worth did not arrive with praise, and it cannot leave with criticism.",
+        "You can admit where you need to grow without calling your whole self a mistake. Choose one skill to practise and one habit to change. Let correction be clear and kind. A plant grows toward light; it does not grow because someone shouts at its roots.",
+        "Notice the good already living in you: the effort you make, the care you show, the truth you are learning to speak. You are unfinished, as every person is. I do not wait for your perfect version. I walk with the honest person you are today.",
+        "Whose standard are you using to decide that you are not enough?", "Write three qualities that are already true in you and one skill you will gently practise.", R.drawable.letters_icon_sun),
+    personalLetter("misunderstood", "When Nobody Seems to Understand You", "Your Voice Still Deserves a Safe Place", "Being misunderstood does not make your feelings wrong.",
+        "My dear one, it is painful to explain your heart and still feel unseen. You may begin to wonder whether speaking is useless. Sometimes people listen only through their own fear, hurry or past. Their poor understanding does not erase the truth of what you feel.",
+        "Try again with one safe person and one clear sentence. Say what happened, how it affected you and what you need now. Do not hide your meaning inside hints and do not make your pain louder by using cruel words. Clarity gives understanding its best chance.",
+        "Not everyone will understand every part of you. Seek people who are willing to ask, listen and learn. If a person keeps twisting your words, you may step back. You do not need the whole world to agree; you need truth, safe support and respect for your own inner voice.",
+        "What is the one sentence you most need someone to hear?", "Write that sentence and share it with one person who usually listens with care.", R.drawable.icon_friendship),
+    personalLetter("future-fear", "When You Are Afraid of the Future", "Tomorrow Does Not Need Today’s Fear", "Prepare for what you can and leave unknown things unopened.",
+        "My dear one, the future can look like a room filled with shadows. Your mind may create many painful scenes and then react as if they are already real. Most of those scenes are guesses. You are spending today’s strength on battles that may never come.",
+        "Ask what can be prepared now. Make the call, save a little, study one part, keep the appointment or ask for advice. Preparation is useful; endless prediction is not. Once today’s duty is done, give your body permission to return to the present.",
+        "You have met unknown days before. Help, skill and courage appeared step by step, not all at once. Tomorrow will also arrive one moment at a time. I will not ask you to carry a day before it reaches you. Walk with Me in the day that is here.",
+        "Which fear needs a real plan, and which fear needs to be released?", "Take one practical step for a real concern, then spend ten minutes fully in the present.", R.drawable.letters_icon_star),
+    personalLetter("life-unfair", "When Life Feels Unfair", "You Can Face Wrong Without Becoming Bitter", "Your pain deserves truth, support and a wise response.",
+        "My dear one, some things are unfair. I will not tell you that every wound is secretly easy or that you should smile at injustice. You may have worked honestly and still lost, or been hurt by a choice you did not make. Your anger and sadness need room to speak.",
+        "Ask what justice looks like now. It may mean telling the truth, keeping proof, asking for help, setting a limit or protecting someone else. Choose action that repairs rather than revenge that creates more harm. Dharma can be firm without making your heart cruel.",
+        "There will also be things you cannot undo. Do not let another person’s wrong decide the kind of person you become. Keep your values, accept support and build what is still possible. Their unfairness belongs to them; your next clean action belongs to you.",
+        "What fair and safe action is still in your hands?", "Tell one trusted person the facts and choose one step toward protection, repair or support.", R.drawable.icon_dharma),
+    personalLetter("tired-strong", "When You Are Tired of Being Strong", "You Are Allowed to Put the Weight Down", "Rest and help are not failures of courage.",
+        "My dear one, perhaps everyone comes to you because you always manage. They see your calm face and do not see how tired you are inside. You may fear that if you stop holding everything, it will all fall apart. Even the strongest arms need somewhere to place their load.",
+        "Strength is not doing every task alone. It is knowing what must be done, what can wait and what another person can carry. Say, ‘I need help.’ Cancel one nonessential demand. Rest before your body forces you to stop. Your needs also belong in the room.",
+        "You do not have to earn rest by reaching a breaking point. Let someone care for you without quickly returning the favor. I am with you in action, and I am also with you in stillness. Today your brave step may be to soften, receive and breathe.",
+        "What weight can you safely put down or share today?", "Ask one person for one specific kind of help and remove one unnecessary task.", R.drawable.icon_compassion),
+    personalLetter("self-forgiveness", "When You Cannot Forgive Yourself", "Do Not Turn One Wrong Into a Life Sentence", "Take responsibility, repair the harm and allow change to be real.",
+        "My dear one, you may believe that continuing to punish yourself proves you are sorry. It does not repair the past. It only keeps pain active. I ask you to face what happened without excuses, but I do not ask you to hate the person who is trying to become better.",
+        "Name the wrong, apologize without pressure and repair what you can. Accept that another person may need time or may not return. Then build a clear practice that makes the same harm less likely. Let your regret become protection, honesty and wiser action.",
+        "Forgiving yourself does not mean saying the wrong was acceptable. It means refusing to waste the lesson. You are responsible for the next choice, not able to rewrite the last one. Let changed behavior speak where repeated self-blame cannot.",
+        "What repair or changed habit would make your regret useful?", "Write one repair you can offer and one guardrail that will guide your future choices.", R.drawable.icon_dharma),
+    personalLetter("betrayal", "When Someone Has Betrayed You", "Their Choice Does Not Make Your Trust Foolish", "You can keep a good heart and build wiser limits.",
+        "My dear one, betrayal hurts because you gave someone a safe place in your heart. Now you may feel angry at them and ashamed of yourself for trusting. Do not call your kindness foolish. Trust was a gift you offered. Their misuse of it belongs to their choice.",
+        "Do not answer hurt with gossip, public shame or another secret. Learn what truly happened. If it is safe, ask one clear question. A real apology includes ownership, repair and changed action. Words without change do not rebuild trust, no matter how beautiful they sound.",
+        "You may forgive and still keep distance. You may care and still say no. Let trust return in small steps only when actions support it. One person’s betrayal does not mean every future friend will do the same. Keep your heart good and your boundaries awake.",
+        "What action—not promise—would be needed before trust could grow again?", "Write the boundary you need and share it calmly if the conversation is safe.", R.drawable.letters_icon_heart),
+    personalLetter("letting-go", "When You Must Let Someone Go", "Love Can Release What It Cannot Keep", "Letting go can honor both truth and your own dignity.",
+        "My dear one, sometimes love remains while a relationship can no longer continue. You may know the truth and still reach back because the empty space frightens you. Letting go is not proof that you never cared. It may be the most honest form your care can take now.",
+        "Do not keep opening a door that both people have agreed to close. Say what must be said once, with respect. Return what belongs to them, keep what you learned and reduce the small contacts that keep hope confused. A clear ending is kinder than an endless half-goodbye.",
+        "Grief will come in waves. Let safe people stand near you. Build new routines where the old ones lived. You are not throwing love away; you are refusing to turn it into a chain. Release them from the role they cannot fill, and release yourself to live.",
+        "What contact or habit is keeping the goodbye unfinished?", "Choose one respectful boundary that gives both hearts space to heal.", R.drawable.letters_icon_heart),
+    personalLetter("family-struggling", "When Your Family Is Struggling", "You Can Bring Care Without Carrying Everyone", "Do your part with love, but do not take the whole burden alone.",
+        "My dear one, when a family struggles, every room can hold worry. Money, health, conflict or change may make you feel that you must fix everything. You may also feel guilty for having your own needs. You are part of the family, but you are not meant to become its entire support.",
+        "Ask what is truly your duty today. Help with one task, speak gently and share facts instead of fear. Let each able person carry a fair part. Seek help from relatives, teachers, doctors, counselors or services when the problem needs more than love alone can provide.",
+        "Protect small signs of normal life: a meal together, study time, sleep, a walk or one honest laugh. Difficulty should not be allowed to take every good moment. Your calm care can help the family, and receiving care will help you remain steady.",
+        "What is your fair part, and what belongs to someone else?", "Choose one useful family task and ask for help with one burden you cannot carry alone.", R.drawable.icon_relationships),
+    personalLetter("stuck", "When You Feel Stuck in Life", "Movement Can Begin Smaller Than You Think", "You do not need a perfect plan to create a little motion.",
+        "My dear one, you may feel that every day looks the same while others move ahead. The more you wait for a large answer, the harder any step can feel. Being stuck is often not laziness. It can be fear, tiredness, grief or too many choices pulling at once.",
+        "Make the next step very small and visible. Open the document, walk for ten minutes, send the email or clear one corner. Do not ask whether it changes your whole life. Ask whether it creates honest movement. Small motion gives your mind new information.",
+        "If you keep trying and cannot function, speak with a safe person or trained helper. You may need support, not stronger blame. Your path has not disappeared because you paused. Begin where your feet are, with what your hands can do today.",
+        "What ten-minute action would create real movement?", "Set a ten-minute timer and do only the first physical step of the task.", R.drawable.icon_purpose),
+    personalLetter("unanswered-prayers", "When Your Prayers Seem Unanswered", "Silence Is Not Proof That You Are Forgotten", "Prayer can hold your heart even before life gives an answer.",
+        "My dear one, you have asked, waited and perhaps begged. Nothing seems to change. You may wonder whether I hear you or whether your faith is too small. Bring Me that doubt too. Honest pain is not disrespect, and you do not need perfect words to pray.",
+        "Prayer is not a bargain that controls every result. Sometimes the answer is delayed, different or carried through people and actions you did not expect. Keep doing the practical duty beside the prayer: seek treatment, apply again, apologize, study, ask for help or rest.",
+        "I will not promise that every wish will arrive in the shape you chose. I promise that your love, courage and honest effort can still grow in the waiting. Look for the next faithful action, not a hidden sign in every event. Let prayer make you present, not passive.",
+        "What practical step can stand beside your prayer today?", "Pray honestly for five minutes, then take one real action connected to the need.", R.drawable.icon_lotus),
+    personalLetter("difficult-decision", "When You Are Facing a Difficult Decision", "Let Values Lead Where Fear Cannot", "A clear choice begins with facts, duty and honest consequences.",
+        "My dear one, two roads may both hold loss, or many voices may be pulling you in different directions. You want certainty before choosing, but important choices rarely offer it. You can still decide with care, even when you cannot control every result.",
+        "Separate facts from guesses. Ask which choice is honest, safe and true to your duty. Consider who may be helped or harmed. Speak with someone wise who does not gain from your answer. Notice whether fear, pride or pressure is trying to hurry you.",
+        "Choose the best action with the truth available now. You may adjust when new facts appear; that is wisdom, not weakness. Once you have examined the choice well, stop asking worry to provide a perfect promise. Let your values carry the step.",
+        "Which choice best protects truth, responsibility and long-term peace?", "Write the facts, duties, likely effects and one wise person you will consult.", R.drawable.icon_strategy),
+    personalLetter("lost-purpose", "When You Have Lost Your Purpose", "Meaning Can Start With One Person You Help", "You do not need a grand mission before your day can matter.",
+        "My dear one, life may feel like a list of tasks with no reason behind them. You may think everyone else has found a calling while you are only passing time. Purpose is not always a sudden voice. Often it grows quietly through care, learning, work and service.",
+        "Look at what is already in your hands: your body, study, family, skill, promise or person who needs you. Do one duty with full attention. Meaning enters ordinary work when it protects, teaches, heals or makes life a little better for someone.",
+        "You are allowed to explore. Notice what brings quiet energy, not only quick praise. Ask which problem you are willing to stay with. Your role may change many times while the deeper values under it remain true. Begin by being useful where you stand.",
+        "Who or what could be helped by one skill you already have?", "Use one skill for twenty minutes to help a person, place or duty near you.", R.drawable.icon_purpose),
+    personalLetter("anger", "When Anger Is Controlling You", "Your Anger Has a Message, Not a Throne", "Listen to what anger protects, then choose your words with care.",
+        "My dear one, anger can arrive like fire. It may come because you were hurt, ignored, treated unfairly or pushed too far. The feeling itself does not make you bad. But anger must not become the ruler of your hands, words or choices.",
+        "Step away before you reply. Cool your body with water, a walk or ten slow breaths. Then ask, ‘What was I needing?’ Maybe you needed respect, truth, rest or a clear limit. When you know the need, you can speak about it without trying to wound someone.",
+        "Say, ‘I felt hurt when this happened. I need us to speak with respect.’ Do not send the cruel message. Do not break what you will later wish to repair. Strong people do not hide anger; they guide it toward truth, safety and fair action.",
+        "What hurt or unmet need is hiding under your anger?", "Wait ten minutes before replying, then state the facts, your feeling and your need.", R.drawable.icon_courage),
+    personalLetter("comparison", "When You Keep Comparing Yourself", "Another Person’s Light Does Not Dim Yours", "Their success is not proof that you are late or less.",
+        "My dear one, comparison can turn another person’s good news into pain. You see their marks, body, money, friends or progress and then look at yourself with cruel eyes. Remember that you are comparing your whole inner life with the small part of theirs that you can see.",
+        "Their path has a different time, duty, support and lesson. Bless what is good for them without using it against yourself. Then return to the work that belongs to you. Your life does not become meaningful by looking like someone else’s life.",
+        "Notice what comparison is trying to show you. It may point to a goal you truly want, or it may be asking for rest and self-respect. Turn envy into one clean action. Learn, practise or let the false goal go.",
+        "What do you truly want beneath the comparison?", "Mute one account that feeds comparison and spend twenty minutes on your own goal.", R.drawable.letters_icon_sun),
+    personalLetter("change", "When Change Feels Frightening", "You Can Meet the New One Step at a Time", "Change asks for adjustment, not instant courage.",
+        "My dear one, even a good change can make your heart uneasy. The old life was known, and the new one has no familiar shape yet. Fear does not always mean the change is wrong. Sometimes it only means that you care and cannot see the whole road.",
+        "Name what will remain steady: your values, a person, a routine, a skill or the way you care for yourself. Then learn one fact about what is coming. A clear detail can make a large unknown smaller. Prepare what you can without trying to control everything.",
+        "Give yourself time to become a beginner. You may miss the old and still welcome the new. Those feelings can live together. I am not asking you to love every change. I am asking you to bring your true self into the next small part of it.",
+        "What can stay steady while everything else changes?", "Choose one grounding routine and one practical preparation for the change ahead.", R.drawable.letters_icon_star),
+    personalLetter("carrying-too-much", "When You Are Carrying Too Much", "Not Every Weight Belongs in Your Hands", "Sort the urgent, share the possible and release the rest.",
+        "My dear one, your mind may be holding work, family, money, messages, promises and other people’s feelings all at once. When everything seems important, even a small task feels heavy. This is not proof that you are weak. It is a sign that your load needs sorting.",
+        "Write down every burden. Mark what truly needs action today, what can wait and what belongs to another person. Do not keep invisible duties that nobody asked you to carry. A clear list will not solve everything, but it will stop every worry from shouting at the same time.",
+        "Ask for specific help. Say no to one demand that breaks your limits. Eat, sleep and pause before exhaustion makes decisions for you. Service is sacred, but destroying yourself is not service. Let your care have wise boundaries so it can remain real.",
+        "Which burden is urgent, which can wait, and which is not yours?", "Make three columns—Today, Later and Not Mine—and move each burden into one.", R.drawable.icon_compassion),
+    personalLetter("forgotten", "When You Feel Forgotten", "Your Quiet Life Is Still Seen", "A lack of attention does not mean a lack of value.",
+        "My dear one, perhaps no one called, thanked you or noticed how much you carried. You may feel easy to replace and hard to remember. Human attention is uneven and often hurried. Its silence can hurt, but it is not a true measure of your place in this world.",
+        "Do not test love by disappearing and waiting to see who searches. Reach out honestly. Say, ‘I would like to spend time with you,’ or, ‘I need support today.’ Give people a fair chance to respond to words instead of asking them to read hidden pain.",
+        "Also return to the life that knows your touch: a duty, animal, plant, family member, friend or skill. Your presence changes more than applause can show. If one circle keeps overlooking you, widen the circle. There are people who can learn your name and value your care.",
+        "Where can you ask to be included instead of waiting silently?", "Invite one safe person to a simple call, walk or meal and say that their company matters.", R.drawable.icon_friendship),
+    personalLetter("financial-struggle", "When You Are Struggling Financially", "Your Worth Is Not Your Bank Balance", "Face the numbers with honesty and take one practical step at a time.",
+        "My dear one, money fear can enter every part of the day. You may feel ashamed, trapped or afraid to tell anyone. A financial struggle is a real problem, but it is not a moral name for you. Your balance cannot measure your dignity, love or ability to rebuild.",
+        "Bring the facts into light. List what comes in, what must go out and which payment is most urgent. Pause new debt and nonessential spending where possible. Speak early with the people or services involved; silence often makes fees, fear and choices harder.",
+        "Ask a trusted, financially wise person for help with a simple plan. Avoid promises of quick money that demand secrecy or high risk. Honest work, small savings and patient repair may feel slow, but they protect your future. Take the next clear step without judging your whole life.",
+        "What is the most urgent number you need to face clearly?", "Write a basic income-and-needs list and contact one trusted source of practical help.", R.drawable.icon_dharma),
+    personalLetter("health-failing", "When Your Health Is Failing", "Your Life Still Holds Dignity and Meaning", "Let care reach your body, mind and heart without shame.",
+        "My dear one, illness can change plans, energy and the way you see your body. You may feel angry, afraid or tired of being treated like a problem to solve. You are still a whole person. Your value does not fall when your strength, speed or independence changes.",
+        "Seek qualified medical care and share symptoms honestly. Ask questions until you understand the plan. Let someone help with appointments, food, medicine or rest. Prayer can support treatment; it should not replace the skilled care your body needs. Accepting help is not surrender.",
+        "Do not force yourself to feel grateful every moment. Make room for grief and for small good things that are still possible. A conversation, sunlight, music or one completed task can hold meaning. I am close to you in the body you have today, not only the body you miss.",
+        "What care does your body most clearly need today?", "Write your main symptoms and questions, then contact a qualified health professional or caregiver.", R.drawable.icon_compassion),
+    personalLetter("begin-again", "When You Need the Courage to Begin Again", "A New Beginning Can Be Small", "Carry the lesson forward without carrying old shame.",
+        "My dear one, starting again can feel heavy because you remember the last attempt. Part of you wants a clean life with no mistakes behind it. You do not need to erase the past. Let it become the teacher that helps you begin with wiser eyes.",
+        "Do not wait for perfect energy, perfect timing or perfect courage. Make the beginning so small that fear cannot hide it: one page, one call, one walk, one honest day. A new life is often built from steps that look ordinary.",
+        "There may be another difficult day. That does not cancel the start. Return without drama and continue. You are not back at zero; you are returning with knowledge. Be firm with the plan and gentle with the person learning to live it.",
+        "What is the smallest clear sign that your new beginning has started?", "Do that one action before the day ends and prepare the next action for tomorrow.", R.drawable.icon_lotus)
 )
 
 fun krishnaLetter(id: String?): KrishnaLetter = krishnaLetters.firstOrNull { it.id == id } ?: krishnaLetters.first()

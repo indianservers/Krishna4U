@@ -64,8 +64,8 @@ fun ParentingValuesSessionScreen(sessionId: String?, readingModeId: String, onBa
             }
         }
         item { SacredHero(R.drawable.illustration_01_krishna_full_body, session.lesson, session.story) }
-        item { SacredListCard("For the parent or caregiver", session.parentNote, R.drawable.icon_relationships, {}) }
-        item { SacredListCard("${readingMode(readingModeId).title} facilitation tip", session.facilitationTip(readingModeId), R.drawable.icon_teachings, {}) }
+        item { SacredListCard("For the parent or caregiver", session.parentNote, R.drawable.icon_relationships) }
+        item { SacredListCard("${readingMode(readingModeId).title} facilitation tip", session.facilitationTip(readingModeId), R.drawable.icon_teachings) }
         item {
             GlassCard(Modifier.fillMaxWidth()) {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {

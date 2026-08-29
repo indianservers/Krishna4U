@@ -9,6 +9,16 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -19,6 +29,8 @@ import com.indianservers.krishna4u.R
 import com.indianservers.krishna4u.ui.theme.LightGold
 import com.indianservers.krishna4u.ui.theme.MutedText
 import com.indianservers.krishna4u.ui.theme.SoftWhite
+import com.indianservers.krishna4u.ui.theme.LocalReducedMotion
+import kotlinx.coroutines.delay
 
 @Composable
 fun FeatureScaffold(
@@ -31,6 +43,7 @@ fun FeatureScaffold(
     content: LazyListScope.() -> Unit
 ) {
     KrishnaCosmicBackground(background) {
+        Box(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxSize().statusBarsPadding()) {
             Row(Modifier.fillMaxWidth().heightIn(min = 64.dp).padding(horizontal = 14.dp), verticalAlignment = Alignment.CenterVertically) {
                 Box(Modifier.size(48.dp).clickable(onClick = onBack), contentAlignment = Alignment.Center) {
@@ -40,7 +53,7 @@ fun FeatureScaffold(
                     Text(title, color = LightGold, style = MaterialTheme.typography.headlineMedium, textAlign = TextAlign.Center)
                     Text(subtitle, color = MutedText, style = MaterialTheme.typography.bodyMedium, textAlign = TextAlign.Center)
                 }
-                Spacer(Modifier.size(48.dp))
+                AnimatedPeacockFeather("$title|$subtitle", Modifier.size(48.dp).padding(7.dp))
             }
             GoldDivider(Modifier.padding(horizontal = 40.dp))
             LazyColumn(
@@ -50,6 +63,24 @@ fun FeatureScaffold(
                 content = content
             )
             if (showBottomBar) SacredBottomNavigation(onNavigate)
+        }
+        val reducedMotion = LocalReducedMotion.current
+        var revealLotus by remember(title) { mutableStateOf(false) }
+        LaunchedEffect(title, reducedMotion) {
+            if (!reducedMotion) {
+                revealLotus = true
+                delay(620)
+                revealLotus = false
+            }
+        }
+        AnimatedVisibility(
+            visible = revealLotus,
+            modifier = Modifier.align(Alignment.TopCenter).statusBarsPadding().padding(top = 62.dp),
+            enter = fadeIn() + scaleIn(initialScale = .25f),
+            exit = fadeOut() + scaleOut(targetScale = 1.25f)
+        ) {
+            SacredIcon(R.drawable.icon_lotus, null, Modifier.size(58.dp))
+        }
         }
     }
 }
@@ -66,7 +97,7 @@ fun SacredHero(@DrawableRes illustration: Int, title: String, body: String, modi
 }
 
 @Composable
-fun SacredListCard(title: String, body: String, @DrawableRes icon: Int, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun SacredListCard(title: String, body: String, @DrawableRes icon: Int, onClick: (() -> Unit)? = null, modifier: Modifier = Modifier) {
     GlassCard(modifier.fillMaxWidth(), onClick) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             SacredIcon(icon, null, Modifier.size(42.dp))
@@ -74,7 +105,9 @@ fun SacredListCard(title: String, body: String, @DrawableRes icon: Int, onClick:
                 Text(title, color = LightGold, style = MaterialTheme.typography.titleLarge)
                 Text(body, color = MutedText, style = MaterialTheme.typography.bodyMedium)
             }
-            SacredIcon(R.drawable.icon_next, "Open", Modifier.size(26.dp))
+            if (onClick != null) {
+                SacredIcon(R.drawable.icon_next, "Open", Modifier.size(26.dp))
+            }
         }
     }
 }

@@ -35,7 +35,7 @@ fun DifficultQuestionsLibraryScreen(onBack: () -> Unit, onNavigate: (String) -> 
         items(filtered) { question ->
             SacredListCard(question.question, "${question.theme} · ${question.shortAnswer}", R.drawable.icon_teachings, { onNavigate("difficult_question/${question.id}") })
         }
-        if (filtered.isEmpty()) item { SacredListCard("No question found", "Try a broader word.", R.drawable.icon_search, {}) }
+        if (filtered.isEmpty()) item { SacredListCard("No question found", "Try a broader word.", R.drawable.icon_search) }
         item { GlassCard(Modifier.fillMaxWidth()) { Text("These are study notes, not final verdicts. The Mahabharata and Krishna traditions contain layered voices, and translations and commentaries often differ.", color = MutedText) } }
     }
 }
@@ -58,8 +58,8 @@ fun DifficultQuestionScreen(questionId: String?, onBack: () -> Unit, onNavigate:
                 }
             }
         }
-        item { SacredListCard("Narrative context", item.context, R.drawable.icon_gita, {}) }
-        item { SacredListCard("The ethical tension", item.ethicalTension, R.drawable.icon_dharma, {}) }
+        item { SacredListCard("Narrative context", item.context, R.drawable.icon_gita) }
+        item { SacredListCard("The ethical tension", item.ethicalTension, R.drawable.icon_dharma) }
         item {
             GlassCard(Modifier.fillMaxWidth()) {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -73,8 +73,8 @@ fun DifficultQuestionScreen(questionId: String?, onBack: () -> Unit, onNavigate:
                 }
             }
         }
-        item { SacredListCard("What not to conclude", item.doNotConclude, R.drawable.icon_courage, {}) }
-        item { SacredListCard("Reflect", item.reflection, R.drawable.icon_journal, {}) }
+        item { SacredListCard("What not to conclude", item.doNotConclude, R.drawable.icon_courage) }
+        item { SacredListCard("Reflect", item.reflection, R.drawable.icon_journal) }
         item { GlassCard(Modifier.fillMaxWidth()) { Column(verticalArrangement = Arrangement.spacedBy(5.dp)) { Text("Textual note", color = LightGold, style = MaterialTheme.typography.titleMedium); Text(item.sourceNote, color = MutedText) } } }
         item {
             SecondarySacredButton("Share Study", { shareSacredText(context, item.question, "${item.question}\n\n${item.shortAnswer}\n\nContext:\n${item.context}\n\nEthical tension:\n${item.ethicalTension}\n\nPossible readings:\n${item.readings.joinToString("\n") { "• $it" }}\n\nWhat not to conclude:\n${item.doNotConclude}\n\nShared from Krishna For You") }, Modifier.fillMaxWidth())

@@ -10,7 +10,7 @@ data class ReadingMode(
 
 val readingModes = listOf(
     ReadingMode("kids", "Kids", "Ages 6–10", "Short stories, simple ideas and three memorable lessons.", 2),
-    ReadingMode("teens", "Teens", "Ages 11–17", "Real-life language, moral choices and practical takeaways.", 3),
+    ReadingMode("teens", "Youth", "Ages 11–17", "Real-life connections, moral choices and practical takeaways.", 3),
     ReadingMode("adults", "Adults", "Ages 18+", "Complete reflections with deeper context and all takeaways.", null)
 )
 

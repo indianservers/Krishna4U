@@ -139,6 +139,7 @@ class VerseBootReceiver : BroadcastReceiver() {
             try {
                 val preferences = PreferencesRepository(context.applicationContext).preferences.first()
                 DailyVerseNotifications.sync(context.applicationContext, preferences)
+                NightMessageNotifications.sync(context.applicationContext, preferences)
             } finally {
                 pendingResult.finish()
             }

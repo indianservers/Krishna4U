@@ -4,6 +4,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.*
 import com.indianservers.krishna4u.core.notifications.DailyVerseNotifications
+import com.indianservers.krishna4u.core.notifications.NightMessageNotifications
 import com.indianservers.krishna4u.data.local.PreferencesRepository
 import com.indianservers.krishna4u.data.local.UserPreferences
 import com.indianservers.krishna4u.feature.gallery.*
@@ -21,11 +22,13 @@ import com.indianservers.krishna4u.feature.oneminute.*
 import com.indianservers.krishna4u.feature.decisions.*
 import com.indianservers.krishna4u.feature.difficultquestions.*
 import com.indianservers.krishna4u.feature.parenting.*
+import com.indianservers.krishna4u.feature.night.*
+import com.indianservers.krishna4u.feature.collectibles.*
 import com.indianservers.krishna4u.ui.theme.KrishnaPreferenceTheme
 import kotlinx.coroutines.launch
 
 @Composable
-fun KrishnaApp() {
+fun KrishnaApp(pendingDestination: String? = null, onDestinationConsumed: () -> Unit = {}) {
     val context = LocalContext.current
     val repository = remember { PreferencesRepository(context.applicationContext) }
     val prefs by repository.preferences.collectAsState(initial = UserPreferences())
@@ -34,6 +37,15 @@ fun KrishnaApp() {
     fun go(route: String) { nav.navigate(route) { launchSingleTop = true } }
     LaunchedEffect(prefs.notificationsEnabled, prefs.notificationHour, prefs.notificationMinute) {
         DailyVerseNotifications.sync(context.applicationContext, prefs)
+    }
+    LaunchedEffect(prefs.bedtimeMessageEnabled, prefs.bedtimeHour, prefs.bedtimeMinute) {
+        NightMessageNotifications.sync(context.applicationContext, prefs)
+    }
+    LaunchedEffect(pendingDestination, prefs.onboardingComplete) {
+        if (pendingDestination != null && prefs.onboardingComplete) {
+            go(pendingDestination)
+            onDestinationConsumed()
+        }
     }
     KrishnaPreferenceTheme(prefs.darkTheme, prefs.textSize, prefs.reducedMotion) {
     NavHost(
@@ -84,7 +96,17 @@ fun KrishnaApp() {
         composable("23") { LifeSituationsScreen({ nav.popBackStack() }, ::go) }
         composable("24") { TodayWithKrishnaScreen({ nav.popBackStack() }, ::go) }
         composable("25") { MeditationAndChantingScreen({ nav.popBackStack() }, ::go) }
-        composable("26") { JournalScreen(prefs.bookmarks, { id -> scope.launch { repository.toggleBookmark(id) } }, { nav.popBackStack() }, ::go) }
+        composable("26") {
+            JournalScreen(
+                bookmarks = prefs.bookmarks,
+                reflections = prefs.reflections,
+                onToggleBookmark = { id -> scope.launch { repository.toggleBookmark(id) } },
+                onSaveReflection = { text -> scope.launch { repository.saveReflection(text) } },
+                onDeleteReflection = { id -> scope.launch { repository.deleteReflection(id) } },
+                onBack = { nav.popBackStack() },
+                onNavigate = ::go
+            )
+        }
         composable("27") { LearningProgressScreen({ nav.popBackStack() }, ::go) }
         composable("28") {
             ProfileSettingsScreen(
@@ -95,6 +117,9 @@ fun KrishnaApp() {
                 notificationsEnabled = prefs.notificationsEnabled,
                 notificationHour = prefs.notificationHour,
                 notificationMinute = prefs.notificationMinute,
+                bedtimeMessageEnabled = prefs.bedtimeMessageEnabled,
+                bedtimeHour = prefs.bedtimeHour,
+                bedtimeMinute = prefs.bedtimeMinute,
                 darkTheme = prefs.darkTheme,
                 reducedMotion = prefs.reducedMotion,
                 onSaveDisplayName = { scope.launch { repository.setDisplayName(it) } },
@@ -103,12 +128,15 @@ fun KrishnaApp() {
                 onReadingModeChanged = { scope.launch { repository.setReadingMode(it) } },
                 onNotificationsChanged = { scope.launch { repository.setNotificationsEnabled(it) } },
                 onNotificationTimeChanged = { hour, minute -> scope.launch { repository.setNotificationTime(hour, minute) } },
+                onBedtimeMessageChanged = { scope.launch { repository.setBedtimeMessageEnabled(it) } },
+                onBedtimeChanged = { hour, minute -> scope.launch { repository.setBedtime(hour, minute) } },
                 onDarkThemeChanged = { scope.launch { repository.setDarkTheme(it) } },
                 onReducedMotionChanged = { scope.launch { repository.setReducedMotion(it) } },
                 onResetJourney = {
                     scope.launch {
                         repository.resetJourney()
                         DailyVerseNotifications.cancel(context.applicationContext)
+                        NightMessageNotifications.cancel(context.applicationContext)
                         nav.navigate("02") { popUpTo("01") { inclusive = true } }
                     }
                 },
@@ -131,6 +159,14 @@ fun KrishnaApp() {
         composable("wisdom") { WisdomForLifeScreen({ nav.popBackStack() }, ::go) }
         composable("emotional_intelligence") { EmotionalIntelligenceLibraryScreen(prefs.readingMode, { nav.popBackStack() }, ::go) }
         composable("emotional_intelligence/{lessonId}") { entry -> EmotionalIntelligenceLessonScreen(entry.arguments?.getString("lessonId"), prefs.readingMode, { nav.popBackStack() }, ::go) }
+        composable("emotion_wheel") { EmotionWheelScreen({ nav.popBackStack() }, ::go) }
+        composable("night_message") { KrishnaNightMessageScreen(prefs.displayName, { nav.popBackStack() }, ::go) }
+        composable("collectibles") {
+            SacredCollectiblesScreen(LearningActivity(prefs.bookmarks, prefs.reflections, prefs.readSlokas), { nav.popBackStack() }, ::go)
+        }
+        composable("collectible/{collectibleId}") { entry ->
+            SacredCollectibleDetailsScreen(entry.arguments?.getString("collectibleId"), LearningActivity(prefs.bookmarks, prefs.reflections, prefs.readSlokas), { nav.popBackStack() }, ::go)
+        }
         composable("krishna_letters") { KrishnaLettersLibraryScreen(prefs.displayName, { nav.popBackStack() }, ::go) }
         composable("krishna_letters/{letterId}") { entry -> KrishnaLetterScreen(entry.arguments?.getString("letterId"), prefs.displayName, { nav.popBackStack() }, ::go) }
         composable("one_minute_stories") { OneMinuteStoriesLibraryScreen({ nav.popBackStack() }, ::go) }

@@ -75,7 +75,7 @@ fun IndividualSlokaScreen(bookmarked: Boolean, onToggleBookmark: () -> Unit, onB
 @Composable
 fun SlokaExplanationScreen(onBack: () -> Unit, onNavigate: (String) -> Unit) = FeatureScaffold("UNDERSTANDING 2.47", "Krishna’s teaching for daily life", R.drawable.bg_03_kurukshetra_cosmos, onBack, onNavigate, false) {
     item { SacredHero(R.drawable.illustration_03_krishna_arjuna_chariot, "Simple meaning", "Give your full attention to what you can do.") }
-    items(listOf(Triple("Deeper wisdom", "Attachment to results creates fear and weakens action.", R.drawable.icon_teachings), Triple("Modern example", "Study with discipline; do not let anxiety decide your effort.", R.drawable.icon_life_journey), Triple("Practice", "Choose one important action today and perform it without checking the outcome.", R.drawable.icon_check))) { x -> SacredListCard(x.first, x.second, x.third, {}) }
+    items(listOf(Triple("Deeper wisdom", "Attachment to results creates fear and weakens action.", R.drawable.icon_teachings), Triple("Modern example", "Study with discipline; do not let anxiety decide your effort.", R.drawable.icon_life_journey), Triple("Practice", "Choose one important action today and perform it without checking the outcome.", R.drawable.icon_check))) { x -> SacredListCard(x.first, x.second, x.third) }
     item { PrimaryGoldButton("Next Teaching", { onNavigate("18") }, Modifier.fillMaxWidth()) }
 }
 
@@ -86,7 +86,7 @@ fun ListenToGitaScreen(onBack: () -> Unit, onNavigate: (String) -> Unit) {
         item { SacredHero(R.drawable.illustration_07_open_gita, "Chapter 2 · Sloka 2.47", "Sanskrit recitation · audio unavailable in supplied pack") }
         item { Image(painterResource(R.drawable.ui_audio_waveform), null, Modifier.fillMaxWidth().height(90.dp), contentScale = ContentScale.FillWidth) }
         item { Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) { SacredIcon(R.drawable.icon_previous, "Previous", Modifier.size(52.dp).clickable { }); Spacer(Modifier.width(20.dp)); SacredIcon(if (playing) R.drawable.icon_pause else R.drawable.icon_play, if (playing) "Pause" else "Play", Modifier.size(76.dp).clickable { playing = !playing }); Spacer(Modifier.width(20.dp)); SacredIcon(R.drawable.icon_next, "Next", Modifier.size(52.dp).clickable { }) } }
-        items(slokas) { (n, t) -> SacredListCard(n, t, R.drawable.icon_audio, {}) }
+        items(slokas) { (n, t) -> SacredListCard(n, t, R.drawable.icon_audio) }
     }
 }
 
@@ -95,8 +95,8 @@ fun GitaStudyModeScreen(onBack: () -> Unit, onNavigate: (String) -> Unit) {
     var reflection by remember { mutableStateOf("") }; var saved by remember { mutableStateOf(false) }
     FeatureScaffold("STUDY MODE · CHAPTER 2", "Focused learning", R.drawable.bg_08_minimal_starfield, onBack, onNavigate, false) {
         item { SacredHero(R.drawable.illustration_01_krishna_full_body, "Sloka 2.47", "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन") }
-        item { SacredListCard("Word by word", "karmaṇi — in action · adhikāraḥ — right", R.drawable.icon_teachings, {}) }
-        item { SacredListCard("What I learned", "My effort is mine; the result is not mine alone.", R.drawable.icon_mind, {}) }
+        item { SacredListCard("Word by word", "karmaṇi — in action · adhikāraḥ — right", R.drawable.icon_teachings) }
+        item { SacredListCard("What I learned", "My effort is mine; the result is not mine alone.", R.drawable.icon_mind) }
         item { OutlinedTextField(reflection, { reflection = it }, label = { Text("Reflection") }, modifier = Modifier.fillMaxWidth(), minLines = 4) }
         item { PrimaryGoldButton(if (saved) "Reflection Saved" else "Save Reflection", { saved = true }, Modifier.fillMaxWidth()) }
     }

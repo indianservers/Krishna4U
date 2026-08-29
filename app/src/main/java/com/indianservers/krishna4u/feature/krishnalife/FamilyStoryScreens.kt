@@ -17,6 +17,7 @@ import com.indianservers.krishna4u.core.audio.LocalStoryNarration
 import com.indianservers.krishna4u.core.design.FeatureScaffold
 import com.indianservers.krishna4u.core.design.GlassCard
 import com.indianservers.krishna4u.core.design.PrimaryGoldButton
+import com.indianservers.krishna4u.core.design.PeacockStorySweep
 import com.indianservers.krishna4u.core.design.SacredHero
 import com.indianservers.krishna4u.core.design.SacredIcon
 import com.indianservers.krishna4u.core.design.SacredListCard
@@ -49,6 +50,7 @@ fun FamilyStoryDetailsScreen(eventId: String?, readingModeId: String, onBack: ()
         item {
             GlassCard(Modifier.fillMaxWidth()) {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    PeacockStorySweep("family-${event.id}")
                     Text("Story Time", color = LightGold, style = MaterialTheme.typography.titleLarge)
                     Text(event.storyFor(if (readingModeId == "adults") "adults" else "kids"), color = SoftWhite, style = MaterialTheme.typography.bodyLarge)
                     LocalStoryNarration(event.storyFor(if (readingModeId == "adults") "adults" else "kids"), Modifier.fillMaxWidth())

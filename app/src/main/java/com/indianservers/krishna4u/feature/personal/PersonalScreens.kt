@@ -32,10 +32,19 @@ import com.indianservers.krishna4u.ui.theme.*
 private data class SavedBookmark(val id: String, val title: String, val body: String, val icon: Int, val route: String)
 
 @Composable
-fun JournalScreen(bookmarks: Set<String>, onToggleBookmark: (String) -> Unit, onBack: () -> Unit, onNavigate: (String) -> Unit) {
+fun JournalScreen(
+    bookmarks: Set<String>,
+    reflections: Set<String>,
+    onToggleBookmark: (String) -> Unit,
+    onSaveReflection: (String) -> Unit,
+    onDeleteReflection: (String) -> Unit,
+    onBack: () -> Unit,
+    onNavigate: (String) -> Unit
+) {
     val context = LocalContext.current
     val gitaRepository = remember { OfflineGitaRepository(context.applicationContext) }
     var tab by remember { mutableStateOf("Slokas") }; var note by remember { mutableStateOf("") }; var saved by remember { mutableStateOf(false) }
+    val savedReflections = remember(reflections) { reflections.sortedByDescending { it.substringBefore('|').toLongOrNull() ?: 0L } }
     val savedItems = remember(bookmarks) {
         bookmarks.sorted().mapNotNull { id ->
             when {
@@ -75,7 +84,27 @@ fun JournalScreen(bookmarks: Set<String>, onToggleBookmark: (String) -> Unit, on
             }
         } else {
             item { OutlinedTextField(note, { note = it; saved = false }, label = { Text("Write a private reflection") }, modifier = Modifier.fillMaxWidth(), minLines = 3) }
-            item { PrimaryGoldButton(if (saved) "Reflection Saved" else "Save Reflection", { saved = note.isNotBlank() }, Modifier.fillMaxWidth()) }
+            item {
+                PrimaryGoldButton(if (saved) "Reflection Saved" else "Save Reflection", {
+                    if (note.isNotBlank()) {
+                        onSaveReflection(note)
+                        note = ""
+                        saved = true
+                    }
+                }, Modifier.fillMaxWidth())
+            }
+            if (savedReflections.isEmpty()) {
+                item { GlassCard(Modifier.fillMaxWidth()) { Text("Your saved reflections will appear here and stay on this device.", color = MutedText) } }
+            } else {
+                items(savedReflections, key = { it }) { entry ->
+                    GlassCard(Modifier.fillMaxWidth()) {
+                        Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                            Text(entry.substringAfter('|'), color = SoftWhite, style = MaterialTheme.typography.bodyLarge)
+                            SecondarySacredButton("Delete Reflection", { onDeleteReflection(entry) }, Modifier.fillMaxWidth())
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -84,7 +113,7 @@ fun JournalScreen(bookmarks: Set<String>, onToggleBookmark: (String) -> Unit, on
 fun LearningProgressScreen(onBack: () -> Unit, onNavigate: (String) -> Unit) = FeatureScaffold("Your Inner Journey", "Learning with Krishna · 28 days", R.drawable.bg_09_lotus_reflection, onBack, onNavigate) {
     item { SacredHero(R.drawable.illustration_08_wisdom_tree, "Level 4 · Seeker", "Your growth is measured by sincere practice, not comparison.") }
     item { Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) { listOf("4 / 18\nChapters", "126\nSlokas", "18\nReflections").forEach { GlassCard(Modifier.weight(1f)) { Text(it, color = LightGold) } } } }
-    items(listOf(Triple("Gita progress", "Chapter 4 of 18", R.drawable.icon_gita), Triple("Daily rhythm", "7-day reflection streak", R.drawable.icon_calendar), Triple("Meditation", "82 minutes of stillness", R.drawable.icon_meditation), Triple("Dharma milestone", "You completed 10 guided reflections", R.drawable.icon_dharma))) { x -> SacredListCard(x.first, x.second, x.third, {}) }
+    items(listOf(Triple("Gita progress", "Chapter 4 of 18", R.drawable.icon_gita), Triple("Daily rhythm", "7-day reflection streak", R.drawable.icon_calendar), Triple("Meditation", "82 minutes of stillness", R.drawable.icon_meditation), Triple("Dharma milestone", "You completed 10 guided reflections", R.drawable.icon_dharma))) { x -> SacredListCard(x.first, x.second, x.third) }
     item { PrimaryGoldButton("Continue Your Journey", { onNavigate("24") }, Modifier.fillMaxWidth()) }
 }
 
@@ -97,6 +126,9 @@ fun ProfileSettingsScreen(
     notificationsEnabled: Boolean,
     notificationHour: Int,
     notificationMinute: Int,
+    bedtimeMessageEnabled: Boolean,
+    bedtimeHour: Int,
+    bedtimeMinute: Int,
     darkTheme: Boolean,
     reducedMotion: Boolean,
     onSaveDisplayName: (String) -> Unit,
@@ -105,6 +137,8 @@ fun ProfileSettingsScreen(
     onReadingModeChanged: (String) -> Unit,
     onNotificationsChanged: (Boolean) -> Unit,
     onNotificationTimeChanged: (Int, Int) -> Unit,
+    onBedtimeMessageChanged: (Boolean) -> Unit,
+    onBedtimeChanged: (Int, Int) -> Unit,
     onDarkThemeChanged: (Boolean) -> Unit,
     onReducedMotionChanged: (Boolean) -> Unit,
     onResetJourney: () -> Unit,
@@ -119,6 +153,9 @@ fun ProfileSettingsScreen(
     var confirmReset by remember { mutableStateOf(false) }
     val notificationPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         onNotificationsChanged(granted)
+    }
+    val bedtimePermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        onBedtimeMessageChanged(granted)
     }
     LaunchedEffect(notificationsEnabled) {
         if (
@@ -141,6 +178,18 @@ fun ProfileSettingsScreen(
             onNotificationsChanged(true)
         }
     }
+    fun requestBedtimeMessage(enabled: Boolean) {
+        if (!enabled) {
+            onBedtimeMessageChanged(false)
+        } else if (
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+        ) {
+            bedtimePermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            onBedtimeMessageChanged(true)
+        }
+    }
     val formattedTime = remember(notificationHour, notificationMinute) {
         val hour = when {
             notificationHour == 0 -> 12
@@ -148,6 +197,14 @@ fun ProfileSettingsScreen(
             else -> notificationHour
         }
         "%d:%02d %s".format(hour, notificationMinute, if (notificationHour < 12) "AM" else "PM")
+    }
+    val formattedBedtime = remember(bedtimeHour, bedtimeMinute) {
+        val hour = when {
+            bedtimeHour == 0 -> 12
+            bedtimeHour > 12 -> bedtimeHour - 12
+            else -> bedtimeHour
+        }
+        "%d:%02d %s".format(hour, bedtimeMinute, if (bedtimeHour < 12) "AM" else "PM")
     }
     FeatureScaffold("Your Journey, Your Way", "Profile & settings", R.drawable.bg_08_minimal_starfield, onBack, onNavigate) {
         item { SacredHero(R.drawable.illustration_02_krishna_portrait, displayName, "Seeker of wisdom") }
@@ -197,6 +254,21 @@ fun ProfileSettingsScreen(
                 })
             }
         }
+        item { ToggleCard("Krishna’s Night Message", "A calming reflection each night at $formattedBedtime", R.drawable.letters_icon_star, bedtimeMessageEnabled, ::requestBedtimeMessage) }
+        if (bedtimeMessageEnabled) {
+            item {
+                SacredListCard("Bedtime", formattedBedtime, R.drawable.icon_timer, onClick = {
+                    TimePickerDialog(
+                        context,
+                        { _, hour, minute -> onBedtimeChanged(hour, minute) },
+                        bedtimeHour,
+                        bedtimeMinute,
+                        false
+                    ).show()
+                })
+            }
+        }
+        item { SacredListCard("Preview Night Message", "Moonlight, stars and a quiet reflection for the end of your day", R.drawable.icon_lotus, onClick = { onNavigate("night_message") }) }
         item { ToggleCard("Sacred dark theme", "Use the cosmic midnight palette", R.drawable.icon_theme, darkTheme, onDarkThemeChanged) }
         item { ToggleCard("Reduced motion", "Minimise decorative and transition animations", R.drawable.icon_settings, reducedMotion, onReducedMotionChanged) }
         item { SacredListCard("Privacy", "Notes and preferences stay on this device", R.drawable.icon_privacy, onClick = { informationDialog = "Privacy" }) }

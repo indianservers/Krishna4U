@@ -144,6 +144,40 @@ fun HomeScreen(displayName: String, selectedNeeds: Set<String>, readSlokaCount: 
                         }
                     }
                 }
+                item {
+                    GlassCard(Modifier.fillMaxWidth().height(118.dp), onClick = { onOpen("krishna_letters") }) {
+                        Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
+                            Image(
+                                painterResource(R.drawable.icon_compassion),
+                                "Krishna’s Letters to You",
+                                Modifier.size(64.dp),
+                                contentScale = ContentScale.Fit
+                            )
+                            Column(Modifier.weight(1f).padding(horizontal = 14.dp)) {
+                                Text("Krishna’s Letters to You", color = LightGold, style = MaterialTheme.typography.titleLarge)
+                                Text("A personal letter for what your heart is carrying", color = MutedText, style = MaterialTheme.typography.bodyMedium)
+                            }
+                            Text("→", color = LightGold, style = MaterialTheme.typography.headlineMedium)
+                        }
+                    }
+                }
+                item {
+                    GlassCard(Modifier.fillMaxWidth().height(118.dp), onClick = { onOpen("night_message") }) {
+                        Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
+                            Image(
+                                painterResource(R.drawable.letters_icon_star),
+                                "Krishna’s Night Message",
+                                Modifier.size(64.dp),
+                                contentScale = ContentScale.Fit
+                            )
+                            Column(Modifier.weight(1f).padding(horizontal = 14.dp)) {
+                                Text("Krishna’s Night Message", color = LightGold, style = MaterialTheme.typography.titleLarge)
+                                Text("Place today in Krishna’s hands and rest", color = MutedText, style = MaterialTheme.typography.bodyMedium)
+                            }
+                            Text("→", color = LightGold, style = MaterialTheme.typography.headlineMedium)
+                        }
+                    }
+                }
             }
             SacredBottomNavigation(onOpen)
         }

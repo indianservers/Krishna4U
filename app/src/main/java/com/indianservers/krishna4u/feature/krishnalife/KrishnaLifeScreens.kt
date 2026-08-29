@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.indianservers.krishna4u.R
+import com.indianservers.krishna4u.core.audio.EnglishAudioIcon
 import com.indianservers.krishna4u.core.design.*
 import com.indianservers.krishna4u.core.localization.readingMode
 import com.indianservers.krishna4u.core.sharing.shareSacredText
@@ -29,9 +30,10 @@ fun KrishnaLifeJourneyScreen(readingModeId: String, onBack: () -> Unit, onNaviga
 fun LifeEventDetailsScreen(eventId: String?, readingModeId: String, bookmarked: Boolean, onToggleBookmark: () -> Unit, onBack: () -> Unit, onNavigate: (String) -> Unit) {
     val context = LocalContext.current
     val event = lifeEvent(eventId)
+    val mode = readingMode(readingModeId)
     FeatureScaffold(event.title, event.subtitle, event.background, onBack, onNavigate, showBottomBar = false) {
         item { SacredHero(event.illustration, event.title, event.qualities) }
-        item { GlassCard(Modifier.fillMaxWidth()) { Column(verticalArrangement = Arrangement.spacedBy(10.dp)) { Text("Story", color = LightGold, style = MaterialTheme.typography.titleLarge); Text(event.storyFor(readingModeId), color = SoftWhite, style = MaterialTheme.typography.bodyLarge) } } }
+        item { GlassCard(Modifier.fillMaxWidth()) { Column(verticalArrangement = Arrangement.spacedBy(10.dp)) { PeacockStorySweep(event.id); Row(Modifier.fillMaxWidth(), verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) { Column(Modifier.weight(1f)) { Text("Story", color = LightGold, style = MaterialTheme.typography.titleLarge); Text("${mode.title} reading · ${mode.ageRange}", color = MutedText, style = MaterialTheme.typography.labelMedium) }; EnglishAudioIcon(event.storyFor(readingModeId), Modifier.size(44.dp)) }; Text(event.storyFor(readingModeId), color = SoftWhite, style = MaterialTheme.typography.bodyLarge) } } }
         item { GlassCard(Modifier.fillMaxWidth()) { Column(verticalArrangement = Arrangement.spacedBy(10.dp)) { Text("Takeaways", color = LightGold, style = MaterialTheme.typography.titleLarge); event.takeawaysFor(readingModeId).forEachIndexed { i, takeaway -> Row { SacredIcon(R.drawable.icon_check, null, Modifier.size(25.dp)); Text("${i + 1}.  $takeaway", Modifier.padding(start = 9.dp), color = SoftWhite) } } } } }
         item { Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) { SecondarySacredButton(if (bookmarked) "✓ Saved" else "☆ Bookmark", onToggleBookmark, Modifier.weight(1f)); SecondarySacredButton("Share Story", { shareSacredText(context, event.title, "${event.title} · ${event.subtitle}\n\nStory\n${event.storyFor(readingModeId)}\n\nTakeaways\n${event.takeawaysFor(readingModeId).mapIndexed { index, value -> "${index + 1}. $value" }.joinToString("\n")}\n\nShared from Krishna For You") }, Modifier.weight(1f)) } }
         item { Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) { SecondarySacredButton("Life Journey", onBack, Modifier.weight(1f)); PrimaryGoldButton("Apply this lesson", { onNavigate("11") }, Modifier.weight(1.45f)) } }

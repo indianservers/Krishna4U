@@ -42,6 +42,7 @@ fun DharmaDecisionStoryScreen(storyId: String?, onBack: () -> Unit, onNavigate: 
     val selected = selectedChoice?.let(dilemma.choices::get)
     FeatureScaffold(dilemma.title, "DHARMA DECISION ${index + 1} OF ${dharmaDecisionStories.size} · ${dilemma.category.uppercase()}", R.drawable.bg_06_dharma_crossroads, onBack, onNavigate, false) {
         item { SacredHero(R.drawable.illustration_06_meditating_seeker, dilemma.question, dilemma.situation) }
+        item { PeacockStorySweep("decision-${dilemma.id}") }
         item { Text("Choose before revealing the guidance", color = LightGold, style = MaterialTheme.typography.headlineSmall) }
         items(dilemma.choices.indices.toList()) { choiceIndex ->
             val choice = dilemma.choices[choiceIndex]
@@ -87,8 +88,8 @@ fun DharmaDecisionStoryScreen(storyId: String?, onBack: () -> Unit, onNavigate: 
                     }
                 }
             }
-            item { SacredListCard("Remember", dilemma.principle, R.drawable.icon_teachings, {}) }
-            item { SacredListCard("Put Dharma into action", dilemma.action, R.drawable.icon_check, {}) }
+            item { SacredListCard("Remember", dilemma.principle, R.drawable.icon_teachings) }
+            item { SacredListCard("Put Dharma into action", dilemma.action, R.drawable.icon_check) }
             item {
                 SecondarySacredButton(
                     "Share This Decision",

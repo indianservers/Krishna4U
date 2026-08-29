@@ -8,6 +8,9 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -32,14 +35,18 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -50,6 +57,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
 import com.indianservers.krishna4u.R
 import com.indianservers.krishna4u.ui.theme.AntiqueGold
 import com.indianservers.krishna4u.ui.theme.CelestialCyan
@@ -97,10 +105,16 @@ fun AnimatedMandalaHalo(modifier: Modifier = Modifier, durationMillis: Int = 600
 
 @Composable
 fun BreathingLotusOrb(modifier: Modifier = Modifier) {
+    val reducedMotion = LocalReducedMotion.current
     val transition = rememberInfiniteTransition(label = "breathing")
     val scale by transition.animateFloat(.94f, 1.06f, infiniteRepeatable(tween(2000), RepeatMode.Reverse), label = "scale")
     val alpha by transition.animateFloat(.78f, 1f, infiniteRepeatable(tween(2000), RepeatMode.Reverse), label = "alpha")
-    Image(painterResource(R.drawable.effect_01_breathing_lotus_orb), null, modifier.scale(scale).alpha(alpha), contentScale = ContentScale.Fit)
+    Image(
+        painterResource(R.drawable.effect_01_breathing_lotus_orb),
+        null,
+        modifier.scale(if (reducedMotion) 1f else scale).alpha(if (reducedMotion) .9f else alpha),
+        contentScale = ContentScale.Fit
+    )
 }
 
 @Composable
@@ -161,6 +175,16 @@ private fun SacredActionButton(
         animationSpec = tween(120),
         label = "sacredButtonPress"
     )
+    var previousText by remember { mutableStateOf(text) }
+    var showBookmarkBurst by remember { mutableStateOf(false) }
+    LaunchedEffect(text) {
+        if ("saved" in text.lowercase() && "saved" !in previousText.lowercase()) {
+            showBookmarkBurst = true
+            delay(850)
+            showBookmarkBurst = false
+        }
+        previousText = text
+    }
     BoxWithConstraints(
         modifier
             .height(height)
@@ -182,6 +206,18 @@ private fun SacredActionButton(
             Modifier.fillMaxSize(),
             contentScale = ContentScale.FillBounds
         )
+        AnimatedVisibility(
+            visible = showBookmarkBurst && !reducedMotion,
+            enter = fadeIn(tween(120)),
+            exit = fadeOut(tween(500))
+        ) {
+            Image(
+                painterResource(R.drawable.effect_03_stardust_particles),
+                null,
+                Modifier.fillMaxSize().scale(1.35f),
+                contentScale = ContentScale.Crop
+            )
+        }
         Row(
             Modifier.padding(horizontal = if (compact) 2.dp else 15.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -204,6 +240,83 @@ private fun SacredActionButton(
                 maxLines = 1
             )
         }
+    }
+}
+
+@Composable
+fun AnimatedPeacockFeather(
+    blessingKey: String,
+    modifier: Modifier = Modifier
+) {
+    val reducedMotion = LocalReducedMotion.current
+    val transition = rememberInfiniteTransition(label = "peacockBreeze")
+    val sway by transition.animateFloat(
+        initialValue = -4f,
+        targetValue = 5f,
+        animationSpec = infiniteRepeatable(tween(2600), RepeatMode.Reverse),
+        label = "peacockSway"
+    )
+    var showBlessing by remember { mutableStateOf(false) }
+    val blessings = listOf(
+        "You do not need the whole path today. Take the next true step.",
+        "A calm mind can hear the answer that fear hides.",
+        "Your kindness is never small when it protects another heart.",
+        "Do your duty with love, then release what you cannot control.",
+        "Begin again gently. I am with you in every sincere effort.",
+        "Let courage be quiet: one honest action is enough for now."
+    )
+    val blessing = blessings[Math.floorMod(blessingKey.hashCode(), blessings.size)]
+    Image(
+        painterResource(R.drawable.icon_peacock_feather),
+        "Touch for a blessing",
+        modifier
+            .graphicsLayer {
+                rotationZ = if (reducedMotion) 0f else sway
+                transformOrigin = androidx.compose.ui.graphics.TransformOrigin(.5f, 1f)
+            }
+            .clip(CircleShape)
+            .clickable(role = Role.Button) { showBlessing = true },
+        contentScale = ContentScale.Fit
+    )
+    if (showBlessing) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { showBlessing = false },
+            icon = { SacredIcon(R.drawable.icon_peacock_feather, null, Modifier.size(52.dp)) },
+            title = { Text("A quiet blessing", color = LightGold, textAlign = TextAlign.Center) },
+            text = { Text(blessing, color = SoftWhite, textAlign = TextAlign.Center, style = MaterialTheme.typography.bodyLarge) },
+            confirmButton = {
+                Text(
+                    "Keep this with me",
+                    color = AntiqueGold,
+                    modifier = Modifier.clickable { showBlessing = false }.padding(12.dp)
+                )
+            },
+            containerColor = CosmicMidnight
+        )
+    }
+}
+
+@Composable
+fun PeacockStorySweep(animationKey: String, modifier: Modifier = Modifier) {
+    val reducedMotion = LocalReducedMotion.current
+    var started by remember(animationKey) { mutableStateOf(false) }
+    val progress by animateFloatAsState(
+        targetValue = if (started && !reducedMotion) 1f else 0f,
+        animationSpec = tween(900),
+        label = "storyFeatherSweep"
+    )
+    LaunchedEffect(animationKey) { started = true }
+    BoxWithConstraints(modifier.fillMaxWidth().height(30.dp)) {
+        val travel = (constraints.maxWidth - 32).coerceAtLeast(0).toFloat()
+        SacredIcon(
+            R.drawable.icon_peacock_feather,
+            null,
+            Modifier.size(30.dp).graphicsLayer {
+                translationX = progress * travel
+                rotationZ = -12f + (progress * 24f)
+                alpha = if (reducedMotion) .85f else 1f - (progress * .25f)
+            }
+        )
     }
 }
 

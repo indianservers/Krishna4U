@@ -51,7 +51,8 @@ class ContentIdentityTest {
         krishnaLifeEvents.forEach { event ->
             assertTrue(event.openingQuestion.isNotBlank())
             assertTrue(event.choicePrompt.isNotBlank())
-            assertTrue(event.storyText.split("\n\n").size in 2..3)
+            assertEquals(4, event.storyText.split("\n\n").size)
+            assertTrue(event.storyText.length > event.familyStoryText.length)
             assertTrue(event.takeaways.size in 5..7)
             assertTrue(event.familyStoryText.split("\n\n").size in 2..3)
             assertEquals(3, event.familyDiscussionQuestions.size)
