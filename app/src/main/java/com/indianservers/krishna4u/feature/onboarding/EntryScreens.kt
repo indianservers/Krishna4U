@@ -42,6 +42,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.indianservers.krishna4u.R
+import com.indianservers.krishna4u.core.localization.appLanguage
+import com.indianservers.krishna4u.core.localization.appLanguages
 import com.indianservers.krishna4u.core.design.AnimatedMandalaHalo
 import com.indianservers.krishna4u.core.design.BreathingLotusOrb
 import com.indianservers.krishna4u.core.design.GlassCard
@@ -116,21 +118,31 @@ fun DivineOnboardingScreen(onSkip: () -> Unit, onBegin: () -> Unit) {
 
 @Composable
 fun ChooseLanguageScreen(selected: String, onSelected: (String) -> Unit, onContinue: () -> Unit) {
-    val languages = listOf("English", "हिन्दी", "తెలుగు", "संस्कृतम्")
+    val selectedLanguage = appLanguage(selected)
     KrishnaCosmicBackground(R.drawable.bg_08_minimal_starfield) {
         Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).statusBarsPadding().navigationBarsPadding().padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Image(painterResource(R.drawable.illustration_09_peacock_feather), null, Modifier.height(118.dp), contentScale = ContentScale.Fit)
             SacredScreenHeader("Choose your language", "Experience Krishna’s wisdom in the words\nclosest to your heart.")
             Spacer(Modifier.height(22.dp))
-            languages.forEach { language ->
-                GlassCard(Modifier.fillMaxWidth().padding(vertical = 5.dp), onClick = { onSelected(language) }) {
+            appLanguages.forEach { language ->
+                GlassCard(
+                    Modifier.fillMaxWidth().padding(vertical = 5.dp),
+                    onClick = if (language.available) ({ onSelected(language.code) }) else null
+                ) {
                     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                        Text(language, Modifier.weight(1f), color = SoftWhite, style = MaterialTheme.typography.titleLarge)
-                        if (selected == language) Image(painterResource(R.drawable.icon_check), "Selected", Modifier.size(34.dp))
+                        Column(Modifier.weight(1f)) {
+                            Text(language.nativeName, color = if (language.available) SoftWhite else MutedText, style = MaterialTheme.typography.titleLarge)
+                            if (language.englishName != language.nativeName) Text(language.englishName, color = MutedText, style = MaterialTheme.typography.bodyMedium)
+                        }
+                        if (selectedLanguage.code == language.code && language.available) {
+                            Image(painterResource(R.drawable.icon_check), "Selected", Modifier.size(34.dp))
+                        } else if (!language.available) {
+                            Text("Coming soon", color = AntiqueGold, style = MaterialTheme.typography.labelLarge)
+                        }
                     }
                 }
             }
-            GlassCard(Modifier.fillMaxWidth().padding(top = 6.dp)) { Row(verticalAlignment = Alignment.CenterVertically) { Image(painterResource(R.drawable.icon_language), null, Modifier.size(30.dp)); Spacer(Modifier.width(12.dp)); Text("More languages", color = MutedText) } }
+            GlassCard(Modifier.fillMaxWidth().padding(top = 6.dp)) { Row(verticalAlignment = Alignment.CenterVertically) { Image(painterResource(R.drawable.icon_language), null, Modifier.size(30.dp)); Spacer(Modifier.width(12.dp)); Text("English is available now. More translations are coming soon.", color = MutedText) } }
             Spacer(Modifier.height(26.dp))
             PrimaryGoldButton("Continue", onContinue, Modifier.fillMaxWidth())
         }
@@ -142,18 +154,20 @@ private data class Interest(val title: String, val icon: Int)
 @Composable
 fun PersonaliseJourneyScreen(onComplete: (Set<String>) -> Unit) {
     val interests = remember { listOf(
-        Interest("Inner Peace", R.drawable.icon_inner_peace), Interest("Dharma", R.drawable.icon_dharma),
-        Interest("Karma", R.drawable.icon_karma), Interest("Relationships", R.drawable.icon_relationships),
-        Interest("Courage", R.drawable.icon_courage), Interest("Devotion", R.drawable.icon_om),
-        Interest("Purpose", R.drawable.icon_purpose), Interest("Bhagavad Gita", R.drawable.icon_gita)
+        Interest("Distressed", R.drawable.icon_inner_peace), Interest("Anxious", R.drawable.icon_meditation),
+        Interest("Lonely", R.drawable.icon_om), Interest("Heartbreak", R.drawable.icon_relationships),
+        Interest("Grief", R.drawable.icon_lotus), Interest("Self-Doubt", R.drawable.icon_courage),
+        Interest("Failure", R.drawable.icon_karma), Interest("Relationships", R.drawable.icon_relationships),
+        Interest("Family", R.drawable.icon_home), Interest("Career & Study", R.drawable.icon_teachings),
+        Interest("Purpose", R.drawable.icon_purpose), Interest("Inner Peace", R.drawable.icon_dharma)
     ) }
-    var selected by remember { mutableStateOf(setOf("Inner Peace", "Dharma", "Bhagavad Gita")) }
+    var selected by remember { mutableStateOf(setOf("Inner Peace")) }
     KrishnaCosmicBackground(R.drawable.bg_01_cosmic_mandala) {
         Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).statusBarsPadding().navigationBarsPadding().padding(22.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Image(painterResource(R.drawable.illustration_09_peacock_feather), null, Modifier.height(75.dp), contentScale = ContentScale.Fit)
             Text("K R I S H N A  ·  F O R  Y O U", color = LightGold, style = MaterialTheme.typography.titleLarge)
             Spacer(Modifier.height(20.dp))
-            SacredScreenHeader("What brings you here?", "Choose what you wish to understand,\nheal or strengthen.")
+            SacredScreenHeader("What do you need today?", "Choose what you wish to understand,\nheal or strengthen.")
             Box(Modifier.fillMaxWidth().height(260.dp), contentAlignment = Alignment.Center) {
                 BreathingLotusOrb(Modifier.size(260.dp))
             }
@@ -164,7 +178,7 @@ fun PersonaliseJourneyScreen(onComplete: (Set<String>) -> Unit) {
                 } }
             }
             Spacer(Modifier.height(24.dp))
-            PrimaryGoldButton("Create My Journey", { onComplete(selected) }, Modifier.fillMaxWidth())
+            PrimaryGoldButton("Hear Krishna's Message", { onComplete(selected.ifEmpty { setOf("Inner Peace") }) }, Modifier.fillMaxWidth())
             Spacer(Modifier.height(14.dp))
             Text("You can change this anytime.", color = MutedText)
         }

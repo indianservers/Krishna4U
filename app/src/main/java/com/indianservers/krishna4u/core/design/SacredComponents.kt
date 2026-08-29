@@ -4,16 +4,21 @@ import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,12 +29,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -41,13 +45,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.indianservers.krishna4u.R
 import com.indianservers.krishna4u.ui.theme.AntiqueGold
 import com.indianservers.krishna4u.ui.theme.CelestialCyan
 import com.indianservers.krishna4u.ui.theme.CosmicMidnight
 import com.indianservers.krishna4u.ui.theme.LightGold
+import com.indianservers.krishna4u.ui.theme.LocalReducedMotion
+import com.indianservers.krishna4u.ui.theme.LocalSacredDarkTheme
 import com.indianservers.krishna4u.ui.theme.SoftWhite
 import com.indianservers.krishna4u.ui.theme.WarmGold
 
@@ -57,9 +66,17 @@ fun KrishnaCosmicBackground(
     modifier: Modifier = Modifier,
     content: @Composable BoxScope.() -> Unit
 ) {
-    Box(modifier.fillMaxSize().background(CosmicMidnight)) {
+    val darkTheme = LocalSacredDarkTheme.current
+    Box(modifier.fillMaxSize().background(if (darkTheme) CosmicMidnight else MaterialTheme.colorScheme.background)) {
         Image(painterResource(background), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
-        Box(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Color.Transparent, CosmicMidnight.copy(.25f), CosmicMidnight.copy(.88f)))))
+        Box(
+            Modifier.fillMaxSize().background(
+                Brush.verticalGradient(
+                    if (darkTheme) listOf(Color.Transparent, CosmicMidnight.copy(.25f), CosmicMidnight.copy(.88f))
+                    else listOf(Color.Transparent, Color(0xFF173D7B).copy(.45f), Color(0xFF10234B).copy(.88f))
+                )
+            )
+        )
         content()
     }
 }
@@ -116,25 +133,136 @@ fun GlassCard(modifier: Modifier = Modifier, onClick: (() -> Unit)? = null, cont
 
 @Composable
 fun PrimaryGoldButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    Button(onClick, modifier.height(58.dp), shape = RoundedCornerShape(30.dp), border = BorderStroke(1.dp, LightGold), colors = ButtonDefaults.buttonColors(containerColor = AntiqueGold, contentColor = CosmicMidnight)) {
-        Text(text, style = MaterialTheme.typography.titleLarge, textAlign = TextAlign.Center)
+    SacredActionButton(
+        text = text,
+        onClick = onClick,
+        background = R.drawable.ui_primary_button_frame,
+        contentColor = CosmicMidnight,
+        modifier = modifier,
+        height = 64.dp
+    )
+}
+
+@Composable
+private fun SacredActionButton(
+    text: String,
+    onClick: () -> Unit,
+    @DrawableRes background: Int,
+    contentColor: Color,
+    modifier: Modifier,
+    height: androidx.compose.ui.unit.Dp
+) {
+    val icon = actionIcon(text)
+    val interactionSource = remember { MutableInteractionSource() }
+    val pressed by interactionSource.collectIsPressedAsState()
+    val reducedMotion = LocalReducedMotion.current
+    val scale by animateFloatAsState(
+        targetValue = if (pressed && !reducedMotion) .96f else 1f,
+        animationSpec = tween(120),
+        label = "sacredButtonPress"
+    )
+    BoxWithConstraints(
+        modifier
+            .height(height)
+            .scale(scale)
+            .clip(RoundedCornerShape(32.dp))
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                role = Role.Button,
+                onClick = onClick
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        val compact = maxWidth < 120.dp
+        val longLabel = text.length > 28
+        Image(
+            painterResource(background),
+            null,
+            Modifier.fillMaxSize(),
+            contentScale = ContentScale.FillBounds
+        )
+        Row(
+            Modifier.padding(horizontal = if (compact) 2.dp else 15.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (icon != null) {
+                Image(painterResource(icon), null, Modifier.size(if (compact) 15.dp else 27.dp), contentScale = ContentScale.Fit)
+                Spacer(Modifier.size(if (compact) 1.dp else 8.dp))
+            }
+            Text(
+                text.replace("☆ ", "").replace("✓ ", "").replace("→", "").trim(),
+                color = contentColor,
+                style = MaterialTheme.typography.labelLarge,
+                fontSize = when {
+                    compact -> 7.5.sp
+                    longLabel -> 12.sp
+                    else -> 18.sp
+                },
+                fontWeight = if (compact) FontWeight.SemiBold else FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                maxLines = 1
+            )
+        }
     }
 }
 
 @Composable
 fun SecondarySacredButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    Button(onClick, modifier.height(52.dp), shape = RoundedCornerShape(28.dp), border = BorderStroke(1.dp, AntiqueGold), colors = ButtonDefaults.buttonColors(containerColor = CosmicMidnight.copy(.7f), contentColor = LightGold)) {
-        Text(text, style = MaterialTheme.typography.labelLarge)
+    SacredActionButton(
+        text = text,
+        onClick = onClick,
+        background = R.drawable.ui_secondary_button_frame,
+        contentColor = LightGold,
+        modifier = modifier,
+        height = 60.dp
+    )
+}
+
+@DrawableRes
+private fun actionIcon(text: String): Int? {
+    val label = text.lowercase()
+    return when {
+        "share" in label -> R.drawable.icon_share
+        "saved" in label || "bookmark" in label -> R.drawable.icon_bookmark
+        "previous" in label || "back" in label || "life journey" in label -> R.drawable.icon_previous
+        "sloka" in label || "gita" in label -> R.drawable.icon_gita
+        "next" in label -> R.drawable.icon_next
+        "listen" in label || "audio" in label -> R.drawable.icon_audio
+        else -> null
     }
 }
 
 @Composable
 fun SpiritualChip(label: String, @DrawableRes icon: Int, selected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val border = if (selected) LightGold else CelestialCyan.copy(.55f)
-    Row(modifier.height(54.dp).clip(RoundedCornerShape(28.dp)).background(if (selected) AntiqueGold.copy(.14f) else CosmicMidnight.copy(.7f)).border(1.dp, border, RoundedCornerShape(28.dp)).clickable(onClick = onClick).padding(horizontal = 15.dp), verticalAlignment = Alignment.CenterVertically) {
-        Image(painterResource(icon), null, Modifier.size(28.dp))
-        Spacer(Modifier.size(8.dp))
-        Text(label, color = if (selected) LightGold else SoftWhite, style = MaterialTheme.typography.bodyMedium)
+    val shape = RoundedCornerShape(28.dp)
+    BoxWithConstraints(
+        modifier
+            .height(54.dp)
+            .clip(shape)
+            .background(if (selected) AntiqueGold.copy(.14f) else CosmicMidnight.copy(.7f))
+            .border(1.dp, border, shape)
+            .clickable(onClick = onClick)
+    ) {
+        val compact = maxWidth < 130.dp
+        Row(
+            Modifier.fillMaxSize().padding(horizontal = if (compact) 6.dp else 15.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(painterResource(icon), null, Modifier.size(if (compact) 18.dp else 28.dp))
+            Spacer(Modifier.size(if (compact) 3.dp else 8.dp))
+            Text(
+                label,
+                color = if (selected) LightGold else SoftWhite,
+                style = MaterialTheme.typography.bodyMedium,
+                fontSize = if (compact) 11.sp else MaterialTheme.typography.bodyMedium.fontSize,
+                maxLines = 1,
+                softWrap = false,
+                overflow = TextOverflow.Clip
+            )
+        }
     }
 }
 

@@ -20,7 +20,7 @@ data class MockupEntry(val number: String, val name: String, val implemented: Bo
 
 val mockupEntries = listOf(
     "Splash", "Divine Onboarding", "Choose Language", "Personalise Journey", "Home", "Krishna Life Journey", "Life Event Details", "Teachings Library", "Teaching Details", "Lessons From Krishna", "Apply To Your Life", "Gita Overview", "Chapter Explorer", "Chapter Summary", "All Slokas", "Individual Sloka", "Sloka Explanation", "Listen To Gita", "Gita Study Mode", "FAQ Library", "What Is Dharma", "Ask Krishna", "Life Situations", "Today With Krishna", "Meditation And Chanting", "Bookmarks Notes Reflections", "Learning Progress", "Profile Settings"
-).mapIndexed { index, name -> MockupEntry((index + 1).toString().padStart(2, '0'), name, index < 5) }
+).mapIndexed { index, name -> MockupEntry((index + 1).toString().padStart(2, '0'), name, true) }
 
 @Composable
 fun MockupGalleryScreen(onOpen: (String) -> Unit) {
