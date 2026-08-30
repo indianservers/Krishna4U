@@ -97,6 +97,13 @@ fun KrishnaNightMessageScreen(displayName: String, onBack: () -> Unit, onNavigat
             )
         }
         item {
+            PrimaryGoldButton(
+                "Begin Evening Reflection",
+                { onNavigate("evening_reflection") },
+                Modifier.fillMaxWidth()
+            )
+        }
+        item {
             Text(
                 "Sleep well. Tomorrow is another place where courage, kindness and dharma can begin.",
                 color = MutedText,

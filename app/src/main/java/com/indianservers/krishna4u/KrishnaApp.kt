@@ -24,7 +24,9 @@ import com.indianservers.krishna4u.feature.difficultquestions.*
 import com.indianservers.krishna4u.feature.parenting.*
 import com.indianservers.krishna4u.feature.night.*
 import com.indianservers.krishna4u.feature.collectibles.*
+import com.indianservers.krishna4u.feature.conceptmaps.*
 import com.indianservers.krishna4u.feature.commitments.*
+import com.indianservers.krishna4u.feature.evening.*
 import com.indianservers.krishna4u.ui.theme.KrishnaPreferenceTheme
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -186,9 +188,19 @@ fun KrishnaApp(pendingDestination: String? = null, onDestinationConsumed: () -> 
         composable("emotional_intelligence/{lessonId}") { entry -> EmotionalIntelligenceLessonScreen(entry.arguments?.getString("lessonId"), prefs.readingMode, { nav.popBackStack() }, ::go) }
         composable("emotion_wheel") { EmotionWheelScreen({ nav.popBackStack() }, ::go) }
         composable("night_message") { KrishnaNightMessageScreen(prefs.displayName, { nav.popBackStack() }, ::go) }
+        composable("evening_reflection") {
+            KrishnaEveningReflectionScreen(
+                prefs.displayName,
+                { text -> scope.launch { repository.saveReflection(text) } },
+                { nav.popBackStack() },
+                ::go
+            )
+        }
         composable("collectibles") {
             SacredCollectiblesScreen(LearningActivity(prefs.bookmarks, prefs.reflections, prefs.readSlokas, prefs.commitmentPractices), { nav.popBackStack() }, ::go)
         }
+        composable("gita_concept_maps") { GitaConceptMapsLibraryScreen({ nav.popBackStack() }, ::go) }
+        composable("gita_concept_maps/{mapId}") { entry -> GitaConceptMapDetailsScreen(entry.arguments?.getString("mapId"), { nav.popBackStack() }, ::go) }
         composable("collectible/{collectibleId}") { entry ->
             SacredCollectibleDetailsScreen(entry.arguments?.getString("collectibleId"), LearningActivity(prefs.bookmarks, prefs.reflections, prefs.readSlokas, prefs.commitmentPractices), { nav.popBackStack() }, ::go)
         }

@@ -1,6 +1,7 @@
 package com.indianservers.krishna4u.feature.letters
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -25,9 +26,13 @@ import com.indianservers.krishna4u.ui.theme.LocalReducedMotion
 fun KrishnaLettersLibraryScreen(displayName: String, onBack: () -> Unit, onNavigate: (String) -> Unit) {
     val readerName = displayName.trim().ifBlank { "Friend" }
     var query by remember { mutableStateOf("") }
-    val visibleLetters = remember(query) {
+    var selectedAudience by remember { mutableStateOf("All") }
+    val visibleLetters = remember(query, selectedAudience) {
         krishnaLetters.filter { letter ->
-            query.isBlank() || listOf(letter.situation, letter.title, letter.preview).any { it.contains(query, ignoreCase = true) }
+            val searchableText = listOf(letter.situation, letter.title, letter.preview) + letter.paragraphs
+            val matchesQuery = query.isBlank() || searchableText.any { it.contains(query, ignoreCase = true) }
+            val matchesAudience = selectedAudience == "All" || selectedAudience in letter.audiences
+            matchesQuery && matchesAudience
         }
     }
     FeatureScaffold("Krishna’s Letters to You", "For the moments that ask for deeper words", R.drawable.bg_05_moonlit_sacred_river, onBack, onNavigate) {
@@ -39,10 +44,28 @@ fun KrishnaLettersLibraryScreen(displayName: String, onBack: () -> Unit, onNavig
             )
         }
         item { OutlinedTextField(query, { query = it }, label = { Text("What are you feeling today?") }, leadingIcon = { SacredIcon(R.drawable.icon_search, null, Modifier.size(24.dp)) }, singleLine = true, modifier = Modifier.fillMaxWidth()) }
-        items(visibleLetters) { letter ->
-            SacredListCard(letter.situation, letter.preview, letter.icon, { onNavigate("krishna_letters/${letter.id}") })
+        item {
+            LazyRow(horizontalArrangement = Arrangement.spacedBy(7.dp), contentPadding = PaddingValues(horizontal = 2.dp)) {
+                items(listOf("All") + krishnaLetterAudiences) { audience ->
+                    SpiritualChip(
+                        audience,
+                        audienceIcon(audience),
+                        selectedAudience == audience,
+                        { selectedAudience = audience },
+                        Modifier.widthIn(min = 94.dp)
+                    )
+                }
+            }
         }
-        if (visibleLetters.isEmpty()) item { GlassCard(Modifier.fillMaxWidth()) { Text("No matching letter yet. Try happy, grateful, afraid, lonely, angry, peaceful, proud, hopeful or confused.", color = MutedText) } }
+        items(visibleLetters) { letter ->
+            SacredListCard(
+                letter.situation,
+                "${letter.audiences.joinToString(" · ")}\n${letter.preview}",
+                letter.icon,
+                { onNavigate("krishna_letters/${letter.id}") }
+            )
+        }
+        if (visibleLetters.isEmpty()) item { GlassCard(Modifier.fillMaxWidth()) { Text("No matching letter in this group. Try another audience, or search for happy, afraid, lonely, angry, grief, work, family or study.", color = MutedText) } }
         item {
             GlassCard(Modifier.fillMaxWidth()) {
                 Text(
@@ -53,6 +76,22 @@ fun KrishnaLettersLibraryScreen(displayName: String, onBack: () -> Unit, onNavig
             }
         }
     }
+}
+
+private fun audienceIcon(audience: String): Int = when (audience) {
+    "Children" -> R.drawable.icon_playfulness
+    "Students" -> R.drawable.icon_gita
+    "Youth" -> R.drawable.icon_courage
+    "Parents" -> R.drawable.icon_compassion
+    "Professionals" -> R.drawable.icon_karma
+    "Couples" -> R.drawable.icon_relationships
+    "Elders" -> R.drawable.icon_lotus
+    "Grief & Illness" -> R.drawable.letters_icon_heart
+    "Caregivers" -> R.drawable.icon_love
+    "Leaders" -> R.drawable.icon_leadership
+    "Spiritual Seekers" -> R.drawable.icon_meditation
+    "New Beginnings" -> R.drawable.letters_icon_star
+    else -> R.drawable.icon_peacock_feather
 }
 
 @Composable
