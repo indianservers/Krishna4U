@@ -3,9 +3,12 @@ package com.indianservers.krishna4u.feature.guidance
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -24,6 +27,7 @@ import com.indianservers.krishna4u.ui.theme.AntiqueGold
 import com.indianservers.krishna4u.ui.theme.LightGold
 import com.indianservers.krishna4u.ui.theme.MutedText
 import com.indianservers.krishna4u.ui.theme.SoftWhite
+import kotlin.random.Random
 
 data class KrishnaComfortMessage(val id: String, val situation: String, val text: String)
 
@@ -347,19 +351,45 @@ fun KrishnaSpeaksScreen(
                 textAlign = TextAlign.Center
             )
         }
-        item { Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            SecondarySacredButton(if (bookmarked(message.id)) "✓ Saved" else "☆ Bookmark", { onToggleBookmark(message.id) }, Modifier.weight(1f))
-            SecondarySacredButton("Share Message", { shareSacredText(context, "A Krishna-inspired message for $displayName", "My dear $displayName,\n\n“${message.text}”\n\nKrishna-inspired reflection · Shared from Krishna For You") }, Modifier.weight(1f))
-        } }
         item {
-            PrimaryGoldButton(
-                text = "Next Message  →",
-                onClick = { onNext((safeIndex + 1).mod(messages.size)) },
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-        item {
-            SecondarySacredButton("Return Home", { onNavigate("05") }, Modifier.fillMaxWidth())
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                KrishnaMessageIconButton(
+                    icon = R.drawable.icon_previous,
+                    label = "Previous message",
+                    onClick = { onNext((safeIndex - 1 + messages.size).mod(messages.size)) }
+                )
+                KrishnaMessageIconButton(
+                    icon = R.drawable.icon_bookmark,
+                    label = if (bookmarked(message.id)) "Remove saved message" else "Save message",
+                    selected = bookmarked(message.id),
+                    onClick = { onToggleBookmark(message.id) }
+                )
+                KrishnaMessageIconButton(
+                    icon = R.drawable.icon_share,
+                    label = "Share message",
+                    onClick = { shareSacredText(context, "A Krishna-inspired message for $displayName", "My dear $displayName,\n\n“${message.text}”\n\nKrishna-inspired reflection · Shared from Krishna For You") }
+                )
+                KrishnaMessageIconButton(
+                    icon = R.drawable.icon_chakra,
+                    label = "Show a random message",
+                    onClick = {
+                        val randomIndex = if (messages.size <= 1) 0 else Random.nextInt(messages.size - 1).let { candidate ->
+                            if (candidate >= safeIndex) candidate + 1 else candidate
+                        }
+                        onNext(randomIndex)
+                    }
+                )
+                KrishnaMessageIconButton(
+                    icon = R.drawable.icon_next,
+                    label = "Next message",
+                    highlighted = true,
+                    onClick = { onNext((safeIndex + 1).mod(messages.size)) }
+                )
+            }
         }
         item {
             Text(
@@ -369,6 +399,31 @@ fun KrishnaSpeaksScreen(
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center
             )
+        }
+    }
+}
+
+@Composable
+private fun KrishnaMessageIconButton(
+    icon: Int,
+    label: String,
+    onClick: () -> Unit,
+    selected: Boolean = false,
+    highlighted: Boolean = false
+) {
+    Surface(
+        onClick = onClick,
+        modifier = Modifier.size(52.dp),
+        shape = CircleShape,
+        color = when {
+            highlighted -> AntiqueGold.copy(alpha = .28f)
+            selected -> AntiqueGold.copy(alpha = .2f)
+            else -> com.indianservers.krishna4u.ui.theme.CosmicMidnight.copy(alpha = .72f)
+        },
+        border = BorderStroke(if (highlighted || selected) 1.5.dp else 1.dp, if (highlighted || selected) LightGold else AntiqueGold.copy(alpha = .7f))
+    ) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            SacredIcon(icon, label, Modifier.size(25.dp))
         }
     }
 }

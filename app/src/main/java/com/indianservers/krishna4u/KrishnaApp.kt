@@ -187,10 +187,10 @@ fun KrishnaApp(pendingDestination: String? = null, onDestinationConsumed: () -> 
         composable("emotion_wheel") { EmotionWheelScreen({ nav.popBackStack() }, ::go) }
         composable("night_message") { KrishnaNightMessageScreen(prefs.displayName, { nav.popBackStack() }, ::go) }
         composable("collectibles") {
-            SacredCollectiblesScreen(LearningActivity(prefs.bookmarks, prefs.reflections, prefs.readSlokas), { nav.popBackStack() }, ::go)
+            SacredCollectiblesScreen(LearningActivity(prefs.bookmarks, prefs.reflections, prefs.readSlokas, prefs.commitmentPractices), { nav.popBackStack() }, ::go)
         }
         composable("collectible/{collectibleId}") { entry ->
-            SacredCollectibleDetailsScreen(entry.arguments?.getString("collectibleId"), LearningActivity(prefs.bookmarks, prefs.reflections, prefs.readSlokas), { nav.popBackStack() }, ::go)
+            SacredCollectibleDetailsScreen(entry.arguments?.getString("collectibleId"), LearningActivity(prefs.bookmarks, prefs.reflections, prefs.readSlokas, prefs.commitmentPractices), { nav.popBackStack() }, ::go)
         }
         composable("commitments") {
             val today = LocalDate.now().toString()
@@ -215,6 +215,7 @@ fun KrishnaApp(pendingDestination: String? = null, onDestinationConsumed: () -> 
         composable("difficult_questions") { DifficultQuestionsLibraryScreen({ nav.popBackStack() }, ::go) }
         composable("difficult_question/{questionId}") { entry -> DifficultQuestionScreen(entry.arguments?.getString("questionId"), { nav.popBackStack() }, ::go) }
         composable("parenting_values") { ParentingValuesLibraryScreen(prefs.readingMode, { nav.popBackStack() }, ::go) }
+        composable("parenting_today") { ParentingTodayScreen({ nav.popBackStack() }, ::go) }
         composable("parenting_values/{sessionId}") { entry -> ParentingValuesSessionScreen(entry.arguments?.getString("sessionId"), prefs.readingMode, { nav.popBackStack() }, ::go) }
         composable("wisdom_theme/{themeId}") { entry -> WisdomThemeScreen(entry.arguments?.getString("themeId") ?: "mind", { nav.popBackStack() }, ::go) }
         composable("wisdom_sloka/{themeId}/{chapter}/{verse}") { entry ->

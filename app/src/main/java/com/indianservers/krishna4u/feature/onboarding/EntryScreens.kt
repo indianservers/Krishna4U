@@ -123,7 +123,9 @@ fun ChooseLanguageScreen(selected: String, onSelected: (String) -> Unit, onConti
         Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).statusBarsPadding().navigationBarsPadding().padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Image(painterResource(R.drawable.illustration_09_peacock_feather), null, Modifier.height(118.dp), contentScale = ContentScale.Fit)
             SacredScreenHeader("Choose your language", "Experience Krishna’s wisdom in the words\nclosest to your heart.")
-            Spacer(Modifier.height(22.dp))
+            Spacer(Modifier.height(16.dp))
+            PrimaryGoldButton("Continue", onContinue, Modifier.fillMaxWidth())
+            Spacer(Modifier.height(16.dp))
             appLanguages.forEach { language ->
                 GlassCard(
                     Modifier.fillMaxWidth().padding(vertical = 5.dp),
@@ -143,8 +145,7 @@ fun ChooseLanguageScreen(selected: String, onSelected: (String) -> Unit, onConti
                 }
             }
             GlassCard(Modifier.fillMaxWidth().padding(top = 6.dp)) { Row(verticalAlignment = Alignment.CenterVertically) { Image(painterResource(R.drawable.icon_language), null, Modifier.size(30.dp)); Spacer(Modifier.width(12.dp)); Text("English is available now. More translations are coming soon.", color = MutedText) } }
-            Spacer(Modifier.height(26.dp))
-            PrimaryGoldButton("Continue", onContinue, Modifier.fillMaxWidth())
+            Spacer(Modifier.height(20.dp))
         }
     }
 }

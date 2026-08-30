@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -37,11 +36,13 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.indianservers.krishna4u.R
 import com.indianservers.krishna4u.core.design.GlassCard
 import com.indianservers.krishna4u.core.design.KrishnaCosmicBackground
+import com.indianservers.krishna4u.core.design.SacredBottomNavigation
 import com.indianservers.krishna4u.feature.wisdom.exploreShortcut
 import com.indianservers.krishna4u.ui.theme.AntiqueGold
 import com.indianservers.krishna4u.ui.theme.LightGold
@@ -84,10 +85,10 @@ fun HomeScreen(
         label = "settingsChakraRotation"
     )
     val cards = listOf(
-        HomeCard("Krishna’s Life", "Explore the divine stories of Krishna.", R.drawable.home_icon_krishna_life, "06"),
-        HomeCard("Teachings", "Timeless wisdom for modern life.", R.drawable.home_icon_teachings, "08"),
-        HomeCard("Bhagavad Gita", "Read, listen, and reflect deeply.", R.drawable.home_icon_bhagavad_gita, "12"),
-        HomeCard("Ask Krishna", "Scripture-grounded reflective guidance.", R.drawable.home_icon_ask_krishna, "22")
+        HomeCard("Krishna’s Life", "Divine stories of Krishna.", R.drawable.home_icon_krishna_life, "06"),
+        HomeCard("Teachings", "Wisdom for modern life.", R.drawable.home_icon_teachings, "08"),
+        HomeCard("Bhagavad Gita", "Read, listen and reflect.", R.drawable.home_icon_bhagavad_gita, "12"),
+        HomeCard("Ask Krishna", "Guidance for your questions.", R.drawable.home_icon_ask_krishna, "22")
     )
     KrishnaCosmicBackground(R.drawable.bg_01_cosmic_mandala) {
         Column(Modifier.fillMaxSize().statusBarsPadding()) {
@@ -151,20 +152,40 @@ fun HomeScreen(
                 items(2) { rowIndex ->
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                         cards.slice(rowIndex * 2..rowIndex * 2 + 1).forEach { card ->
-                            GlassCard(Modifier.weight(1f).height(140.dp), onClick = { onOpen(card.route) }) {
-                                Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
-                                    Column(Modifier.weight(1f)) {
-                                        Text(card.title, color = LightGold, style = MaterialTheme.typography.titleLarge)
-                                        Spacer(Modifier.height(5.dp))
-                                        Text(card.body, color = MutedText, style = MaterialTheme.typography.bodyMedium)
-                                    }
-                                    Spacer(Modifier.width(6.dp))
-                                    Image(
-                                        painterResource(card.icon),
+                            GlassCard(
+                                Modifier.weight(1f).height(140.dp),
+                                onClick = { onOpen(card.route) },
+                                contentPadding = 10.dp
+                            ) {
+                                Column(Modifier.fillMaxSize()) {
+                                    Text(
                                         card.title,
-                                        Modifier.size(64.dp).clip(CircleShape),
-                                        contentScale = ContentScale.Crop
+                                        color = LightGold,
+                                        fontSize = 18.sp,
+                                        lineHeight = 21.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
                                     )
+                                    Spacer(Modifier.height(4.dp))
+                                    Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
+                                        Text(
+                                            card.body,
+                                            Modifier.weight(1f),
+                                            color = MutedText,
+                                            fontSize = 15.sp,
+                                            lineHeight = 20.sp,
+                                            maxLines = 3,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                        Spacer(Modifier.width(5.dp))
+                                        Image(
+                                            painterResource(card.icon),
+                                            card.title,
+                                            Modifier.size(54.dp).clip(CircleShape),
+                                            contentScale = ContentScale.Crop
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -197,12 +218,12 @@ fun HomeScreen(
                     }
                 }
                 item {
-                    GlassCard(Modifier.fillMaxWidth().height(132.dp), onClick = { onOpen("krishna_speaks") }) {
+                    GlassCard(Modifier.fillMaxWidth().height(106.dp), onClick = { onOpen("krishna_speaks") }, contentPadding = 10.dp) {
                         Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
                             Image(
                                 painterResource(R.drawable.illustration_10_flute_feather),
                                 null,
-                                Modifier.size(104.dp),
+                                Modifier.size(82.dp),
                                 contentScale = ContentScale.Fit
                             )
                             Column(Modifier.weight(1f).padding(start = 4.dp)) {
@@ -251,19 +272,6 @@ fun HomeScreen(
                 }
             }
             SacredBottomNavigation(onOpen)
-        }
-    }
-}
-
-@Composable
-private fun SacredBottomNavigation(onOpen: (String) -> Unit) {
-    val items = listOf("Home" to R.drawable.icon_home, "Explore" to R.drawable.icon_explore, "Gita" to R.drawable.icon_gita, "Journal" to R.drawable.icon_journal)
-    Row(Modifier.fillMaxWidth().navigationBarsPadding().padding(horizontal = 8.dp, vertical = 10.dp), horizontalArrangement = Arrangement.SpaceEvenly) {
-        items.forEachIndexed { index, item ->
-            Column(Modifier.weight(1f).clickable { onOpen(listOf("05", "wisdom", "12", "26")[index]) }, horizontalAlignment = Alignment.CenterHorizontally) {
-                Image(painterResource(item.second), item.first, Modifier.size(30.dp))
-                Text(item.first, color = if (index == 0) LightGold else MutedText, style = MaterialTheme.typography.bodyMedium, fontWeight = if (index == 0) FontWeight.Bold else FontWeight.Normal)
-            }
         }
     }
 }

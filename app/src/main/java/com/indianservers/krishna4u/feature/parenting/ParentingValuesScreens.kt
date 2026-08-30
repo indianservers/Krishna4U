@@ -1,6 +1,7 @@
 package com.indianservers.krishna4u.feature.parenting
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,26 +22,54 @@ import com.indianservers.krishna4u.ui.theme.SoftWhite
 
 @Composable
 fun ParentingValuesLibraryScreen(readingModeId: String, onBack: () -> Unit, onNavigate: (String) -> Unit) {
+    var selectedMode by remember { mutableStateOf("All") }
     var selectedValue by remember { mutableStateOf("All") }
-    val visible = if (selectedValue == "All") parentingValuesSessions else parentingValuesSessions.filter { it.value == selectedValue }
+    LaunchedEffect(selectedMode) { selectedValue = "All" }
+    val visible = parentingValuesSessions.filter { session ->
+        val modeMatches = when (selectedMode) {
+            "Family" -> !session.teenFocused
+            "Parent–Teen" -> session.teenFocused
+            else -> true
+        }
+        modeMatches && (selectedValue == "All" || session.value == selectedValue)
+    }
+    val availableValues = listOf("All") + parentingValuesSessions
+        .filter { session ->
+            when (selectedMode) {
+                "Family" -> !session.teenFocused
+                "Parent–Teen" -> session.teenFocused
+                else -> true
+            }
+        }
+        .map { it.value }
+        .distinct()
     FeatureScaffold("Parenting with Krishna’s Values", "Stories · Conversations · Family activities", R.drawable.bg_05_moonlit_sacred_river, onBack, onNavigate) {
         item { SacredHero(R.drawable.illustration_02_krishna_portrait, "Values are learned in relationship", "Read together, invite the child’s thinking and practise one small action as a family.") }
+        item { SacredListCard("What happened today?", "Choose a real situation and receive calm-first words, a first action and the right family session", R.drawable.icon_ask_krishna, { onNavigate("parenting_today") }) }
         item { SacredListCard("Reading Mode · ${readingMode(readingModeId).title}", "${readingMode(readingModeId).ageRange} · Facilitation tips adapt automatically", R.drawable.icon_relationships, { onNavigate("28") }) }
         item {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(7.dp)) {
-                listOf("All", "Honesty", "Responsibility", "Compassion", "Courage").take(3).forEach { value ->
-                    SpiritualChip(value, R.drawable.icon_dharma, selectedValue == value, { selectedValue = value }, Modifier.weight(1f))
+                listOf("All", "Family", "Parent–Teen").forEach { mode ->
+                    SpiritualChip(mode, if (mode == "Parent–Teen") R.drawable.icon_relationships else R.drawable.icon_dharma, selectedMode == mode, { selectedMode = mode }, Modifier.weight(1f))
                 }
             }
-            Spacer(Modifier.height(8.dp))
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(7.dp)) {
-                listOf("Compassion", "Courage").forEach { value ->
-                    SpiritualChip(value, if (value == "Courage") R.drawable.icon_courage else R.drawable.icon_compassion, selectedValue == value, { selectedValue = value }, Modifier.weight(1f))
+        }
+        item {
+            LazyRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(7.dp)) {
+                items(availableValues) { value ->
+                    val icon = when (value) {
+                        "Courage", "Handling failure" -> R.drawable.icon_courage
+                        "Compassion", "Service and generosity", "Care for animals and nature" -> R.drawable.icon_compassion
+                        "Friendship", "Respect", "Care for elders", "Healthy boundaries" -> R.drawable.icon_relationships
+                        "Self-control", "Patience", "Discipline" -> R.drawable.icon_mind
+                        else -> R.drawable.icon_dharma
+                    }
+                    SpiritualChip(value, icon, selectedValue == value, { selectedValue = value }, Modifier.widthIn(min = 108.dp))
                 }
             }
         }
         items(visible) { session ->
-            SacredListCard(session.title, "${session.value} · ${session.lesson}", if (session.value == "Courage") R.drawable.icon_courage else R.drawable.icon_compassion, { onNavigate("parenting_values/${session.id}") })
+            SacredListCard(session.title, "${if (session.teenFocused) "Parent–Teen · " else ""}${session.value} · ${session.lesson}", if (session.teenFocused) R.drawable.icon_relationships else if (session.value == "Courage") R.drawable.icon_courage else R.drawable.icon_compassion, { onNavigate("parenting_values/${session.id}") })
         }
         item { GlassCard(Modifier.fillMaxWidth()) { Text("Use curiosity before correction. These sessions support family conversation; they do not replace professional help for safety, developmental or mental-health concerns.", color = MutedText) } }
     }
@@ -53,8 +82,10 @@ fun ParentingValuesSessionScreen(sessionId: String?, readingModeId: String, onBa
     val index = parentingValuesSessions.indexOf(session)
     val previous = parentingValuesSessions.getOrNull(index - 1)
     val next = parentingValuesSessions.getOrNull(index + 1)
-    val spoken = "${session.title}. ${session.story} Lesson. ${session.lesson} Conversation questions. ${session.conversationPrompts.joinToString(" ")} Family activity. ${session.activityTitle}. ${session.activitySteps.joinToString(" ")}"
-    FeatureScaffold(session.title, "${session.value.uppercase()} · FAMILY SESSION ${index + 1} OF ${parentingValuesSessions.size}", R.drawable.bg_08_minimal_starfield, onBack, onNavigate, false) {
+    val rolePlaySteps = session.rolePlaySteps()
+    val weeklyAction = session.actionForThisWeek()
+    val spoken = "${session.title}. ${session.story} Lesson. ${session.lesson} Conversation questions. ${session.conversationPrompts.joinToString(" ")} Family activity. ${session.activityTitle}. ${session.activitySteps.joinToString(" ")} Family role-play. ${rolePlaySteps.joinToString(" ")} One action this week. $weeklyAction"
+    FeatureScaffold(session.title, "${if (session.teenFocused) "PARENT–TEEN" else session.value.uppercase()} · FAMILY SESSION ${index + 1} OF ${parentingValuesSessions.size}", R.drawable.bg_08_minimal_starfield, onBack, onNavigate, false) {
         item {
             GlassCard(Modifier.fillMaxWidth()) {
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -92,7 +123,21 @@ fun ParentingValuesSessionScreen(sessionId: String?, readingModeId: String, onBa
                 }
             }
         }
-        item { SecondarySacredButton("Share Family Session", { shareSacredText(context, session.title, "${session.title}\n\nStory:\n${session.story}\n\nLesson:\n${session.lesson}\n\nTalk about it:\n${session.conversationPrompts.joinToString("\n") { "• $it" }}\n\nFamily activity · ${session.activityTitle}:\n${session.activitySteps.mapIndexed { i, value -> "${i + 1}. $value" }.joinToString("\n")}\n\nShared from Krishna For You") }, Modifier.fillMaxWidth()) }
+        item {
+            GlassCard(Modifier.fillMaxWidth()) {
+                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    Text("Family role-play", color = AntiqueGold, style = MaterialTheme.typography.headlineSmall)
+                    rolePlaySteps.forEachIndexed { step, text ->
+                        Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.Top) {
+                            Text("${step + 1}", color = AntiqueGold, style = MaterialTheme.typography.titleMedium)
+                            Text(text, color = SoftWhite, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
+                        }
+                    }
+                }
+            }
+        }
+        item { SacredListCard("One action this week", weeklyAction, R.drawable.icon_check) }
+        item { SecondarySacredButton("Share Family Session", { shareSacredText(context, session.title, "${session.title}\n\nStory:\n${session.story}\n\nLesson:\n${session.lesson}\n\nTalk about it:\n${session.conversationPrompts.joinToString("\n") { "• $it" }}\n\nFamily activity · ${session.activityTitle}:\n${session.activitySteps.mapIndexed { i, value -> "${i + 1}. $value" }.joinToString("\n")}\n\nFamily role-play:\n${rolePlaySteps.mapIndexed { i, value -> "${i + 1}. $value" }.joinToString("\n")}\n\nOne action this week:\n$weeklyAction\n\nShared from Krishna For You") }, Modifier.fillMaxWidth()) }
         item {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 SecondarySacredButton(if (previous == null) "All Sessions" else "Previous", { onNavigate(previous?.let { "parenting_values/${it.id}" } ?: "parenting_values") }, Modifier.weight(1f))

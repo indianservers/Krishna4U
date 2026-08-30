@@ -139,10 +139,15 @@ fun SacredScreenHeader(title: String, subtitle: String? = null, modifier: Modifi
 }
 
 @Composable
-fun GlassCard(modifier: Modifier = Modifier, onClick: (() -> Unit)? = null, content: @Composable BoxScope.() -> Unit) {
+fun GlassCard(
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
+    contentPadding: androidx.compose.ui.unit.Dp = 16.dp,
+    content: @Composable BoxScope.() -> Unit
+) {
     val shape = RoundedCornerShape(18.dp)
     val click = if (onClick != null) Modifier.clickable(role = Role.Button, onClick = onClick) else Modifier
-    Box(modifier.then(click).clip(shape).background(Brush.linearGradient(listOf(Color(0xCC07132F), Color(0xB50B2A69)))).border(BorderStroke(1.dp, Brush.linearGradient(listOf(LightGold, CelestialCyan.copy(.55f), WarmGold))), shape).padding(16.dp), content = content)
+    Box(modifier.then(click).clip(shape).background(Brush.linearGradient(listOf(Color(0xCC07132F), Color(0xB50B2A69)))).border(BorderStroke(1.dp, Brush.linearGradient(listOf(LightGold, CelestialCyan.copy(.55f), WarmGold))), shape).padding(contentPadding), content = content)
 }
 
 @Composable

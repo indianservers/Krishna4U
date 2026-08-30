@@ -151,9 +151,8 @@ class PreferencesRepository(private val context: Context) {
     }
 
     suspend fun toggleCommitmentPractised(id: String, date: String) = context.krishnaDataStore.edit { preferences ->
-        val datePrefix = "$date:"
         val practices = preferences[Keys.commitmentPractices]
-            ?.filterTo(mutableSetOf()) { it.startsWith(datePrefix) }
+            ?.toMutableSet()
             ?: mutableSetOf()
         val entry = "$date:$id"
         if (!practices.add(entry)) practices.remove(entry)

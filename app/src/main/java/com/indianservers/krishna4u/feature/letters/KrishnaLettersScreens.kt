@@ -42,7 +42,7 @@ fun KrishnaLettersLibraryScreen(displayName: String, onBack: () -> Unit, onNavig
         items(visibleLetters) { letter ->
             SacredListCard(letter.situation, letter.preview, letter.icon, { onNavigate("krishna_letters/${letter.id}") })
         }
-        if (visibleLetters.isEmpty()) item { GlassCard(Modifier.fillMaxWidth()) { Text("No matching letter yet. Try fear, family, love, purpose, anger or confidence.", color = MutedText) } }
+        if (visibleLetters.isEmpty()) item { GlassCard(Modifier.fillMaxWidth()) { Text("No matching letter yet. Try happy, grateful, afraid, lonely, angry, peaceful, proud, hopeful or confused.", color = MutedText) } }
         item {
             GlassCard(Modifier.fillMaxWidth()) {
                 Text(

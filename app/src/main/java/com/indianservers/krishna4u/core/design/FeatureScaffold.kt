@@ -125,10 +125,22 @@ fun SacredBottomNavigation(onNavigate: (String) -> Unit) {
         Triple("Home", R.drawable.icon_home, "05"), Triple("Explore", R.drawable.icon_explore, "wisdom"),
         Triple("Gita", R.drawable.icon_gita, "12"), Triple("Journal", R.drawable.icon_journal, "26")
     )
-    Row(Modifier.fillMaxWidth().navigationBarsPadding().padding(vertical = 8.dp), horizontalArrangement = Arrangement.SpaceEvenly) {
-        items.forEach { (label, icon, route) ->
-            Column(Modifier.weight(1f).heightIn(min = 58.dp).clickable { onNavigate(route) }, horizontalAlignment = Alignment.CenterHorizontally) {
-                SacredIcon(icon, label, Modifier.size(29.dp)); Text(label, color = MutedText, style = MaterialTheme.typography.bodyMedium)
+    Box(Modifier.fillMaxWidth().navigationBarsPadding()) {
+        Row(
+            Modifier.fillMaxWidth().height(68.dp).padding(horizontal = 8.dp, vertical = 6.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            items.forEach { (label, icon, route) ->
+                Column(
+                    Modifier.weight(1f).fillMaxHeight().clickable { onNavigate(route) },
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    SacredIcon(icon, label, Modifier.size(30.dp))
+                    Spacer(Modifier.height(2.dp))
+                    Text(label, color = MutedText, style = MaterialTheme.typography.bodyMedium, maxLines = 1)
+                }
             }
         }
     }
