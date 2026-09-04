@@ -29,23 +29,29 @@ import java.util.Locale
 
 /** Compact, fully local TTS control. The latest [text] is spoken whenever content changes. */
 @Composable
-fun EnglishAudioIcon(text: String, modifier: Modifier = Modifier) {
+fun EnglishAudioIcon(text: String, modifier: Modifier = Modifier, languageCode: String = "en") {
     val currentText by rememberUpdatedState(text)
     val context = androidx.compose.ui.platform.LocalContext.current
     var engine by remember { mutableStateOf<TextToSpeech?>(null) }
     var ready by remember { mutableStateOf(false) }
     var speaking by remember { mutableStateOf(false) }
 
-    DisposableEffect(Unit) {
+    DisposableEffect(languageCode) {
         val mainHandler = Handler(Looper.getMainLooper())
         var localEngine: TextToSpeech? = null
         localEngine = TextToSpeech(context) { result ->
             if (result == TextToSpeech.SUCCESS) {
                 val tts = localEngine ?: return@TextToSpeech
+                val desiredLocale = when (languageCode) {
+                    "te" -> Locale.forLanguageTag("te-IN")
+                    "hi" -> Locale.forLanguageTag("hi-IN")
+                    else -> Locale.ENGLISH
+                }
                 tts.voices
-                    ?.filter { it.locale.language == Locale.ENGLISH.language && !it.isNetworkConnectionRequired }
+                    ?.filter { it.locale.language == desiredLocale.language && !it.isNetworkConnectionRequired }
                     ?.maxByOrNull { it.quality }
                     ?.let { tts.voice = it }
+                    ?: tts.setLanguage(desiredLocale)
                 tts.setSpeechRate(0.9f)
                 ready = true
             }
@@ -98,7 +104,7 @@ fun EnglishAudioIcon(text: String, modifier: Modifier = Modifier) {
                     tts.stop()
                     speaking = false
                 } else if (ready) {
-                    tts.speak(currentText, TextToSpeech.QUEUE_FLUSH, Bundle(), "english-${currentText.hashCode()}")
+                    tts.speak(currentText, TextToSpeech.QUEUE_FLUSH, Bundle(), "$languageCode-${currentText.hashCode()}")
                 }
             },
             enabled = ready || speaking,

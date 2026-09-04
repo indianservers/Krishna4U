@@ -3,8 +3,52 @@ package com.indianservers.krishna4u.feature.letters
 import androidx.annotation.DrawableRes
 import com.indianservers.krishna4u.R
 
-data class KrishnaLetter(val id: String, val situation: String, val title: String, val preview: String, val paragraphs: List<String>, val reflection: String, val nextStep: String, @DrawableRes val icon: Int) {
-    fun spokenText(name: String): String = "My dear $name. ${paragraphs.joinToString(" ")} Remember: $reflection I am with you, Krishna."
+private fun simpleEnglish(text: String): String = listOf(
+    "qualified medical care" to "care from a trained doctor",
+    "qualified support" to "trained help",
+    "qualified help" to "trained help",
+    "professional support" to "trained help",
+    "nonessential" to "not needed",
+    "interrogation" to "too many questions",
+    "self-betrayal" to "betraying yourself",
+    "consistent behaviour" to "steady actions",
+    "independently" to "on your own",
+    "circumstances" to "situations",
+    "circumstance" to "situation",
+    "unmanageable" to "too heavy to carry",
+    "depleted" to "very tired",
+    "manufacture" to "force",
+    "recognition" to "praise",
+    "possessiveness" to "the need to control",
+    "possessive" to "controlling",
+    "exploits" to "takes advantage of",
+    "exploit" to "take advantage of"
+).fold(text) { result, (formal, simple) -> result.replace(formal, simple, ignoreCase = true) }
+
+private fun conciseClosing(text: String): String = text
+    .split(Regex("(?<=[.!?])\\s+"))
+    .take(2)
+    .joinToString(" ")
+
+data class KrishnaLetter(val id: String, val situation: String, val title: String, val preview: String, val paragraphs: List<String>, val reflection: String, val nextStep: String, @param:DrawableRes val icon: Int) {
+    val readingParagraphs: List<String>
+        get() = paragraphs.mapIndexed { index, paragraph ->
+            simpleEnglish(if (index == paragraphs.lastIndex) conciseClosing(paragraph) else paragraph)
+        }
+
+    fun personalizedReadingParagraphs(name: String): List<String> {
+        val readerName = name.trim().ifBlank { "Seeker" }
+        return readingParagraphs.mapIndexed { index, paragraph ->
+            if (index != 0) paragraph
+            else if (paragraph.startsWith("My dear one,", ignoreCase = true)) {
+                paragraph.replaceFirst(Regex("^My dear one,", RegexOption.IGNORE_CASE), "My dear $readerName,")
+            } else {
+                "My dear $readerName, $paragraph"
+            }
+        }
+    }
+
+    fun spokenText(name: String): String = "${personalizedReadingParagraphs(name).joinToString(" ")} Remember: $reflection I am with you, Krishna."
     val audiences: Set<String> get() = audiencesForKrishnaLetter(id)
 }
 
@@ -15,17 +59,17 @@ val krishnaLetterAudiences = listOf(
 
 private fun audiencesForKrishnaLetter(id: String): Set<String> = buildSet {
     if (id in setOf("embarrassed", "bored", "belonging", "child-truth", "left-out-school")) add("Children")
-    if (id in setOf("failure", "anxiety", "not-enough", "comparison", "future-fear", "student-focus", "important-exam")) add("Students")
-    if (id in setOf("rejection", "uncertainty", "heart-broken", "misunderstood", "anger", "comparison", "change", "youth-peer-pressure", "identity-confusion")) add("Youth")
+    if (id in setOf("failure", "anxiety", "not-enough", "comparison", "future-fear", "student-focus", "important-exam", "comfort-growth", "happiness-before-duty", "smart-work", "rise-again", "stronger-than-moment", "life-purpose", "choose-courage", "ready-to-grow", "walk-dharma", "dream-discipline", "valuable-gift", "future-still-open", "next-step-strength")) add("Students")
+    if (id in setOf("rejection", "uncertainty", "heart-broken", "misunderstood", "anger", "comparison", "change", "youth-peer-pressure", "identity-confusion", "moving-on", "comfort-growth", "happiness-before-duty", "pain-strength", "smart-work", "someone-only-takes", "presence-costs-peace", "returning-to-hurt", "friendship-changed", "outgrown-place", "guilty-choosing-self", "memories-pull-back", "closure-never-came", "rise-again", "stronger-than-moment", "life-purpose", "choose-courage", "ready-to-grow", "walk-dharma", "dream-discipline", "valuable-gift", "future-still-open", "next-step-strength")) add("Youth")
     if (id in setOf("family-struggling", "carrying-too-much", "guilt", "parent-failing", "child-pulls-away")) add("Parents")
-    if (id in setOf("failure", "financial-struggle", "success", "proud", "confident", "inspired", "work-taken-over", "work-unseen")) add("Professionals")
-    if (id in setOf("heart-broken", "betrayal", "letting-go", "loved", "couple-arguments", "rebuilding-trust")) add("Couples")
+    if (id in setOf("failure", "financial-struggle", "success", "proud", "confident", "inspired", "work-taken-over", "work-unseen", "comfort-growth", "happiness-before-duty", "smart-work", "rise-again", "stronger-than-moment", "life-purpose", "choose-courage", "ready-to-grow", "walk-dharma", "dream-discipline", "valuable-gift", "future-still-open", "next-step-strength")) add("Professionals")
+    if (id in setOf("heart-broken", "betrayal", "letting-go", "loved", "couple-arguments", "rebuilding-trust", "moving-on", "someone-only-takes", "presence-costs-peace", "returning-to-hurt", "guilty-choosing-self", "closure-never-came", "love-trust-gone")) add("Couples")
     if (id in setOf("forgotten", "health-failing", "grateful", "peaceful", "elder-invisible", "depending-on-others")) add("Elders")
-    if (id in setOf("grief", "lost-hope", "health-failing", "tired-strong", "grief-returns", "caring-for-ill")) add("Grief & Illness")
+    if (id in setOf("grief", "lost-hope", "health-failing", "tired-strong", "grief-returns", "caring-for-ill", "pain-strength", "memories-pull-back", "beginning-betrays-past")) add("Grief & Illness")
     if (id in setOf("family-struggling", "carrying-too-much", "health-failing", "caring-for-ill")) add("Caregivers")
-    if (id in setOf("difficult-decision", "anger", "success", "confident", "leader-decision")) add("Leaders")
-    if (id in setOf("unanswered-prayers", "lost-purpose", "hopeful", "peaceful", "grateful", "faith-dry")) add("Spiritual Seekers")
-    if (id in setOf("stuck", "change", "begin-again", "hopeful", "inspired", "disappointed", "new-place")) add("New Beginnings")
+    if (id in setOf("difficult-decision", "anger", "success", "confident", "leader-decision", "choose-courage", "walk-dharma", "valuable-gift")) add("Leaders")
+    if (id in setOf("unanswered-prayers", "lost-purpose", "hopeful", "peaceful", "grateful", "faith-dry", "life-purpose", "walk-dharma", "valuable-gift", "next-step-strength")) add("Spiritual Seekers")
+    if (id in setOf("stuck", "change", "begin-again", "hopeful", "inspired", "disappointed", "new-place", "moving-on", "comfort-growth", "pain-strength", "smart-work", "friendship-changed", "outgrown-place", "guilty-choosing-self", "memories-pull-back", "closure-never-came", "love-trust-gone", "beginning-betrays-past", "rise-again", "stronger-than-moment", "ready-to-grow", "future-still-open", "next-step-strength")) add("New Beginnings")
     if (isEmpty()) add("Youth")
 }
 
@@ -88,6 +132,31 @@ private fun krishnaPersonalTouch(id: String): String = when (id) {
     "grief-returns" -> "This returning wave does not mean you have failed to heal. Love can be quiet for months and then speak through a date, song or familiar place. Let the tears come without judging the progress between them. Sit with Me, share the memory and care gently for the life still asking for you today."
     "leader-decision" -> "Before people follow your decision, bring Me the power it carries. Listen especially to those who will bear the cost but hold less authority. Choose truth over image and welfare over ego. Leadership is not proved by always appearing certain; it is proved by taking responsibility for a careful and just choice."
     "faith-dry" -> "You do not have to manufacture a feeling to remain close to Me. Bring Me the quiet prayer, the unanswered question and even the doubt. Devotion can be a small honest action when emotion is absent. Keep one gentle practice, serve someone near you and let love return in its own time."
+    "moving-on" -> "Place the person, the memories and the questions in My hands. Take the lesson with you, but leave the weight behind. I am not only present in what stays. I am also present in the courage that helps you move on."
+    "comfort-growth" -> "Do not ask Me to remove every hill from your road. Ask Me for the strength, wisdom and good people needed to climb the hill that belongs to you. I will give you rest when you need it, but I will also call you forward when comfort asks you to stay small."
+    "happiness-before-duty" -> "You do not have to feel happy before you walk with Me. Bring Me the tired heart and the unfinished duty. We can take one honest step together, and sometimes peace will meet you after you begin rather than before."
+    "pain-strength" -> "Do not hide your pain from Me or turn it into your whole identity. Let us understand what it asks for: care, change, courage or release. You are not weak because something hurts; you become stronger when you answer pain with truth and a healthy step."
+    "smart-work" -> "I do not measure devotion by how tired you can make yourself. Bring Me effort joined with thought. Learn from a Guru, teacher or skilled person, remove wasted work and give your full attention to what truly moves the duty forward."
+    "someone-only-takes" -> "You may care without making your heart an endless storehouse for another person. Bring Me the guilt that rises when you say no. Love can give freely, but dharma also asks for truth, balance and respect for the life I placed in your care."
+    "presence-costs-peace" -> "I do not ask you to call every hard talk harmful, but I also do not ask you to live inside repeated fear and disrespect. Let truth show you the pattern. Peace is not silence at any cost; sometimes peace begins with a clear limit and a safe distance."
+    "returning-to-hurt" -> "Do not be ashamed that you returned. Familiar pain can feel easier than an unknown future. Come back to Me now, tell a safe person the whole pattern and let this return become the moment you choose help instead of another promise without change."
+    "friendship-changed" -> "Some friendships walk closely for one season and softly change in another. Do not turn every distance into an enemy story. Keep what was good, speak once with honesty and let both lives grow without forcing yesterday to return."
+    "outgrown-place" -> "Growth may make an old room feel too small, but do not leave with pride. Thank the place that held an earlier version of you. Carry its lesson, honour the people who helped and step toward the wider duty now calling you."
+    "guilty-choosing-self" -> "Choosing your health, safety and honest limits is not the same as caring only about yourself. Bring Me the guilt and examine it with truth. Keep your real duties, but do not accept a false duty to disappear so that everyone else remains comfortable."
+    "memories-pull-back" -> "A memory can be a lamp without becoming a chain. Sit with Me when the old scene returns. Bless what was true, notice what is true now and give today at least one act of your full attention."
+    "closure-never-came" -> "You may never receive the apology or answer that would make the story neat. Do not give another person lifelong control over your peace by waiting at that closed door. We can build closure from truth, wise limits and the life you choose next."
+    "love-trust-gone" -> "Love can remain after safety has broken. Do not use love as proof that trust must return at once. Let actions, time and honest repair decide what access is safe, and let distance remain if the harm continues."
+    "beginning-betrays-past" -> "Moving forward does not erase the person, dream or life you loved. Take the best of the past with you as a value, not a weight. I am present in your memory, and I am also waiting in the new morning you are learning to enter."
+    "rise-again" -> "Rise, My dear one. Do not try to prove everything in one day. Give Me yesterday's weight, keep its lesson and take one honest step. I am not watching from far away; I am rising with you."
+    "stronger-than-moment" -> "This moment may be loud, but it is not greater than the strength I placed within you. Let Me hold the future while you do the next right thing. The moment will pass, and the courage you build here will remain."
+    "life-purpose" -> "Do not wait for a grand sign before you serve. I meet you in the duty near you, the person who needs care and the gift you use honestly. Walk with Me, and let your simple actions reveal why your life matters."
+    "choose-courage" -> "When your voice shakes, remember that I hear it. Stand for dharma without anger and protect without cruelty. You are not alone when you choose what is right; I am beside you in the brave step."
+    "ready-to-grow" -> "Bring Me the weakness you want to change without shame. I do not expect perfection; I ask for honesty, practice and a willing heart. Keep moving toward the light I placed before you, one steady choice at a time."
+    "walk-dharma" -> "If the right road feels lonely, take My hand. Do not trade your values for quick approval. The peace of a clean heart will remain after the crowd has moved on, and I will walk every step with you."
+    "dream-discipline" -> "Give Me your dream, then honour it through today's work. I am with you not only in bright inspiration but also in the quiet practice nobody sees. Keep the effort in your hands and place the result in Mine."
+    "valuable-gift" -> "I placed something useful within you, and it does not need to look like another person's gift. Learn it well, offer it without pride and let it serve life. I can bring light through your time, attention, skill and kindness."
+    "future-still-open" -> "One result cannot close the future I have placed before you. Learn, change your method and prepare again, or notice the wiser door now opening. Do not stop walking because one road ended; I am already present on the next one."
+    "next-step-strength" -> "You do not need to see the whole road to walk with Me. Begin with the truth you know and the duty before you. My presence is not a reason to remain still; it is the strength that helps you take the next step."
     else -> error("Missing Krishna-style personal touch for letter: $id")
 }
 
@@ -427,7 +496,132 @@ val krishnaLetters = listOf(
         "My dear one, prayer may feel like words returning from an empty room. A practice that once brought warmth may now feel ordinary or distant. Do not force emotion or use another person’s devotion to judge your own. A quiet season does not prove that love has ended.",
         "Bring Me the truth: ‘I do not feel You, but I am here.’ Read one verse slowly, sit for one minute or perform one kind action without demanding a spiritual experience. Devotion can remain through honest practice when strong feeling is absent.",
         "Examine whether exhaustion, grief, disappointment or unanswered questions need care. Speak with a wise, trustworthy person who allows questions without fear. Faith that has never been allowed to ask may remain fragile. Let your questions deepen truth rather than drive you into shame.",
-        "What honest question or disappointment have you been afraid to bring into prayer?", "Write one honest prayer and complete one small act of service without waiting to feel inspired.", R.drawable.icon_lotus)
+        "What honest question or disappointment have you been afraid to bring into prayer?", "Write one honest prayer and complete one small act of service without waiting to feel inspired.", R.drawable.icon_lotus),
+    personalLetter("moving-on", "When It Is Time to Move On", "A Finished Chapter Does Not Need to Become a Prison", "Some people arrive as blessings, some bring lessons, and some are not meant to stay forever.",
+        "My dear one, not everyone who enters your life is meant to remain forever. Some people come as blessings. They bring love, help, wisdom and good memories. Some come as lessons. They show you where you need stronger limits, more courage or more respect for yourself.",
+        "Even medicine has an expiry date. Something that once helped you may not always remain good for you. In the same way, a friendship, relationship, habit or dream may have served its purpose and reached its end. Do not hold it only because it was once important. Honour the good, learn from the pain and look honestly at what it has become today.",
+        "You do not need to hate someone in order to leave. You do not need to call every ending a failure. If a person keeps draining your peace, hurting your dignity or pulling you away from dharma, you may step back with a clean heart. Forgive where you can, keep wise limits and move forward without revenge. Letting go does not erase love or thanks; it means you will not force a finished chapter to continue.",
+        "What are you holding because it was once good, even though it is no longer healthy?", "Write what this person or season gave you, what it taught you and one boundary that will help you move forward.", R.drawable.icon_life_journey),
+    personalLetter("comfort-growth", "When Comfort Is Keeping You Small", "Comfort Should Restore You, Not Control You", "Rest is needed, but avoiding every hard step can slowly make your world smaller.",
+        "My dear one, rest is important, but life cannot always be built around comfort. If you avoid every hard task, difficult talk and uncertain step, your world slowly becomes smaller. Comfort should help you recover. It should not become a cage.",
+        "A seed must break before it can grow. The body becomes stronger through effort. The mind becomes wiser by facing problems. You do not need to search for pain, but do not run from every struggle. Some hard moments are preparing you for a larger duty.",
+        "Ask yourself: ‘Is this truly unsafe, or is it only uncomfortable?’ Protect yourself from real harm. But when the path is safe and right, take the step even if your heart is afraid. I will walk with you.",
+        "Which comfort is stopping you from growing?", "Do one useful task today that you have been avoiding because it feels difficult.", R.drawable.icon_courage),
+    personalLetter("happiness-before-duty", "When You Are Waiting to Feel Happy Before You Begin", "You Can Act Before the Perfect Mood Arrives", "A meaningful life includes pain, doubt and effort as well as happiness.",
+        "My dear one, no meaningful life is happy every hour. Even strong people feel fear, loss, doubt and pain. Greatness does not mean smiling through everything. It means staying honest and choosing the right action even when the heart feels heavy.",
+        "Happiness is a beautiful visitor, but it cannot be your only guide. If you act only when you feel good, your goals will remain unfinished. Duty, love and courage sometimes ask you to move while you are tired, sad or unsure.",
+        "Do not feel ashamed of pain. Listen to what it is teaching you and seek help when it becomes too heavy. Then ask, ‘What is still in my hands?’ You may not control the whole situation, but one wise action can begin to change it.",
+        "Are you waiting to feel happy before doing what matters?", "Complete one important duty today without waiting for the perfect mood.", R.drawable.letters_icon_sun),
+    personalLetter("pain-strength", "When Pain Makes You Question Your Strength", "Understand the Pain Before You Answer It", "Pain may ask for care, change, courage or release; it does not automatically mean weakness.",
+        "My dear one, pain does not always mean you are on the wrong path. Sometimes it shows that something mattered. Sometimes it warns you to stop. Sometimes it teaches you to prepare better, choose better people or build stronger limits.",
+        "Do not worship pain, and do not ignore it. Understand it. Ask whether you need rest, treatment, protection, support or courage. Wisdom knows the difference between pain that helps you grow and harm that asks you to leave.",
+        "You are not weak because something hurts. Strength begins when you face the truth about the pain and choose the next healthy step. Cry if you need to. Ask for help. Rest when needed. Then rise without hating yourself for having fallen.",
+        "What is your pain asking for—care, change, courage or release?", "Write the lesson this pain is teaching you and one safe action you can take.", R.drawable.icon_compassion),
+    personalLetter("smart-work", "When Hard Work Is Not Giving Results", "Join Effort with Wisdom", "Working harder is not always the answer; effort needs the right direction and method.",
+        "My dear one, working harder is not always the answer. If you keep walking in the wrong direction, more speed will only take you farther away. Effort needs wisdom.",
+        "Pause and study your method. What is working? What is wasting time? What skill is missing? Ask a teacher, Guru or experienced person to show you what you cannot see. Guidance can save months of blind effort.",
+        "Smart work is not lazy work. It means choosing the right task, using the right method and giving it full attention. Remove distractions. Practise the weak part. Measure progress. Change the plan when facts show a better way, but do not leave a good goal only because it became difficult.",
+        "Do you need more effort, a better method or wise guidance?", "Stop one low-value activity and give that time to the task that will create the greatest real progress.", R.drawable.icon_strategy),
+    personalLetter("someone-only-takes", "When Someone Only Comes to Take", "Love Needs Giving and Receiving", "Care should not leave one heart carrying every need, every call and every repair.",
+        "My dear one, you may notice that someone comes when they need time, money, comfort or help, but disappears when you need care. You keep giving because you are kind, and then feel empty or used. Kindness is precious, but it does not require you to ignore a one-sided pattern.",
+        "Look at actions over time. Have you clearly shared what you need? Have they listened, helped or changed? One hard season can make a good person need more support, so do not judge too quickly. But repeated taking without care, thanks or respect needs an honest limit.",
+        "Say what you can and cannot give. Offer only what is healthy and truly yours to offer. Do not lend what you cannot safely lose or hide serious harm to protect their image. A person who values you may not like every limit, but they will learn to respect that you are a person, not a resource.",
+        "Does this bond make room for your needs as well as theirs?", "Say one clear limit and notice whether the person answers with respect, guilt or pressure.", R.drawable.icon_relationships),
+    personalLetter("presence-costs-peace", "When Their Presence Costs You Peace", "Peace Needs Truth, Not Pretending", "Some discomfort helps relationships grow; repeated fear and disrespect do not.",
+        "My dear one, your body may become tense before this person calls or enters the room. You may rehearse every word because small things often become blame, control or conflict. Do not dismiss what your body is telling you, but do not decide from one difficult day alone.",
+        "Ask what the pattern has been. Can you speak honestly without fear? Do they respect your no? Is repair possible after harm? A healthy bond can include disagreement, challenge and growth. It should not require you to lose sleep, hide truth or become smaller to keep another person calm.",
+        "Set a clear limit and seek wise support. If there is threat, violence, stalking, control or abuse, choose safety and trained help rather than a private meeting. You can wish someone well from a distance. Protecting peace is not avoiding every problem; it is refusing to let repeated harm become normal.",
+        "Is your peace disturbed by healthy growth, or by a repeated pattern of harm?", "Write the pattern in facts and share it with one trusted person who will support truth and safety.", R.drawable.icon_inner_peace),
+    personalLetter("returning-to-hurt", "When You Keep Returning to What Hurt You", "A Familiar Door Can Still Lead to Pain", "Returning does not make you foolish, but the pattern deserves more than another promise.",
+        "My dear one, perhaps you left and returned, blocked and called again, or promised yourself that this time would be different. Familiar pain can feel less frightening than an empty space. Hope may keep holding one good memory while your mind pushes repeated harm aside.",
+        "Do not shame yourself. Shame often sends people back into the same cycle. Write what happened each time, what was promised and what truly changed. Trust steady actions, not only tears, gifts or beautiful words that appear when you are about to leave.",
+        "Make the next choice with support. Tell someone safe, remove easy paths back to danger and seek trained help when abuse, addiction or strong emotional dependence is involved. Missing a person does not mean returning is wise. You can feel love, grief and longing while still choosing protection.",
+        "What facts does hope keep asking you to forget?", "Write the repeated pattern and ask one safe person to help you keep the boundary you choose.", R.drawable.icon_chakra),
+    personalLetter("friendship-changed", "When a Friendship Is No Longer the Same", "Not Every Distance Needs an Enemy", "Friendships can change through time, growth and new duties without making the past false.",
+        "My dear one, a friend who once knew every part of your day may now call less, reply differently or seem far away. You may wonder what you did wrong. Sometimes there is hurt that needs a talk. Sometimes two lives simply begin moving at a different pace.",
+        "Ask once with care: ‘I feel distance between us. Is something wrong?’ Listen without preparing a defence. If repair is needed, be honest. If life has changed, do not force closeness through guilt, constant checking or reminders of everything you once shared.",
+        "Thank the friendship for what it gave. Leave the door open if the bond is still kind, but also make room for new people and duties. A changing friendship does not erase the laughter, help or growth it carried. You may honour the old bond without demanding its old shape.",
+        "Does this friendship need a repair, a new shape or a gentle goodbye?", "Have one honest talk, then give equal energy to a relationship that is present and caring now.", R.drawable.icon_friendship),
+    personalLetter("outgrown-place", "When You Have Outgrown a Place", "Growth Can Honour Where It Began", "A place can be good for an earlier season and still become too small for your next duty.",
+        "My dear one, a job, group, town or role may once have helped you feel safe and useful. Now you may feel called to learn more, serve differently or live with greater truth. Leaving can bring both excitement and guilt, especially when good people helped you there.",
+        "Do not confuse growth with being better than those who stay. Ask whether you are moving toward a real value or only running from ordinary effort. Finish duties cleanly, give fair notice, share what others need and thank the people who opened the first door.",
+        "Then allow yourself to go. You can carry the good habits, friendships and lessons without keeping the same walls around your life. Roots do not ask a tree to remain a seed. Let gratitude look backward while courage takes the next honest step forward.",
+        "Are you leaving to grow toward dharma, or only escaping a difficulty that will follow you?", "Write what you are moving toward, complete one duty well and thank one person who helped you grow here.", R.drawable.icon_life_journey),
+    personalLetter("guilty-choosing-self", "When You Feel Guilty for Choosing Yourself", "Self-Care Is Not the Same as Selfishness", "Your health, safety and honest limits are also part of your duty.",
+        "My dear one, you may have learned that love means always saying yes. When you rest, decline a request or choose a path others dislike, guilt quickly calls you selfish. But a life spent meeting every demand can leave no strength for your true duties, health or purpose.",
+        "Look honestly at the choice. Are you avoiding a fair duty, or protecting a real need? Selfishness ignores others. Healthy self-care includes others without erasing you. You may keep a promise and still ask for help. You may love family and still refuse disrespect, danger or control.",
+        "Explain your limit with kindness, but do not argue forever for permission to have one. People who benefited from your silence may call your change unkind. Let steady, fair actions show the truth. Care for yourself so that what you give comes from strength, not fear and hidden anger.",
+        "Is this guilt pointing to a real duty, or punishing you for having a healthy limit?", "Name the duty you will keep and the limit that will protect your health, safety or peace.", R.drawable.icon_compassion),
+    personalLetter("memories-pull-back", "When Memories Keep Pulling You Back", "Remember Without Leaving Today", "The past can be honoured without becoming the only place where your heart lives.",
+        "My dear one, a song, place, message or quiet hour may carry you back so fully that today disappears. Some memories bring warmth. Others reopen regret and longing. You may keep replaying them because the past feels known while the present still feels empty.",
+        "Do not fight every memory. Sit with it for a moment and name what you miss: the person, safety, hope or version of yourself. Keep the lesson and the love. Then notice what the memory leaves out, including the pain, limits or duties that also belonged to that time.",
+        "Return through your senses. Feel your feet, look around and name the date. Call someone present, complete one task or create one new memory with care. If painful memories take over daily life, sleep or safety, seek trained help. You deserve support in returning to now.",
+        "What do you truly miss beneath the memory?", "Honour one memory for ten minutes, then give one full hour to a person or duty in your life today.", R.drawable.letters_icon_star),
+    personalLetter("closure-never-came", "When the Closure You Wanted Never Came", "You Can Close Your Side of the Door", "An apology or answer may never arrive, but your life does not have to wait beside it.",
+        "My dear one, you may still be waiting for them to explain, admit the harm or say the words that would make everything clear. Your mind keeps building one more conversation. Closure feels as if it is locked inside another person’s honesty, and they may never offer it.",
+        "Accepting this is not saying the harm was right. It means facing what their actions have already shown. Write the questions that remain and answer only what the facts allow. Some blanks must stay blank. Do not fill them with blame against yourself.",
+        "Make closure through your own truth: name what happened, choose the lesson, set the limit and stop returning for an answer that costs more peace each time. A counsellor, elder or trusted friend can witness your story. You do not need the person who hurt you to agree before healing begins.",
+        "Which answer are you still asking another person to give before you permit yourself to move?", "Write the answer supported by their actions, choose one boundary and stop one form of checking for seven days.", R.drawable.icon_lock),
+    personalLetter("love-trust-gone", "When Love Remains but Trust Is Gone", "Love Does Not Remove the Need for Safety", "A heart may still care while wise judgment requires proof, limits or distance.",
+        "My dear one, you may still love someone who lied, broke a promise or made you feel unsafe. This can be confusing. Love does not switch off the moment trust breaks. But love alone cannot rebuild what repeated actions damaged.",
+        "Trust returns slowly through truth, open answers, kept promises and respect for your limits. Do not rush because they are sorry or because you miss the good days. If you caused the harm, accept that the other person may need time. If you were harmed, you may watch actions without offering full access.",
+        "Some bonds can heal with steady repair and trained help. Some need distance or an ending, especially when harm continues. Forgiveness does not require forgetting facts. You may keep love in your heart while choosing a boundary that protects your body, mind and future.",
+        "What action—not promise—would be needed for trust to become safer?", "Write one clear boundary and one steady action required before giving more trust.", R.drawable.icon_relationships),
+    personalLetter("beginning-betrays-past", "When Beginning Again Feels Like Betraying the Past", "Moving Forward Can Carry Love With It", "A new life does not erase the person, dream or season that mattered before it.",
+        "My dear one, you may fear that smiling again, loving again or building a new dream means the past mattered less. Part of you stays close to pain because pain feels loyal. You may believe that moving forward leaves someone or something precious behind.",
+        "Love is not measured by how long you refuse life. Carry one value, habit, story or kindness from what you lost. Let it shape the person you become. The past can travel as wisdom and love; it does not need to travel as a weight that stops every new step.",
+        "Go slowly. A new beginning does not demand that you forget or feel happy every day. It asks only that you allow today to have meaning too. Speak the memory, keep what is sacred and open one small space for a person, duty or hope that is here now.",
+        "What part of the past can you carry as love instead of pain?", "Choose one value from the past and live it through one new action this week.", R.drawable.icon_lotus),
+    personalLetter("rise-again", "When You Are Ready to Rise Again", "Rise With the Lesson, Not the Weight", "Falling is not your final story; one honest step can begin your return.",
+        "My dear one, I saw what brought you down. I saw the effort nobody noticed and the pain you hid behind your smile. But this moment is not the end of your story. Falling does not make you weak, and needing time to stand does not make you less worthy.",
+        "Rise slowly. You do not need to become strong in one day. Take one honest step, then another. Do not carry yesterday as a punishment. Carry its lesson. Ask what must change, accept wise help and begin again with a calmer mind and better understanding.",
+        "I am not asking you to prove anything to the world. I am asking you to trust the strength growing within you. Rest if you need rest, but do not build a home inside defeat. Your life still has work, love and dharma waiting for your hands.",
+        "What is one lesson you can carry forward without carrying the shame?", "Choose one small action that says, ‘I am beginning again,’ and complete it today.", R.drawable.icon_courage),
+    personalLetter("stronger-than-moment", "When This Moment Feels Bigger Than You", "This Moment Cannot Decide Your Whole Life", "Fear may be loud today, but it does not know your full strength or future.",
+        "My dear one, this moment may feel powerful. Your mind may be showing you every danger at once and saying that you cannot handle what comes next. Pause. You have already crossed days you once thought you could never survive. The strength that carried you then has not left you.",
+        "Do not try to solve your whole life in one frightened hour. Calm your breath and look only at the next right step. Ask for help where it is needed. Do what is within your control with care, and stop fighting the parts of tomorrow that have not arrived.",
+        "A hard moment can reveal strength that comfort never asked you to use. Let this day teach you steadiness, patience and trust. The problem may be real, but fear does not get to decide who you become while facing it.",
+        "What is the next right step hidden inside this frightening moment?", "Take five slow breaths, write the one thing you can control and do it before returning to the larger worry.", R.drawable.icon_mind),
+    personalLetter("life-purpose", "When You Want Your Life to Matter", "Purpose Begins With the Good Near You", "A meaningful life is built through honest duties, service and gifts shared with care.",
+        "My dear one, you may be waiting for one great purpose to appear. You may think your life will matter only through fame, wealth or a large achievement. But meaning often begins quietly: protecting someone, teaching what you know, keeping a promise or doing needed work with love.",
+        "Look at the duty standing near you. Study sincerely. Work honestly. Care for your family, nature and every living being. Help the person whose need you can truly meet. A lamp does not ask how many people will praise its light. It shines because giving light is its nature.",
+        "Your purpose may grow and change, but your values can guide every stage. Use your skills to make life a little safer, wiser or kinder. No sincere act of service is too small to carry meaning. The good you do may travel farther than you ever see.",
+        "Who or what near you can receive the best of your care today?", "Use one skill, hour or kind action to help a person, animal, place or duty near you.", R.drawable.icon_lotus),
+    personalLetter("choose-courage", "When Courage Is Calling You", "Choose What Is Right Even While You Tremble", "Courage is not the absence of fear; it is dharma becoming stronger than fear.",
+        "My dear one, courage does not mean that fear has disappeared. It means you choose what is right while your heart is still trembling. You may need to speak the truth, defend someone, admit a mistake, ask for help or begin something uncertain. Do not wait to feel perfectly fearless.",
+        "Let dharma guide your courage, not anger, pride or the wish to look powerful. Be firm without being cruel. Protect the innocent without creating needless harm. Speak clearly, listen wisely and step away safely when danger needs responsible help rather than a lonely fight.",
+        "Your shaking voice can still tell the truth. Your small action can still change another person's fate. Courage grows each time you act from values instead of fear. Begin with the brave choice that belongs to you, not with an image of how heroes should look.",
+        "What right action is fear asking you to delay?", "Tell one safe person your plan, then take one calm and responsible step toward the right action.", R.drawable.icon_courage),
+    personalLetter("ready-to-grow", "When You Are Ready to Grow", "Move Toward the Light Without Hating Where You Began", "Growth starts with honest self-seeing, patient practice and one better choice at a time.",
+        "My dear one, growth begins when you stop hiding from what needs to change. Do not be ashamed of your weak places. See them clearly and work on them patiently. A seed does not hate itself for being small. It simply keeps reaching toward the light.",
+        "Accept useful correction without calling yourself worthless. Learn from a teacher, elder or trusted Guru. Practise what is difficult. Leave habits that weaken your mind, body or character. You do not need to change everything tonight; you need to keep one honest promise today.",
+        "Do not compare your growth with another person's journey. Your starting point, duties and pace are your own. Measure yourself by truth, steady effort and the good your choices create. Every disciplined return is proof that change is already happening.",
+        "Which habit or weakness is asking for patient and honest work?", "Choose one small practice you can repeat daily for seven days and mark today's first effort.", R.drawable.icon_lotus),
+    personalLetter("walk-dharma", "When the Right Path Feels Lonely", "Walk in Dharma Even Without the Crowd", "Popularity can change quickly; the peace of a clean heart stays with you.",
+        "My dear one, sometimes dharma will ask you to refuse what everyone else accepts. You may be laughed at for refusing to cheat, lie, bully, harm your body or join a cruel joke. The crowd may call your values weakness because your choice makes them examine their own.",
+        "Do not mistake popularity for truth. Walk gently, but do not abandon your character to gain approval. Say no clearly. Leave when needed. Ask a trusted adult or responsible person for help if the situation is unsafe. Standing for dharma does not mean facing every danger alone.",
+        "Choose friends who respect your health, honesty and future. Be patient with those who do not understand, but do not hand them control of your direction. The discomfort of standing apart will pass; the strength of keeping your values will travel with you.",
+        "Which value must you protect even if others do not approve?", "Write your clear ‘no’ in one sentence and share it with a trusted person who will support you.", R.drawable.icon_dharma),
+    personalLetter("dream-discipline", "When Your Dream Needs Discipline", "Let Daily Practice Carry the Dream", "A dream becomes real through focused effort, wise methods and promises kept on ordinary days.",
+        "My dear one, a dream cannot grow through wishes alone. It needs your time, focus and steady effort. Some days you will feel inspired; other days you will not. Do the honest work on both. Discipline is the promise you keep after excitement becomes quiet.",
+        "Plan wisely. Remove one distraction, break the work into clear parts and learn from people who understand the path. Rest when your body needs it, but do not make comfort your permanent home. Smart work means checking your method, accepting feedback and improving instead of only becoming tired.",
+        "Do not waste today's strength worrying about the final result. Give your full heart to the duty in front of you. Your dream is asking whether you are willing to grow into the person who can carry it with skill, patience and humility.",
+        "What daily practice would make your dream stronger even when motivation is absent?", "Schedule one focused work period today, remove one distraction and finish a clear task.", R.drawable.icon_chakra),
+    personalLetter("valuable-gift", "When You Wonder What You Can Give", "The World Needs the Good You Can Offer", "Your time, skill, attention and kindness can become sacred when used in service.",
+        "My dear one, never believe that you have nothing valuable to offer. You may not have great wealth or influence, but you have attention, time, skills, kindness and courage. A patient listener can lighten a lonely heart. One brave voice can protect someone from harm.",
+        "Notice what comes naturally to you and what you are willing to learn well. Your gift may be teaching, building, caring, organising, creating, listening or solving a problem others avoid. Strengthen it through practice, then offer it where it can truly help rather than only attract praise.",
+        "Do not hide your light because another person shines differently. Their gift does not reduce yours. Offer your ability without pride and receive correction without shame. A talent becomes meaningful when it lifts life beyond the person who owns it.",
+        "Which ability or quality in you could serve someone beyond yourself?", "Use one gift for thirty minutes this week to teach, protect, help or create something useful.", R.drawable.icon_compassion),
+    personalLetter("future-still-open", "When One Result Makes Your Future Look Closed", "Your Future Is Larger Than One Result", "An exam, rejection or mistake can guide your next step, but it cannot name your whole future.",
+        "My dear one, one result may be making every road look closed. An exam, interview, rejection or mistake can tell you what happened once. It cannot tell you everything you can become. Do not turn a painful result into a permanent name for yourself.",
+        "Let the result teach you. Ask what knowledge, practice, timing or method needs to change. Seek honest feedback from a teacher, Guru or skilled person. Prepare again when the goal is still right, or choose a different path when wisdom shows that your gifts belong elsewhere.",
+        "Some doors close because they are not your road. Others ask you to return better prepared. Have the patience to learn the difference. Your future is not one narrow doorway; it is built through values, skills, relationships and many choices still waiting to be made.",
+        "Is this result asking you to prepare again, change your method or notice another path?", "Ask one wise person for specific feedback and write the next practical step before the day ends.", R.drawable.icon_life_journey),
+    personalLetter("next-step-strength", "When You Need Strength to Take the Next Step", "You Only Need Enough Light for One Step", "Faith does not remove action; it gives you strength to begin before the whole road is clear.",
+        "My dear one, you do not need to see the entire road before you begin. You only need enough faith to take the next right step. Do not wait for every doubt to disappear. Begin with what you know and let honest action reveal what comes after.",
+        "Make the call, open the book, offer the apology, ask for help or start the work. Choose the action that follows truth and duty, not the one that only gives quick relief. If the step carries serious risk, seek wise guidance and make a safe plan before moving.",
+        "My presence does not mean you should remain still and wait for Me to do your duty. I give you steadiness, people, wisdom and chances; your hands must still act. One sincere step today can become a road when you return tomorrow.",
+        "What is the smallest right step you already know you need to take?", "Do that step within the next hour, then write the next one while your courage is awake.", R.drawable.icon_next)
 )
 
 fun krishnaLetter(id: String?): KrishnaLetter = krishnaLetters.firstOrNull { it.id == id } ?: krishnaLetters.first()

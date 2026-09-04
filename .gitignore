@@ -15,3 +15,4 @@
 local.properties
 .kotlin/
 tmp/
+tools/letter_translation_cache.json

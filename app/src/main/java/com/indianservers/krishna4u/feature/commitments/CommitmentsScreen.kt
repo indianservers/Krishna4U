@@ -156,6 +156,16 @@ private fun CommitmentCard(
             Column(Modifier.weight(1f).padding(horizontal = 12.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
                 Text(commitment.title, color = LightGold, style = MaterialTheme.typography.titleLarge)
                 Text(commitment.promise, color = SoftWhite, style = MaterialTheme.typography.bodyMedium)
+                commitment.practicePrompt?.let { practice ->
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        "PRACTICE TODAY",
+                        color = CelestialCyan,
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(practice, color = MutedText, style = MaterialTheme.typography.bodySmall)
+                }
             }
             Column(
                 Modifier.width(50.dp).clickable(onClick = onToggle),

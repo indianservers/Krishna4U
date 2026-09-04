@@ -228,7 +228,7 @@ fun ProfileSettingsScreen(
                     PrimaryGoldButton(
                         text = if (nameSaved) "Name Saved" else "Save Name",
                         onClick = {
-                            nameDraft = nameDraft.trim().ifBlank { "Devotee" }
+                            nameDraft = nameDraft.trim().ifBlank { "Seeker" }
                             onSaveDisplayName(nameDraft)
                             nameSaved = true
                         },

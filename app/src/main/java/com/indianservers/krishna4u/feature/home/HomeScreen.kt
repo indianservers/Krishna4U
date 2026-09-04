@@ -24,11 +24,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -63,8 +68,12 @@ fun HomeScreen(
     readSlokaCount: Int,
     homeShortcuts: Set<String>,
     onToggleHomeShortcut: (String) -> Unit,
+    onDisplayNameChanged: (String) -> Unit,
     onOpen: (String) -> Unit
 ) {
+    val effectiveName = displayName.trim().ifBlank { "Seeker" }
+    var showRenameDialog by remember { mutableStateOf(false) }
+    var nameDraft by remember(effectiveName) { mutableStateOf(effectiveName) }
     val reducedMotion = LocalReducedMotion.current
     val featuredVerse = remember { homeVerses.random() }
     val deviceTime by produceState(initialValue = LocalTime.now()) {
@@ -85,18 +94,34 @@ fun HomeScreen(
         label = "settingsChakraRotation"
     )
     val cards = listOf(
-        HomeCard("Krishna’s Life", "Divine stories of Krishna.", R.drawable.home_icon_krishna_life, "06"),
-        HomeCard("Teachings", "Wisdom for modern life.", R.drawable.home_icon_teachings, "08"),
-        HomeCard("Bhagavad Gita", "Read, listen and reflect.", R.drawable.home_icon_bhagavad_gita, "12"),
-        HomeCard("Ask Krishna", "Guidance for your questions.", R.drawable.home_icon_ask_krishna, "22")
+        HomeCard(androidx.compose.ui.res.stringResource(R.string.home_krishna_life), androidx.compose.ui.res.stringResource(R.string.home_krishna_life_desc), R.drawable.home_icon_krishna_life, "06"),
+        HomeCard(androidx.compose.ui.res.stringResource(R.string.home_teachings), androidx.compose.ui.res.stringResource(R.string.home_teachings_desc), R.drawable.home_icon_teachings, "08"),
+        HomeCard(androidx.compose.ui.res.stringResource(R.string.home_bhagavad_gita), androidx.compose.ui.res.stringResource(R.string.home_bhagavad_gita_desc), R.drawable.home_icon_bhagavad_gita, "12"),
+        HomeCard(androidx.compose.ui.res.stringResource(R.string.home_ask_krishna), androidx.compose.ui.res.stringResource(R.string.home_ask_krishna_desc), R.drawable.home_icon_ask_krishna, "22")
     )
     KrishnaCosmicBackground(R.drawable.bg_01_cosmic_mandala) {
         Column(Modifier.fillMaxSize().statusBarsPadding()) {
             Row(Modifier.fillMaxWidth().padding(18.dp), verticalAlignment = Alignment.CenterVertically) {
                 Image(painterResource(R.drawable.icon_peacock_feather), null, Modifier.size(52.dp).clip(CircleShape))
                 Column(Modifier.weight(1f).padding(start = 12.dp)) {
-                    Text("Namaste, $displayName", color = LightGold, style = MaterialTheme.typography.headlineMedium)
-                    Text("May Krishna guide your path today.", color = MutedText)
+                    Row(
+                        Modifier.fillMaxWidth().clickable {
+                            nameDraft = effectiveName
+                            showRenameDialog = true
+                        },
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            androidx.compose.ui.res.stringResource(R.string.home_namaste, effectiveName),
+                            modifier = Modifier.weight(1f),
+                            color = LightGold,
+                            style = MaterialTheme.typography.headlineMedium,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Text("✎", color = AntiqueGold, fontSize = 20.sp)
+                    }
+                    Text(androidx.compose.ui.res.stringResource(R.string.home_blessing), color = MutedText)
                 }
                 Image(
                     painterResource(R.drawable.icon_settings),
@@ -131,10 +156,10 @@ fun HomeScreen(
                         val progress = completed / 700f
                         val percentage = progress * 100f
                         Column(Modifier.fillMaxWidth()) {
-                            Text("Your Gita Journey", color = SoftWhite, style = MaterialTheme.typography.titleLarge)
+                            Text(androidx.compose.ui.res.stringResource(R.string.home_gita_journey), color = SoftWhite, style = MaterialTheme.typography.titleLarge)
                             Text(
-                                if (completed == 0) "Begin your 700-śloka journey"
-                                else "$completed of 700 ślokas read · ${"%.1f".format(percentage)}%",
+                                if (completed == 0) androidx.compose.ui.res.stringResource(R.string.home_begin_sloka_journey)
+                                else androidx.compose.ui.res.stringResource(R.string.home_sloka_progress, completed, "%.1f".format(percentage)),
                                 color = MutedText,
                                 style = MaterialTheme.typography.bodyMedium
                             )
@@ -193,7 +218,7 @@ fun HomeScreen(
                 }
                 if (pinnedShortcuts.isNotEmpty()) {
                     item {
-                        Text("Your Explore shortcuts", color = LightGold, style = MaterialTheme.typography.titleLarge)
+                        Text(androidx.compose.ui.res.stringResource(R.string.home_explore_shortcuts), color = LightGold, style = MaterialTheme.typography.titleLarge)
                     }
                     items(pinnedShortcuts, key = { it.route }) { shortcut ->
                         GlassCard(Modifier.fillMaxWidth()) {
@@ -227,8 +252,8 @@ fun HomeScreen(
                                 contentScale = ContentScale.Fit
                             )
                             Column(Modifier.weight(1f).padding(start = 4.dp)) {
-                                Text("Krishna Speaks to You", color = LightGold, style = MaterialTheme.typography.titleLarge, fontSize = 17.sp, maxLines = 1)
-                                Text(selectedNeeds.firstOrNull()?.let { "A message for $it" } ?: "A message for what you need today", color = MutedText, maxLines = 1)
+                                Text(androidx.compose.ui.res.stringResource(R.string.home_krishna_speaks), color = LightGold, style = MaterialTheme.typography.titleLarge, fontSize = 17.sp, maxLines = 1)
+                                Text(selectedNeeds.firstOrNull()?.let { androidx.compose.ui.res.stringResource(R.string.home_message_for, it) } ?: androidx.compose.ui.res.stringResource(R.string.home_message_for_today), color = MutedText, maxLines = 1)
                             }
                             Text("→", color = LightGold, style = MaterialTheme.typography.headlineMedium)
                         }
@@ -239,13 +264,13 @@ fun HomeScreen(
                         Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
                             Image(
                                 painterResource(R.drawable.icon_compassion),
-                                "Krishna’s Letters to You",
+                                androidx.compose.ui.res.stringResource(R.string.home_krishna_letters),
                                 Modifier.size(64.dp),
                                 contentScale = ContentScale.Fit
                             )
                             Column(Modifier.weight(1f).padding(horizontal = 14.dp)) {
-                                Text("Krishna’s Letters to You", color = LightGold, style = MaterialTheme.typography.titleLarge)
-                                Text("A personal letter for what your heart is carrying", color = MutedText, style = MaterialTheme.typography.bodyMedium)
+                                Text(androidx.compose.ui.res.stringResource(R.string.home_krishna_letters), color = LightGold, style = MaterialTheme.typography.titleLarge)
+                                Text(androidx.compose.ui.res.stringResource(R.string.home_krishna_letters_desc), color = MutedText, style = MaterialTheme.typography.bodyMedium)
                             }
                             Text("→", color = LightGold, style = MaterialTheme.typography.headlineMedium)
                         }
@@ -257,13 +282,13 @@ fun HomeScreen(
                             Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
                                 Image(
                                     painterResource(R.drawable.letters_icon_star),
-                                    "Krishna’s Night Message",
+                                    androidx.compose.ui.res.stringResource(R.string.home_night_message),
                                     Modifier.size(64.dp),
                                     contentScale = ContentScale.Fit
                                 )
                                 Column(Modifier.weight(1f).padding(horizontal = 14.dp)) {
-                                    Text("Krishna’s Night Message", color = LightGold, style = MaterialTheme.typography.titleLarge)
-                                    Text("Place today in Krishna’s hands and rest", color = MutedText, style = MaterialTheme.typography.bodyMedium)
+                                    Text(androidx.compose.ui.res.stringResource(R.string.home_night_message), color = LightGold, style = MaterialTheme.typography.titleLarge)
+                                    Text(androidx.compose.ui.res.stringResource(R.string.home_night_message_desc), color = MutedText, style = MaterialTheme.typography.bodyMedium)
                                 }
                                 Text("→", color = LightGold, style = MaterialTheme.typography.headlineMedium)
                             }
@@ -272,6 +297,33 @@ fun HomeScreen(
                 }
             }
             SacredBottomNavigation(onOpen)
+        }
+        if (showRenameDialog) {
+            AlertDialog(
+                onDismissRequest = { showRenameDialog = false },
+                title = { Text(androidx.compose.ui.res.stringResource(R.string.edit_display_name)) },
+                text = {
+                    OutlinedTextField(
+                        value = nameDraft,
+                        onValueChange = { nameDraft = it.take(40) },
+                        label = { Text(androidx.compose.ui.res.stringResource(R.string.display_name)) },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                },
+                confirmButton = {
+                    TextButton(onClick = {
+                        val savedName = nameDraft.trim().ifBlank { "Seeker" }
+                        onDisplayNameChanged(savedName)
+                        showRenameDialog = false
+                    }) { Text(androidx.compose.ui.res.stringResource(R.string.action_save)) }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showRenameDialog = false }) {
+                        Text(androidx.compose.ui.res.stringResource(R.string.action_cancel))
+                    }
+                }
+            )
         }
     }
 }

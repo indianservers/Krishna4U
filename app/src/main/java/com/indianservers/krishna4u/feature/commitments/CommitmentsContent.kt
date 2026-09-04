@@ -7,7 +7,8 @@ data class KrishnaCommitment(
     val id: String,
     val title: String,
     val promise: String,
-    @param:DrawableRes val icon: Int
+    @param:DrawableRes val icon: Int,
+    val practicePrompt: String? = null
 )
 
 val krishnaCommitments = listOf(
@@ -28,5 +29,11 @@ val krishnaCommitments = listOf(
     KrishnaCommitment("promises", "Keep My Word", "I will keep my promises and speak honestly when circumstances prevent me from fulfilling them.", R.drawable.icon_check),
     KrishnaCommitment("own-path", "Walk My Own Path", "I will not compare my journey with others; I will celebrate their success, overcome jealousy and remain grateful for my path.", R.drawable.icon_purpose),
     KrishnaCommitment("character", "Stay Humble, Brave and Generous", "I will earn honestly, share generously, remain humble in success and courageous during failure.", R.drawable.icon_leadership),
-    KrishnaCommitment("offering", "Offer My Life to Krishna", "I will offer my thoughts, words, talents and actions to Krishna and try to leave every person and place better than I found them.", R.drawable.icon_lotus)
+    KrishnaCommitment(
+        "offering",
+        "Offer My Life to Krishna",
+        "I will offer my thoughts, words, talents and actions to Krishna and try to leave every person and place better than I found them.",
+        R.drawable.icon_lotus,
+        practicePrompt = "Choose one ordinary action—study, work, service or care. Before you begin, quietly offer it to Krishna. Do it wholeheartedly, then release the need for praise or reward."
+    )
 )

@@ -122,8 +122,10 @@ fun SacredListCard(title: String, body: String, @DrawableRes icon: Int, onClick:
 @Composable
 fun SacredBottomNavigation(onNavigate: (String) -> Unit) {
     val items = listOf(
-        Triple("Home", R.drawable.icon_home, "05"), Triple("Explore", R.drawable.icon_explore, "wisdom"),
-        Triple("Gita", R.drawable.icon_gita, "12"), Triple("Journal", R.drawable.icon_journal, "26")
+        Triple(androidx.compose.ui.res.stringResource(R.string.nav_home), R.drawable.icon_home, "05"),
+        Triple(androidx.compose.ui.res.stringResource(R.string.nav_explore), R.drawable.icon_explore, "wisdom"),
+        Triple(androidx.compose.ui.res.stringResource(R.string.nav_gita), R.drawable.icon_gita, "12"),
+        Triple(androidx.compose.ui.res.stringResource(R.string.nav_journal), R.drawable.icon_journal, "26")
     )
     Box(Modifier.fillMaxWidth().navigationBarsPadding()) {
         Row(

@@ -122,9 +122,12 @@ fun ChooseLanguageScreen(selected: String, onSelected: (String) -> Unit, onConti
     KrishnaCosmicBackground(R.drawable.bg_08_minimal_starfield) {
         Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).statusBarsPadding().navigationBarsPadding().padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Image(painterResource(R.drawable.illustration_09_peacock_feather), null, Modifier.height(118.dp), contentScale = ContentScale.Fit)
-            SacredScreenHeader("Choose your language", "Experience Krishna’s wisdom in the words\nclosest to your heart.")
+            SacredScreenHeader(
+                androidx.compose.ui.res.stringResource(R.string.choose_language_title),
+                androidx.compose.ui.res.stringResource(R.string.choose_language_subtitle)
+            )
             Spacer(Modifier.height(16.dp))
-            PrimaryGoldButton("Continue", onContinue, Modifier.fillMaxWidth())
+            PrimaryGoldButton(androidx.compose.ui.res.stringResource(R.string.action_continue), onContinue, Modifier.fillMaxWidth())
             Spacer(Modifier.height(16.dp))
             appLanguages.forEach { language ->
                 GlassCard(
@@ -139,12 +142,12 @@ fun ChooseLanguageScreen(selected: String, onSelected: (String) -> Unit, onConti
                         if (selectedLanguage.code == language.code && language.available) {
                             Image(painterResource(R.drawable.icon_check), "Selected", Modifier.size(34.dp))
                         } else if (!language.available) {
-                            Text("Coming soon", color = AntiqueGold, style = MaterialTheme.typography.labelLarge)
+                            Text(androidx.compose.ui.res.stringResource(R.string.coming_soon), color = AntiqueGold, style = MaterialTheme.typography.labelLarge)
                         }
                     }
                 }
             }
-            GlassCard(Modifier.fillMaxWidth().padding(top = 6.dp)) { Row(verticalAlignment = Alignment.CenterVertically) { Image(painterResource(R.drawable.icon_language), null, Modifier.size(30.dp)); Spacer(Modifier.width(12.dp)); Text("English is available now. More translations are coming soon.", color = MutedText) } }
+            GlassCard(Modifier.fillMaxWidth().padding(top = 6.dp)) { Row(verticalAlignment = Alignment.CenterVertically) { Image(painterResource(R.drawable.icon_language), null, Modifier.size(30.dp)); Spacer(Modifier.width(12.dp)); Text(androidx.compose.ui.res.stringResource(R.string.languages_available_message), color = MutedText) } }
             Spacer(Modifier.height(20.dp))
         }
     }

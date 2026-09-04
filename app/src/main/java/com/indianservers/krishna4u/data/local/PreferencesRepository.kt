@@ -18,7 +18,7 @@ data class UserPreferences(
     val onboardingComplete: Boolean = false,
     val language: String = "en",
     val interests: Set<String> = emptySet(),
-    val displayName: String = "Devotee",
+    val displayName: String = "Seeker",
     val krishnaMessageIndex: Int = 0,
     val bookmarks: Set<String> = emptySet(),
     val homeShortcuts: Set<String> = emptySet(),
@@ -68,7 +68,10 @@ class PreferencesRepository(private val context: Context) {
             onboardingComplete = values[Keys.onboarding] ?: false,
             language = supportedLanguageCode(values[Keys.language] ?: "en"),
             interests = values[Keys.interests]?.split('|')?.filter(String::isNotBlank)?.toSet() ?: emptySet(),
-            displayName = values[Keys.displayName]?.takeIf(String::isNotBlank) ?: "Devotee",
+            displayName = values[Keys.displayName]
+                ?.trim()
+                ?.takeIf { it.isNotBlank() && !it.equals("Devotee", ignoreCase = true) }
+                ?: "Seeker",
             krishnaMessageIndex = values[Keys.krishnaMessageIndex] ?: 0,
             bookmarks = values[Keys.bookmarks]?.toSet() ?: emptySet(),
             homeShortcuts = values[Keys.homeShortcuts]?.toSet() ?: emptySet(),
@@ -105,7 +108,7 @@ class PreferencesRepository(private val context: Context) {
     suspend fun setReducedMotion(value: Boolean) = context.krishnaDataStore.edit { it[Keys.reducedMotion] = value }
     suspend fun setReadingMode(value: String) = context.krishnaDataStore.edit { it[Keys.readingMode] = supportedReadingMode(value) }
     suspend fun setDisplayName(value: String) = context.krishnaDataStore.edit {
-        it[Keys.displayName] = value.trim().take(40).ifBlank { "Devotee" }
+        it[Keys.displayName] = value.trim().take(40).ifBlank { "Seeker" }
     }
     suspend fun finishOnboarding(interests: Set<String>) = context.krishnaDataStore.edit {
         it[Keys.interests] = interests.joinToString("|")

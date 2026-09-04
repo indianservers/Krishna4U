@@ -5,6 +5,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.*
 import com.indianservers.krishna4u.core.notifications.DailyVerseNotifications
 import com.indianservers.krishna4u.core.notifications.NightMessageNotifications
+import com.indianservers.krishna4u.core.localization.ProvideAppLanguage
 import com.indianservers.krishna4u.data.local.PreferencesRepository
 import com.indianservers.krishna4u.data.local.UserPreferences
 import com.indianservers.krishna4u.feature.gallery.*
@@ -51,6 +52,7 @@ fun KrishnaApp(pendingDestination: String? = null, onDestinationConsumed: () -> 
             onDestinationConsumed()
         }
     }
+    ProvideAppLanguage(prefs.language) {
     KrishnaPreferenceTheme(prefs.darkTheme, prefs.textSize, prefs.reducedMotion) {
     NavHost(
         nav,
@@ -71,6 +73,7 @@ fun KrishnaApp(pendingDestination: String? = null, onDestinationConsumed: () -> 
                 readSlokaCount = prefs.readSlokas.size,
                 homeShortcuts = prefs.homeShortcuts,
                 onToggleHomeShortcut = { route -> scope.launch { repository.toggleHomeShortcut(route) } },
+                onDisplayNameChanged = { name -> scope.launch { repository.setDisplayName(name) } },
                 onOpen = ::go
             )
         }
@@ -218,8 +221,8 @@ fun KrishnaApp(pendingDestination: String? = null, onDestinationConsumed: () -> 
                 onNavigate = ::go
             )
         }
-        composable("krishna_letters") { KrishnaLettersLibraryScreen(prefs.displayName, { nav.popBackStack() }, ::go) }
-        composable("krishna_letters/{letterId}") { entry -> KrishnaLetterScreen(entry.arguments?.getString("letterId"), prefs.displayName, { nav.popBackStack() }, ::go) }
+        composable("krishna_letters") { KrishnaLettersLibraryScreen(prefs.displayName, prefs.language, { nav.popBackStack() }, ::go) }
+        composable("krishna_letters/{letterId}") { entry -> KrishnaLetterScreen(entry.arguments?.getString("letterId"), prefs.displayName, prefs.language, { nav.popBackStack() }, ::go) }
         composable("one_minute_stories") { OneMinuteStoriesLibraryScreen({ nav.popBackStack() }, ::go) }
         composable("one_minute_story/{storyId}") { entry -> OneMinuteStoryScreen(entry.arguments?.getString("storyId"), { nav.popBackStack() }, ::go) }
         composable("dharma_decisions") { DharmaDecisionLibraryScreen({ nav.popBackStack() }, ::go) }
@@ -248,6 +251,7 @@ fun KrishnaApp(pendingDestination: String? = null, onDestinationConsumed: () -> 
             LaunchedEffect(chapter, verse) { repository.markSlokaRead(chapter, verse) }
             CompleteVerseReaderScreen(chapter, verse, bookmarkId in prefs.bookmarks, { scope.launch { repository.toggleBookmark(bookmarkId) } }, { nav.popBackStack() }, ::go)
         }
+    }
     }
     }
 }

@@ -10,8 +10,16 @@ data class AppLanguage(
 
 val appLanguages = listOf(
     AppLanguage("en", "English", "English", available = true),
-    AppLanguage("hi", "हिन्दी", "Hindi"),
-    AppLanguage("te", "తెలుగు", "Telugu"),
+    AppLanguage("hi", "हिन्दी", "Hindi", available = true),
+    AppLanguage("te", "తెలుగు", "Telugu", available = true),
+    AppLanguage("ta", "தமிழ்", "Tamil"),
+    AppLanguage("kn", "ಕನ್ನಡ", "Kannada"),
+    AppLanguage("ml", "മലയാളം", "Malayalam"),
+    AppLanguage("mr", "मराठी", "Marathi"),
+    AppLanguage("bn", "বাংলা", "Bengali"),
+    AppLanguage("gu", "ગુજરાતી", "Gujarati"),
+    AppLanguage("pa", "ਪੰਜਾਬੀ", "Punjabi"),
+    AppLanguage("or", "ଓଡ଼ିଆ", "Odia"),
     AppLanguage("sa", "संस्कृतम्", "Sanskrit"),
     AppLanguage("es", "Español", "Spanish"),
     AppLanguage("fr", "Français", "French"),
